@@ -95,9 +95,11 @@ describe('App', () => {
     expect(screen.queryByText(/Slagen .* nodig/)).toBeNull()
   })
 
-  it('wisselt de tafel van rond naar vierkant en bewaart dat', () => {
+  it('wisselt vanuit de header van ronde naar vierkante tafel en bewaart dat', () => {
     render(<App />)
-    fireEvent.click(screen.getByTitle('Vierkante tafel'))
+    const knop = screen.getByTitle('Vierkante tafel')
+    expect(knop.closest('header')).toBeTruthy()
+    fireEvent.click(knop)
     expect(JSON.parse(localStorage.getItem('wiezen.voorkeuren')!).tafelvorm).toBe('vierkant')
     expect(document.querySelector('.vilt')!.className).toContain('rounded-3xl')
   })

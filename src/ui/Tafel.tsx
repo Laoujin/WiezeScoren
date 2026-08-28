@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { SPELER_IDS, type SpelerId } from '../domein/contracten'
 import type { Ploeglid } from '../domein/ploeg'
 import type { Punten } from '../domein/score'
-import { TAFELVORMEN, type Tafelvorm } from '../domein/voorkeuren'
+import type { Tafelvorm } from '../domein/voorkeuren'
 import { Avatar } from './Avatar'
 import { MuntStroom } from './MuntStroom'
 import { Ploegkiezer } from './Ploegkiezer'
@@ -182,7 +182,6 @@ type TafelProps = {
   onDeler: (speler: SpelerId) => void
   onHernoem: (speler: SpelerId, naam: string) => void
   onKiesZetel: (speler: SpelerId, naam: string) => void
-  onVorm: (vorm: Tafelvorm) => void
 }
 
 export function Tafel({
@@ -200,7 +199,6 @@ export function Tafel({
   onDeler,
   onHernoem,
   onKiesZetel,
-  onVorm,
 }: TafelProps) {
   const getoondePot = useTelling(pot, vertraging)
   const zetels = zetelsVan(vorm)
@@ -208,26 +206,6 @@ export function Tafel({
   return (
     <div className="relative mx-auto aspect-square w-full max-w-[40rem] sm:aspect-4/3">
       <div className="lamplicht pointer-events-none absolute inset-x-0 top-[-14%] h-[70%]" />
-
-      <div className="absolute top-0 right-0 z-30 flex gap-1 rounded-lg border border-krijt/15 bg-vilt-diep/70 p-1">
-        {TAFELVORMEN.map((keuze) => (
-          <button
-            key={keuze}
-            type="button"
-            title={keuze === 'rond' ? 'Ronde tafel' : 'Vierkante tafel'}
-            onClick={() => onVorm(keuze)}
-            className={`flex h-8 w-8 items-center justify-center transition-colors ${
-              keuze === 'rond' ? 'rounded-full' : 'rounded-sm'
-            } ${
-              vorm === keuze
-                ? 'bg-messing text-vilt-diep'
-                : 'border border-krijt/30 text-krijt-dof hover:border-krijt/60'
-            }`}
-          >
-            <span className="sr-only">{keuze === 'rond' ? 'Rond' : 'Vierkant'}</span>
-          </button>
-        ))}
-      </div>
 
       <div
         className={`vilt absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-4 border-messing-diep/60 bg-vilt-licht shadow-[0_28px_60px_-20px_#000,inset_0_2px_30px_rgba(0,0,0,0.45)] ${

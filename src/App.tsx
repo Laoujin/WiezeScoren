@@ -14,6 +14,7 @@ import { ContractKeuze } from './ui/ContractKeuze'
 import { Instellingen } from './ui/Instellingen'
 import { Scorebord } from './ui/Scorebord'
 import { Tafel } from './ui/Tafel'
+import { Tafelvormkiezer } from './ui/Tafelvormkiezer'
 import { useMuntStroom } from './ui/useMuntStroom'
 import { useSpel } from './ui/useSpel'
 
@@ -132,6 +133,8 @@ export function App() {
           >
             Nieuw spel
           </button>
+          <span className="mx-1 h-6 w-px bg-krijt/15" />
+          <Tafelvormkiezer vorm={spelState.tafelvorm} onVorm={spelState.zetTafelvorm} />
         </nav>
       </header>
 
@@ -153,7 +156,6 @@ export function App() {
               onDeler={spelState.kiesDeler}
               onHernoem={spelState.hernoem}
               onKiesZetel={spelState.kiesZetel}
-              onVorm={spelState.zetTafelvorm}
             />
             <ContractKeuze
               config={config}

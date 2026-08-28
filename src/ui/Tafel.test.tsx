@@ -14,11 +14,7 @@ const VLUCHT = {
   ],
 }
 
-function toon(
-  vlucht: typeof VLUCHT | null,
-  vorm: Tafelvorm = 'rond',
-  onVorm: (vorm: Tafelvorm) => void = () => {},
-) {
+function toon(vlucht: typeof VLUCHT | null, vorm: Tafelvorm = 'rond') {
   render(
     <Tafel
       spelers={['Az', 'Bo', 'Cy', 'Di']}
@@ -35,7 +31,6 @@ function toon(
       onDeler={() => {}}
       onHernoem={() => {}}
       onKiesZetel={() => {}}
-      onVorm={onVorm}
     />,
   )
 }
@@ -121,13 +116,6 @@ describe('tafelvorm', () => {
     cleanup()
     toon(null, 'vierkant')
     expect(document.querySelector('.vilt')!.className).toContain('rounded-3xl')
-  })
-
-  it('laat de vorm omschakelen', () => {
-    const gekozen: Tafelvorm[] = []
-    toon(null, 'rond', (vorm) => gekozen.push(vorm))
-    screen.getByTitle('Vierkante tafel').click()
-    expect(gekozen).toEqual(['vierkant'])
   })
 
   it('laat de munten de gekozen vorm volgen', () => {
