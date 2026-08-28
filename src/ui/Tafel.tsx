@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { SPELER_IDS, type SpelerId } from '../domein/contracten'
 import type { Ploeglid } from '../domein/ploeg'
 import type { Punten } from '../domein/score'
@@ -73,13 +73,18 @@ function Plaquette({
 }: PlaquetteProps) {
   const [bewerkt, zetBewerkt] = useState(false)
   const [kiest, zetKiest] = useState(false)
+  const anker = useRef<HTMLDivElement>(null)
+  const sluit = useCallback(() => zetKiest(false), [])
   const getoondTotaal = useTelling(totaal, vertraging)
 
   return (
     <div
+      ref={anker}
       data-plaquette={speler}
       className="absolute w-[34%] -translate-x-1/2 -translate-y-1/2 sm:w-[26%]"
-      style={plaats(zetel.plaquette)}
+      // De transform hierboven maakt een stacking context, dus de kieslijst raakt niet zelf boven
+      // de delerfiche; de hele zetel moet omhoog zolang ze openstaat.
+      style={kiest ? { ...plaats(zetel.plaquette), zIndex: 30 } : plaats(zetel.plaquette)}
     >
       <div
         onContextMenu={(e) => {
@@ -159,8 +164,9 @@ function Plaquette({
           ploeg={ploeg}
           aanTafel={naam}
           omhoog={zetel.plaquette.y > 50}
+          anker={anker}
           onKies={onKiesZetel}
-          onSluit={() => zetKiest(false)}
+          onSluit={sluit}
         />
       )}
     </div>

@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { GEEN_PUNTEN } from '../domein/score'
 import type { Tafelvorm } from '../domein/voorkeuren'
@@ -84,6 +84,77 @@ describe('Tafel', () => {
     toon(null)
     expect(screen.getByTitle('Deler').parentElement?.style.top).toBe('65%')
     expect(screen.getByText('Bo').closest('[data-plaquette]')?.getAttribute('style')).toContain('left: 15%')
+  })
+})
+
+describe('ploegkiezer', () => {
+  beforeEach(() => {
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+  })
+
+  afterEach(() => {
+    cleanup()
+    vi.unstubAllGlobals()
+  })
+
+  function plaquette(speler: number): HTMLElement {
+    return document.querySelector<HTMLElement>(`[data-plaquette="${speler}"]`)!
+  }
+
+  // Een echte muisklik stuurt eerst pointerdown; daar hangt het sluiten van een andere lijst aan.
+  function open(speler: number) {
+    const knop = plaquette(speler).querySelector('button[title$="vervangen"]')!
+    fireEvent.pointerDown(knop)
+    fireEvent.click(knop)
+  }
+
+  function kiezer(speler: number): HTMLElement | null {
+    return plaquette(speler).querySelector<HTMLElement>('.animatie-open')
+  }
+
+  it('opent de kieslijst met de hele ploeg', () => {
+    toon(null)
+    open(0)
+    expect([...kiezer(0)!.querySelectorAll('button')].map((b) => b.title)).toEqual(['Bo'])
+  })
+
+  it('tilt de zetel boven de delerfiche zolang de lijst openstaat', () => {
+    toon(null)
+    const deler = Number(
+      screen.getByTitle('Deler').parentElement!.className.match(/z-(\d+)/)![1],
+    )
+    expect(plaquette(0).style.zIndex).toBe('')
+    open(0)
+    expect(Number(plaquette(0).style.zIndex)).toBeGreaterThan(deler)
+  })
+
+  it('sluit bij een klik buiten de lijst', () => {
+    toon(null)
+    open(0)
+    fireEvent.pointerDown(document.body)
+    expect(kiezer(0)).toBeNull()
+  })
+
+  it('blijft open bij een klik binnen de zetel', () => {
+    toon(null)
+    open(0)
+    fireEvent.pointerDown(kiezer(0)!)
+    expect(kiezer(0)).not.toBeNull()
+  })
+
+  it('sluit met Escape', () => {
+    toon(null)
+    open(0)
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(kiezer(0)).toBeNull()
+  })
+
+  it('sluit de lijst van de ene zetel wanneer een andere opengaat', () => {
+    toon(null)
+    open(0)
+    open(2)
+    expect(kiezer(0)).toBeNull()
+    expect(kiezer(2)).not.toBeNull()
   })
 })
 
