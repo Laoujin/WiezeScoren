@@ -127,4 +127,10 @@ describe('App', () => {
     expect(JSON.parse(localStorage.getItem('wiezen.voorkeuren')!).tafelvorm).toBe('vierkant')
     expect(document.querySelector('.vilt')!.className).toContain('rounded-3xl')
   })
+
+  it('linkt in de voettekst naar de repo', () => {
+    render(<App />)
+    const link = screen.getByTitle('Broncode op GitHub')
+    expect(link.getAttribute('href')).toBe('https://github.com/Laoujin/WiezeScoren')
+  })
 })
