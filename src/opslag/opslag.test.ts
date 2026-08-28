@@ -72,6 +72,22 @@ describe('ploeg', () => {
     expect(laadPloeg(opslag)).toEqual(ploeg)
   })
 
+  it('vult de avatar aan bij een ploeg die van voor de fotos komt', () => {
+    opslag.setItem('wiezen.ploeg', JSON.stringify([{ id: 'gert', naam: 'Gert' }]))
+    expect(laadPloeg(opslag)).toEqual([{ id: 'gert', naam: 'Gert', avatar: 'gert.webp' }])
+  })
+
+  it('laat een zelf gekozen avatar staan', () => {
+    const eigen = [{ id: 'gert', naam: 'Gert', avatar: 'eigen.webp' }]
+    opslag.setItem('wiezen.ploeg', JSON.stringify(eigen))
+    expect(laadPloeg(opslag)).toEqual(eigen)
+  })
+
+  it('laat een lid zonder standaardavatar met rust', () => {
+    opslag.setItem('wiezen.ploeg', JSON.stringify([{ id: 'zus', naam: 'Zus' }]))
+    expect(laadPloeg(opslag)).toEqual([{ id: 'zus', naam: 'Zus' }])
+  })
+
   it('valt terug op de standaardploeg bij een lege lijst', () => {
     opslag.setItem('wiezen.ploeg', '[]')
     expect(laadPloeg(opslag)).toEqual(STANDAARD_PLOEG)

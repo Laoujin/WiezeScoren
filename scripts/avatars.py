@@ -296,7 +296,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("fotos", nargs="+", type=Path)
     parser.add_argument("--uit", type=Path, default=UITVOER)
-    parser.add_argument("--stijl", choices=sorted(STIJLEN), default="penseel")
+    parser.add_argument("--stijl", choices=sorted(STIJLEN), default="inkt")
     parser.add_argument(
         "--overdrijving", type=float, default=1.0, help="schaalt alle kenmerken tegelijk"
     )

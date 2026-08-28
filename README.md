@@ -93,24 +93,26 @@ kleurvlakken met zwarte lijnen, en snijdt er een ronde WebP uit.
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install mediapipe opencv-python-headless
-.venv/bin/python scripts/avatars.py ~/fotos/*.jpg
+.venv/bin/python scripts/avatars.py players-raw/*.jpg
 ```
 
 De uitvoer belandt in `public/spelers/` als `<naam>.webp`, 256 px en rond uitgesneden. Zet die
 bestandsnaam in het `avatar`-veld van het ploeglid; ontbreekt hij of laadt hij niet, dan toont de
 app de initialen.
 
-| Knop        | Standaard | Doet                |
-| ----------- | --------- | ------------------- |
-| `--ogen`    | 1.35      | ogen vergroten      |
-| `--neus`    | 1.30      | neus vergroten      |
-| `--mond`    | 1.15      | mond vergroten      |
-| `--kin`     | 1.12      | kin verlengen       |
-| `--schedel` | 1.10      | schedel verbreden   |
-| `--lijnen`  | 0.85      | zwartheid contouren |
+| Knop             | Standaard | Doet                                                     |
+| ---------------- | --------- | -------------------------------------------------------- |
+| `--stijl`        | `inkt`    | `inkt`, `penseel`, `waterverf`, `potlood`, `pentekening` |
+| `--overdrijving` | 1.0       | schaalt alle kenmerken tegelijk                          |
+| `--proefblad`    | —         | alle stijlen naast elkaar in één PNG                     |
+| `--ogen`         | 1.45      | ogen vergroten                                           |
+| `--neus`         | 1.40      | neus vergroten                                           |
+| `--mond`         | 1.20      | mond vergroten                                           |
+| `--kin`          | 1.20      | kin verlengen                                            |
+| `--schedel`      | 1.25      | schedel verbreden                                        |
 
-1.0 zet een kenmerk uit. Per persoon bijstellen loont: een karikatuur werkt pas wanneer je
-overdrijft wat al opvalt.
+1.0 zet een kenmerk uit. Voorbij `--overdrijving 2.6` gaan de trekken schuiven en wordt het
+vervorming in plaats van overdrijving.
 
 ## Opslag
 

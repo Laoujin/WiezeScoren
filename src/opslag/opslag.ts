@@ -34,9 +34,14 @@ function schrijf(opslag: Storage, sleutel: string, waarde: unknown): void {
   opslag.setItem(sleutel, JSON.stringify(waarde))
 }
 
+/** Een bewaarde ploeg kan ouder zijn dan de avatars, dus ontbrekende foto's per lid aanvullen. */
 export function laadPloeg(opslag: Storage): Ploeglid[] {
-  const ploeg = lees<Ploeglid[]>(opslag, SLEUTELS.ploeg)
-  return Array.isArray(ploeg) && ploeg.length > 0 ? ploeg : STANDAARD_PLOEG
+  const bewaard = lees<Ploeglid[]>(opslag, SLEUTELS.ploeg)
+  if (!Array.isArray(bewaard) || bewaard.length === 0) return STANDAARD_PLOEG
+  return bewaard.map((lid) => {
+    const standaard = STANDAARD_PLOEG.find((s) => s.id === lid.id)
+    return lid.avatar || !standaard?.avatar ? lid : { ...lid, avatar: standaard.avatar }
+  })
 }
 
 export function bewaarPloeg(opslag: Storage, ploeg: Ploeglid[]): void {

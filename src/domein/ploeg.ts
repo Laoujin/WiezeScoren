@@ -9,7 +9,7 @@ export type Ploeglid = {
 
 export const STANDAARD_PLOEG: Ploeglid[] = [
   { id: 'wouter', naam: 'Wouter', avatar: 'wouter.webp' },
-  { id: 'gert', naam: 'Gert' },
+  { id: 'gert', naam: 'Gert', avatar: 'gert.webp' },
   { id: 'moe', naam: 'Moe', avatar: 'lieve.webp' },
   { id: 'va', naam: 'Va', avatar: 'guido.webp' },
   { id: 'zus', naam: 'Zus' },
