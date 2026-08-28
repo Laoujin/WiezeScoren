@@ -3,8 +3,8 @@ import { act, cleanup, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useTelling } from './useTelling'
 
-function Teller({ doel }: { doel: number }) {
-  return <span data-testid="teller">{useTelling(doel)}</span>
+function Teller({ doel, vertraging }: { doel: number; vertraging?: number }) {
+  return <span data-testid="teller">{useTelling(doel, vertraging)}</span>
 }
 
 function getoond(): number {
@@ -64,6 +64,15 @@ describe('useTelling', () => {
     rerender(<Teller doel={-3} />)
     frames.spoel(1000)
     expect(getoond()).toBe(-3)
+  })
+
+  it('wacht de vertraging af voor het beginnen te tellen', () => {
+    const { rerender } = render(<Teller doel={0} vertraging={800} />)
+    rerender(<Teller doel={40} vertraging={800} />)
+    frames.spoel(600)
+    expect(getoond()).toBe(0)
+    frames.spoel(1000)
+    expect(getoond()).toBe(40)
   })
 
   it('keert terug naar een eerder getoonde waarde', () => {
