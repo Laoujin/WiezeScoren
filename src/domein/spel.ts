@@ -1,4 +1,5 @@
 import { SPELER_IDS, type ContractType, type Config, type SpelerId } from './contracten'
+import { zetOpZetel } from './ploeg'
 import { GEEN_PUNTEN, somVan, speelRonde, type Punten, type RondeUitkomst } from './score'
 
 export type Ronde = {
@@ -151,6 +152,10 @@ export function hernoemSpeler(spel: Spel, speler: SpelerId, naam: string): Spel 
   const spelers = [...spel.spelers]
   spelers[speler] = naam.trim() || STANDAARD_NAMEN[speler]!
   return { ...spel, spelers }
+}
+
+export function zetZetel(spel: Spel, zetel: SpelerId, naam: string): Spel {
+  return { ...spel, spelers: zetOpZetel(spel.spelers, zetel, naam) }
 }
 
 export function zetDeler(spel: Spel, deler: SpelerId): Spel {
