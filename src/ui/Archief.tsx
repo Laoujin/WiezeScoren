@@ -1,3 +1,4 @@
+import archiefLeeg from '../assets/archief-leeg.jpg'
 import { SPELER_IDS, type Config } from '../domein/contracten'
 import { totalen, type Spel } from '../domein/spel'
 import { puntKleur } from './zetels'
@@ -17,9 +18,10 @@ export function Archief({ archief, config, onHeropen, onWis }: Props) {
       <h2 className="font-display text-2xl font-black tracking-tight">Archief</h2>
 
       {archief.length === 0 ? (
-        <p className="py-8 text-center text-sm text-krijt-dof">
-          Afgesloten partijen komen hier terecht.
-        </p>
+        <div className="py-8 text-center">
+          <img src={archiefLeeg} alt="" className="mx-auto mb-4 w-64 rounded-xl opacity-60" />
+          <p className="text-sm text-krijt-dof">Afgesloten partijen komen hier terecht.</p>
+        </div>
       ) : (
         <ul className="mt-4 space-y-3">
           {archief.map((spel) => {
