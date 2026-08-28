@@ -6,3 +6,4 @@ dist
 .claude/worktrees
 .venv
 players-raw
+__pycache__
