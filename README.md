@@ -93,6 +93,7 @@ De pot hoort bij de partij en gaat dus mee het archief in.
 | -------------------------- | ------------------------------------------- |
 | `src/domein/contracten.ts` | contracttypes en standaardwaarden           |
 | `src/domein/score.ts`      | `berekenPunten` en `speelRonde`             |
+| `src/domein/betalingen.ts` | wie aan wie betaalt, met de pot als knoop   |
 | `src/domein/spel.ts`       | partijstate, rondes, potverloop, totalen     |
 | `src/opslag/opslag.ts`     | laden, bewaren, archiveren                  |
 | `src/ui/`                  | tafel, contractknoppen, scorebord, schermen |
