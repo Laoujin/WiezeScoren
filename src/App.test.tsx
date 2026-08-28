@@ -86,6 +86,13 @@ describe('App', () => {
     expect(JSON.parse(localStorage.getItem('wiezen.spel')!).deler).toBe(3)
   })
 
+  it('zet het scorebord onder de tafel en de contractkeuze ernaast', () => {
+    render(<App />)
+    const kolom = document.querySelector('main > div')!
+    expect(kolom.contains(screen.getByText('Scorebord'))).toBe(true)
+    expect(kolom.contains(screen.getByText('Om de punten'))).toBe(false)
+  })
+
   it('vraagt bij abondance enkel of het gehaald is', () => {
     render(<App />)
     fireEvent.click(zetel(0))

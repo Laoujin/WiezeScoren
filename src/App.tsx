@@ -157,32 +157,34 @@ export function App() {
               onHernoem={spelState.hernoem}
               onKiesZetel={spelState.kiesZetel}
             />
-            <ContractKeuze
-              config={config}
-              spelers={spel.spelers}
-              selectie={selectie}
-              contract={contract}
-              slagen={slagen}
-              madams={madams}
-              bericht={bericht}
-              kanOpslaan={kanOpslaan}
-              onContract={kiesContract}
-              onSlagen={zetSlagen}
-              onMadam={(speler, aantal) => zetMadams((huidig) => ({ ...huidig, [speler]: aantal }))}
-              onOpslaan={bewaarRonde}
-              onWis={wisKeuze}
-            />
+            <div className="mt-5">
+              <Scorebord
+                spel={spel}
+                config={config}
+                onWisRonde={spelState.wisRonde}
+                onPasPuntAan={spelState.pasPuntAan}
+                onHerstel={spelState.herstelPunten}
+                onCorrectie={() =>
+                  spelState.speelRonde({ contract: 'correctie', spelers: [], slagen: 0 })
+                }
+              />
+            </div>
           </div>
 
-          <Scorebord
-            spel={spel}
+          <ContractKeuze
             config={config}
-            onWisRonde={spelState.wisRonde}
-            onPasPuntAan={spelState.pasPuntAan}
-            onHerstel={spelState.herstelPunten}
-            onCorrectie={() =>
-              spelState.speelRonde({ contract: 'correctie', spelers: [], slagen: 0 })
-            }
+            spelers={spel.spelers}
+            selectie={selectie}
+            contract={contract}
+            slagen={slagen}
+            madams={madams}
+            bericht={bericht}
+            kanOpslaan={kanOpslaan}
+            onContract={kiesContract}
+            onSlagen={zetSlagen}
+            onMadam={(speler, aantal) => zetMadams((huidig) => ({ ...huidig, [speler]: aantal }))}
+            onOpslaan={bewaarRonde}
+            onWis={wisKeuze}
           />
         </main>
       )}

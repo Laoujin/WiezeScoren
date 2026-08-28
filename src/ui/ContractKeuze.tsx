@@ -91,10 +91,10 @@ export function ContractKeuze({
   ]
 
   return (
-    <section className="mt-5 overflow-hidden rounded-2xl border border-krijt/12 bg-vilt-diep/55 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-sm">
+    <section className="overflow-hidden rounded-2xl border border-krijt/12 bg-vilt-diep/55 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-sm">
       <div className="h-px bg-gradient-to-r from-transparent via-messing/50 to-transparent" />
 
-      <div className="grid gap-x-5 gap-y-4 p-4 sm:grid-cols-2">
+      <div className="grid gap-x-5 gap-y-4 p-4 sm:grid-cols-2 lg:grid-cols-1">
         {groepen.map((groep) => (
           <div key={groep.titel}>
             <p className="mb-2 text-[0.6rem] tracking-[0.24em] text-krijt-dof uppercase">
