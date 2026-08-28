@@ -26,25 +26,29 @@ painterly texture study of aged billiard cloth in deep forest green, visible fib
 
 **Referencen**
 
-1. Bewaar als `src/assets/vilt.jpg`, ongeveer 1600 px breed, kwaliteit 70, onder de 200 kB.
-2. In `src/index.css`, in de regel `.vilt`, de data-URI vervangen:
+`.vilt` zit op het tafelblad in `src/ui/Tafel.tsx`, en dat is hoogstens 560 px breed. Een tegel is
+genoeg; de 1600 px uit een eerdere versie van deze doc was overkill.
 
-```css
-.vilt {
-  background-image:
-    radial-gradient(72% 62% at 50% 24%, rgb(255 245 210 / 0.18) 0%, transparent 64%),
-    url('./assets/vilt.jpg');
-  background-size: cover;
-  background-position: center;
-  background-blend-mode: screen, overlay;
-}
+De `feTurbulence` die hier stond, lag als *overlay* op `bg-vilt-licht`. Een kleurenfoto op die plek
+duwt het palet weg, dus gaat er enkel de wolnop in: grijswaarde, hoogdoorlaat om het lichtverloop
+van de foto eruit te filteren, en vier keer gespiegeld zodat de tegel naadloos is.
+
+```bash
+convert bron.png -crop 256x256+1100+510 +repage -colorspace Gray \
+  \( +clone -blur 0x12 \) -compose Divide -composite \
+  -contrast-stretch 0.4%x0.4% -normalize +level '36%,64%' /tmp/nop.png
+convert /tmp/nop.png \( +clone -flop \) +append \( +clone -flip \) -append /tmp/tegel.png
+cwebp -q 80 /tmp/tegel.png -o src/assets/vilt.webp
 ```
 
-Zet het pad relatief vanuit `src/`, niet als `/vilt.jpg` in `public/`: Vite hasht en herschrijft
+Het `-blur 0x12` gedeeld door zichzelf haalt het laagfrequente licht eruit. Zonder die stap trekt
+`-normalize` het verloop van de uitsnede uit elkaar en zie je een kruis op de spiegelnaden.
+
+Zet het pad relatief vanuit `src/`, niet als `/vilt.webp` in `public/`: Vite hasht en herschrijft
 alleen relatieve verwijzingen mee met de `base` van GitHub Pages.
 
-Wordt de tekst op de tafel slechter leesbaar, verlaag dan de foto met een extra donkere laag:
-`linear-gradient(rgb(7 26 19 / 0.45), rgb(7 26 19 / 0.45))` als eerste laag boven de afbeelding.
+Wordt de tekst op de tafel slechter leesbaar, verlaag dan `background-size` van de tegel: kleiner
+maakt de nop fijner en minder aanwezig.
 
 ---
 
@@ -62,7 +66,14 @@ overhead shot of a green baize table lit by one low brass lamp, a neat stack of 
 
 **Referencen**
 
-1. Bewaar als `public/og.jpg`, exact 1200 x 630, onder de 300 kB.
+1. Bewaar als `public/og.jpg`, exact 1200 x 630, onder de 300 kB. Midjourney levert op
+   `--ar 1.91:1` een 1536 x 768, dus 2:1: eerst breedte weg snijden, dan schalen.
+
+```bash
+convert bron.png -gravity center -crop 1463x768+0+0 +repage -resize 1200x630! \
+  -quality 82 -strip public/og.jpg
+```
+
 2. In `index.html`, in de `<head>`:
 
 ```html
@@ -89,7 +100,8 @@ emblem of a single antique brass token seen straight on, engraved rim, deep gree
 **Referencen**
 
 1. Bewaar het bijgesneden vierkant als `docs/art/icoon.png`.
-2. Omzetten met de `create-ico` skill, uitvoer naar `public/favicon.ico`.
+2. Omzetten met de `create-ico` skill, `-s 16,32,48`, uitvoer naar `public/favicon.ico`.
+   Met de standaardmaten erbij weegt de 256-laag alleen al 190 kB en het web vraagt hem nooit op.
 3. In `index.html` de regel `<link rel="icon" type="image/svg+xml" href="/favicon.svg" />`
    vervangen door `<link rel="icon" href="/favicon.ico" sizes="any" />` en `public/favicon.svg`
    verwijderen.
@@ -120,13 +132,75 @@ import archiefLeeg from '../assets/archief-leeg.jpg'
 
 ---
 
-## Na het binnenhalen
+## Avatars uit de portretfoto's
 
-Comprimeer voor je commit; onbewerkte Midjourney-uitvoer is enkele megabytes en gaat mee in elke
-Pages-deploy.
+De vier avatars in `public/spelers/`. Komen nu uit `scripts/avatars.py`: MediaPipe overdrijft de
+kenmerken en er gaat een filter over. Dat blijft een bewerkte foto. Deze prompts maken er een
+tekening van die nog steeds op de speler lijkt.
 
-```bash
-bunx @squoosh/cli --mozjpeg '{"quality":70}' -d src/assets ~/Downloads/vilt.png
+De foto staat in de prompt als omni reference. Sleep `players-raw/gert.jpg` in de imagine-balk,
+Midjourney zet er een URL van, en daarachter komt de promptregel. Eén keer per speler, met
+dezelfde promptregel, anders vallen de vier uiteen als set.
+
+`--ow` regelt hoe letterlijk de gelijkenis is: 100 is los, 400 plakt tegen de foto aan. Voor een
+karikatuur die nog herkenbaar is zit de bruikbare band tussen 150 en 250. Begin op 200.
+
+### Gravure
+
+Past bij het messing en de plaquettes. Eén lijnkleur, dus houdt zich goed op 44 px.
+
+```
+--oref <URL> --ow 200 engraved portrait of this person, copperplate line etching, cross-hatched shading, gently exaggerated features in the manner of a caricature, warm brass ink on a deep green-black ground, head and shoulders, centred, plain background --ar 1:1 --v 7 --style raw --stylize 80 --no text letters signature frame border hands cards
 ```
 
-Controleer daarna `bun run build` en kijk of de bundelgrootte in de hand blijft.
+### Inkt-karikatuur
+
+Losser, meer persoonlijkheid, minder streng dan de gravure.
+
+```
+--oref <URL> --ow 200 caricature portrait of this person in brush and ink, confident tapering strokes, features pushed just past life, a single wash of muted green behind the head, cream paper, head and shoulders, centred --ar 1:1 --v 7 --style raw --stylize 150 --no text letters signature frame border hands cards
+```
+
+### Olieverf
+
+Warmst van de drie, maar de minste lijn: verliest het meest op 44 px.
+
+```
+--oref <URL> --ow 200 painted portrait of this person, Flemish old master lighting, one warm lamp from the upper left, deep green-black background, visible brushwork, slightly heightened features, head and shoulders, centred --ar 1:1 --v 7 --style raw --stylize 120 --no text letters signature frame border hands cards
+```
+
+**Referencen**
+
+1. Kies één stijl en draai die voor alle vier de foto's. Twee stijlen door elkaar valt op.
+2. Vierkant bijsnijden op het gezicht, dan naar 256 px.
+3. Wegschrijven als `public/spelers/<voornaam>.webp`, kleine letters, geen accenten. De namen
+   liggen vast in de ploeg: `gert`, `guido`, `lieve`, `wouter`.
+
+```bash
+bunx @squoosh/cli --resize '{"width":256,"height":256}' --webp '{"quality":80}' \
+  -d public/spelers ~/Downloads/gert.png
+```
+
+`Avatar.tsx` zet er zelf `rounded-full` en `overflow-hidden` op, dus een vierkante WebP is genoeg;
+het alfakanaal dat `scripts/avatars.py` erin snijdt is voor de weergave niet nodig.
+
+Blijft `scripts/avatars.py` staan: die werkt zonder Midjourney-abonnement en voor een nieuwe
+speler halverwege een avond is dat sneller dan vier keer wachten op een grid.
+
+Weigert Midjourney `--oref` samen met een andere referentievlag, laat de andere dan vallen: de
+gelijkenis is hier het punt. `--oref` vraagt `--v 7` en werkt niet in draft mode.
+
+---
+
+## Na het binnenhalen
+
+De ruwe uitvoer staat in `docs/midjourney/`. Comprimeer naar `src/assets/` of `public/` voor je
+commit; onbewerkte Midjourney-bestanden zijn enkele megabytes per stuk.
+
+Vite houdt zijn transformaties in `node_modules/.vite`. Op deze Dropbox-schijf komen de mtimes niet
+altijd door en bouwt hij dan met de oude bron verder: `dist/index.html` en de CSS bleven achter
+terwijl `tsc` de nieuwe bestanden wel zag. Ruim die map op wanneer de build je wijziging negeert.
+
+```bash
+rm -rf dist node_modules/.vite && bun run build
+```
