@@ -131,8 +131,8 @@ export function rondeSluit(stand: Rondestand): boolean {
   return somVan(stand.punten) + (stand.potNa - stand.potVoor) === 0
 }
 
-export function totalen(spel: Spel, config: Config): Punten {
-  return verloop(spel, config).reduce<Punten>(
+export function totalenVan(stand: Rondestand[]): Punten {
+  return stand.reduce<Punten>(
     (totaal, { punten }) => ({
       0: totaal[0] + punten[0],
       1: totaal[1] + punten[1],
@@ -141,6 +141,10 @@ export function totalen(spel: Spel, config: Config): Punten {
     }),
     { ...GEEN_PUNTEN },
   )
+}
+
+export function totalen(spel: Spel, config: Config): Punten {
+  return totalenVan(verloop(spel, config))
 }
 
 export function hernoemSpeler(spel: Spel, speler: SpelerId, naam: string): Spel {
