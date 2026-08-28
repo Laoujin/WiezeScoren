@@ -11,7 +11,7 @@ import {
   type Spel,
 } from '../domein/spel'
 import { useTelling } from './useTelling'
-import { ZETELS, puntKleur, tekenPunt } from './zetels'
+import { puntKleur, tekenPunt } from './zetels'
 
 function omschrijf(ronde: Ronde, spelers: string[], config: Config): string {
   if (ronde.contract === 'correctie') return 'Handmatige correctie'
@@ -105,7 +105,7 @@ export function Scorebord({
   const eindsom = somVan(stand) + pot
 
   return (
-    <section className="rounded-2xl border border-krijt/15 bg-vilt-diep/45 p-4 backdrop-blur-sm">
+    <section className="min-w-0 rounded-2xl border border-krijt/15 bg-vilt-diep/45 p-4 backdrop-blur-sm">
       <header className="mb-3 flex items-baseline justify-between gap-3">
         <h2 className="font-display text-xl font-black tracking-tight">Scorebord</h2>
         <button
@@ -129,9 +129,6 @@ export function Scorebord({
                 <th className="px-2 py-1 text-left font-medium">Ronde</th>
                 {SPELER_IDS.map((s) => (
                   <th key={s} className="px-1 py-1 text-right font-medium">
-                    <span className={ZETELS[s].rood ? 'text-hart' : 'text-krijt-dof'}>
-                      {ZETELS[s].kleur}
-                    </span>{' '}
                     {spel.spelers[s]}
                   </th>
                 ))}

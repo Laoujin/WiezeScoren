@@ -1,38 +1,72 @@
+import { useState } from 'react'
 import { SPELER_IDS, type SpelerId } from '../domein/contracten'
 import type { Punten } from '../domein/score'
-import { useState } from 'react'
+import { Munt } from './Munt'
+import { MuntStroom } from './MuntStroom'
+import type { Vlucht } from './useMuntStroom'
 import { useTelling } from './useTelling'
-import { ZETELS, puntKleur, tekenPunt } from './zetels'
+import { ZETELS, plaats, puntKleur, tekenPunt } from './zetels'
 
-type ZetelProps = {
+const MAX_FICHES = 8
+const PUNTEN_PER_FICHE = 6
+
+function Fichestapel({ pot, vertraging }: { pot: number; vertraging: number }) {
+  const hoogte = Math.min(MAX_FICHES, Math.ceil(pot / PUNTEN_PER_FICHE))
+
+  if (hoogte === 0) {
+    return (
+      <div className="flex h-11 w-11 items-center justify-center rounded-full border border-dashed border-krijt/20" />
+    )
+  }
+
+  return (
+    <div className="relative h-11 w-11">
+      {Array.from({ length: hoogte }, (_, i) => (
+        <span
+          key={i}
+          className="fiche animatie-fiche absolute left-1/2"
+          style={{
+            bottom: `${i * 5}px`,
+            zIndex: i,
+            animationDelay: `${vertraging + i * 40}ms`,
+            ['--fiche' as string]: i % 2 ? 'var(--color-hart)' : 'var(--color-krijt)',
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+type PlaquetteProps = {
   speler: SpelerId
   naam: string
   totaal: number
   voorbeeld: number | null
   geselecteerd: boolean
+  vertraging: number
   onSelecteer: () => void
   onDeler: () => void
   onHernoem: (naam: string) => void
 }
 
-function Zetel({
+function Plaquette({
   speler,
   naam,
   totaal,
   voorbeeld,
   geselecteerd,
+  vertraging,
   onSelecteer,
   onDeler,
   onHernoem,
-}: ZetelProps) {
+}: PlaquetteProps) {
   const [bewerkt, zetBewerkt] = useState(false)
-  const getoondTotaal = useTelling(totaal)
-  const zetel = ZETELS[speler]
+  const getoondTotaal = useTelling(totaal, vertraging)
 
   return (
     <div
-      className="absolute w-[32%] -translate-x-1/2 -translate-y-1/2"
-      style={{ left: zetel.x, top: zetel.y }}
+      className="absolute w-[30%] -translate-x-1/2 -translate-y-1/2 sm:w-[24%]"
+      style={plaats(ZETELS[speler].plaquette)}
     >
       <button
         type="button"
@@ -42,16 +76,16 @@ function Zetel({
           e.preventDefault()
           onDeler()
         }}
-        className={`w-full rounded-2xl border px-3 py-2 text-left backdrop-blur-sm transition-transform duration-200 hover:-translate-y-0.5 ${
+        className={`flex w-full items-center gap-2 rounded-xl border px-2 py-1.5 text-left transition-transform duration-200 hover:-translate-y-0.5 ${
           geselecteerd
-            ? 'border-messing bg-messing/20 shadow-[0_0_28px_-8px_var(--color-messing)]'
-            : 'border-krijt/15 bg-vilt-diep/55 hover:border-krijt/35'
+            ? 'plaquette-actief border-messing'
+            : 'plaquette border-krijt/12 hover:border-krijt/30'
         }`}
       >
-        <span className="flex items-baseline gap-2">
-          <span className={`text-lg ${zetel.rood ? 'text-hart' : 'text-krijt-dof'}`}>
-            {zetel.kleur}
-          </span>
+        <Munt
+          className={`h-5 w-5 shrink-0 ${geselecteerd ? 'text-messing' : 'text-messing-diep'}`}
+        />
+        <span className="min-w-0 flex-1">
           {bewerkt ? (
             <input
               autoFocus
@@ -65,7 +99,7 @@ function Zetel({
                 if (e.key === 'Enter') e.currentTarget.blur()
                 if (e.key === 'Escape') zetBewerkt(false)
               }}
-              className="w-full min-w-0 rounded bg-krijt/10 px-1 font-sans text-sm font-semibold outline-none"
+              className="w-full min-w-0 rounded bg-krijt/10 px-1 text-xs font-semibold outline-none"
             />
           ) : (
             <span
@@ -73,27 +107,25 @@ function Zetel({
                 e.stopPropagation()
                 zetBewerkt(true)
               }}
-              className="truncate text-sm font-semibold tracking-wide"
+              className="block truncate text-[0.62rem] font-bold tracking-[0.16em] text-krijt/55 uppercase"
             >
               {naam}
             </span>
           )}
-        </span>
-        <span className="mt-1 flex items-end justify-between gap-2">
           <span
-            className={`font-display text-3xl leading-none font-black ${puntKleur(getoondTotaal)}`}
+            className={`gegraveerd block font-display text-2xl leading-none font-black ${puntKleur(getoondTotaal)}`}
           >
             {getoondTotaal}
           </span>
-          {voorbeeld !== null && (
-            <span
-              key={voorbeeld}
-              className={`animatie-inslag rounded-full border border-current/30 px-2 py-0.5 text-xs font-bold ${puntKleur(voorbeeld)}`}
-            >
-              {tekenPunt(voorbeeld)}
-            </span>
-          )}
         </span>
+        {voorbeeld !== null && (
+          <span
+            key={voorbeeld}
+            className={`animatie-inslag shrink-0 rounded-md border border-current/25 px-1.5 py-0.5 text-[0.7rem] leading-none font-bold ${puntKleur(voorbeeld)}`}
+          >
+            {tekenPunt(voorbeeld)}
+          </span>
+        )}
       </button>
     </div>
   )
@@ -106,7 +138,8 @@ type TafelProps = {
   pot: number
   deler: SpelerId
   selectie: SpelerId[]
-  bericht: string
+  vlucht: Vlucht | null
+  vertraging: number
   onSelecteer: (speler: SpelerId) => void
   onDeler: (speler: SpelerId) => void
   onHernoem: (speler: SpelerId, naam: string) => void
@@ -119,40 +152,37 @@ export function Tafel({
   pot,
   deler,
   selectie,
-  bericht,
+  vlucht,
+  vertraging,
   onSelecteer,
   onDeler,
   onHernoem,
 }: TafelProps) {
-  const chip = ZETELS[deler]
-  const getoondePot = useTelling(pot)
+  const getoondePot = useTelling(pot, vertraging)
 
   return (
     <div className="relative mx-auto aspect-square w-full max-w-[40rem] sm:aspect-4/3">
       <div className="lamplicht pointer-events-none absolute inset-x-0 top-[-14%] h-[70%]" />
 
-      <div className="vilt absolute top-1/2 left-1/2 h-[52%] w-[32%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border-4 border-messing-diep/60 bg-vilt-licht shadow-[0_28px_60px_-20px_#000,inset_0_2px_30px_rgba(0,0,0,0.45)]">
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5 px-4 text-center">
-          <span className="text-[0.6rem] tracking-[0.32em] text-krijt/50 uppercase">Pot</span>
+      <div className="vilt absolute top-1/2 left-1/2 h-[44%] w-[36%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border-4 border-messing-diep/60 bg-vilt-licht shadow-[0_28px_60px_-20px_#000,inset_0_2px_30px_rgba(0,0,0,0.45)] sm:h-[46%] sm:w-[48%]">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
+          <span className="text-[0.58rem] tracking-[0.34em] text-krijt/45 uppercase">Pot</span>
+          <Fichestapel key={pot} pot={pot} vertraging={vertraging} />
           <span
-            key={pot}
-            className={`font-display text-4xl leading-none font-black ${pot > 0 ? 'animatie-inslag text-messing' : 'text-krijt/30'}`}
+            className={`gegraveerd font-display text-3xl leading-none font-black ${getoondePot > 0 ? 'text-messing' : 'text-krijt/25'}`}
           >
             {getoondePot}
           </span>
-          {bericht && (
-            <span className="mt-1 font-display text-xs text-krijt/75 italic">{bericht}</span>
-          )}
         </div>
       </div>
 
       <div
         className="deler-schuif pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2"
-        style={{ left: chip.chipX, top: chip.chipY }}
+        style={plaats(ZETELS[deler].deler)}
       >
         <span
           key={deler}
-          className="animatie-chip flex h-9 w-9 items-center justify-center rounded-full border-2 border-messing bg-gradient-to-b from-messing to-messing-diep font-display text-base font-black text-vilt-diep shadow-[0_6px_14px_-4px_#000]"
+          className="animatie-chip flex h-8 w-8 items-center justify-center rounded-full border-2 border-messing bg-gradient-to-b from-messing to-messing-diep font-display text-sm font-black text-vilt-diep shadow-[0_6px_14px_-4px_#000]"
           title="Deler"
         >
           D
@@ -160,18 +190,21 @@ export function Tafel({
       </div>
 
       {SPELER_IDS.map((speler) => (
-        <Zetel
+        <Plaquette
           key={speler}
           speler={speler}
           naam={spelers[speler] ?? ''}
           totaal={totalen[speler]}
           voorbeeld={voorbeeld ? voorbeeld[speler] : null}
           geselecteerd={selectie.includes(speler)}
+          vertraging={vertraging}
           onSelecteer={() => onSelecteer(speler)}
           onDeler={() => onDeler(speler)}
           onHernoem={(naam) => onHernoem(speler, naam)}
         />
       ))}
+
+      {vlucht && <MuntStroom key={vlucht.id} betalingen={vlucht.betalingen} />}
     </div>
   )
 }

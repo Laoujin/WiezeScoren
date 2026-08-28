@@ -1,11 +1,29 @@
+import type { CSSProperties } from 'react'
+import { POT, type Knoop } from '../domein/betalingen'
 import type { SpelerId } from '../domein/contracten'
 
-/** Vaste zetelkenmerken: de stoelen liggen met de klok mee vanaf onderaan. */
-export const ZETELS: Record<SpelerId, { kleur: string; rood: boolean; x: string; y: string; chipX: string; chipY: string }> = {
-  0: { kleur: '♠', rood: false, x: '50%', y: '88%', chipX: '50%', chipY: '70%' },
-  1: { kleur: '♥', rood: true, x: '16%', y: '50%', chipX: '40%', chipY: '50%' },
-  2: { kleur: '♦', rood: true, x: '50%', y: '12%', chipX: '50%', chipY: '30%' },
-  3: { kleur: '♣', rood: false, x: '84%', y: '50%', chipX: '60%', chipY: '50%' },
+/** Een plek op de tafel, in procent van de tafelbreedte en -hoogte. */
+export type Plek = { x: number; y: number }
+
+/**
+ * Waar elke plaquette en de bijhorende delerfiche staan. De zetels liggen met de klok mee vanaf
+ * onderaan.
+ */
+export const ZETELS: Record<SpelerId, { plaquette: Plek; deler: Plek }> = {
+  0: { plaquette: { x: 50, y: 87 }, deler: { x: 50, y: 65 } },
+  1: { plaquette: { x: 15, y: 50 }, deler: { x: 38, y: 50 } },
+  2: { plaquette: { x: 50, y: 13 }, deler: { x: 50, y: 35 } },
+  3: { plaquette: { x: 85, y: 50 }, deler: { x: 62, y: 50 } },
+}
+
+export const POT_PLEK: Plek = { x: 50, y: 50 }
+
+export function plekVan(knoop: Knoop): Plek {
+  return knoop === POT ? POT_PLEK : ZETELS[knoop].plaquette
+}
+
+export function plaats({ x, y }: Plek): CSSProperties {
+  return { left: `${x}%`, top: `${y}%` }
 }
 
 export function tekenPunt(punten: number): string {
