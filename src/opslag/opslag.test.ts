@@ -1,13 +1,18 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { STANDAARD_CONFIG } from '../domein/contracten'
 import { maakRonde, nieuwSpel, voegRondeToe } from '../domein/spel'
+import { STANDAARD_PLOEG } from '../domein/ploeg'
 import {
   archiveer,
+  bewaarVoorkeuren,
+  bewaarPloeg,
   bewaarConfig,
   bewaarSpel,
   laadArchief,
   laadConfig,
+  laadPloeg,
   laadSpel,
+  laadVoorkeuren,
   wisAlles,
 } from './opslag'
 
@@ -45,9 +50,30 @@ describe('spel', () => {
     expect(laadSpel(opslag)).toEqual(spel)
   })
 
+  it('zet de eerste vier van de ploeg aan tafel', () => {
+    expect(laadSpel(opslag).spelers).toEqual(['Wouter', 'Gert', 'Moe', 'Va'])
+  })
+
   it('herstelt naar een vers spel bij onleesbare data', () => {
     opslag.setItem('wiezen.spel', '{kapot')
     expect(laadSpel(opslag).rondes).toEqual([])
+  })
+})
+
+describe('ploeg', () => {
+  it('geeft de standaardploeg terug wanneer er niets bewaard is', () => {
+    expect(laadPloeg(opslag)).toEqual(STANDAARD_PLOEG)
+  })
+
+  it('bewaart en herleest een aangepaste ploeg', () => {
+    const ploeg = [{ id: 'x', naam: 'Xavier', avatar: '/spelers/x.webp' }]
+    bewaarPloeg(opslag, ploeg)
+    expect(laadPloeg(opslag)).toEqual(ploeg)
+  })
+
+  it('valt terug op de standaardploeg bij een lege lijst', () => {
+    opslag.setItem('wiezen.ploeg', '[]')
+    expect(laadPloeg(opslag)).toEqual(STANDAARD_PLOEG)
   })
 })
 
@@ -113,5 +139,21 @@ describe('wisAlles', () => {
     bewaarConfig(opslag, STANDAARD_CONFIG)
     wisAlles(opslag)
     expect(opslag.length).toBe(0)
+  })
+})
+
+describe('voorkeuren', () => {
+  it('begint met een ronde tafel', () => {
+    expect(laadVoorkeuren(opslag).tafelvorm).toBe('rond')
+  })
+
+  it('bewaart een gekozen tafelvorm', () => {
+    bewaarVoorkeuren(opslag, { tafelvorm: 'vierkant' })
+    expect(laadVoorkeuren(opslag).tafelvorm).toBe('vierkant')
+  })
+
+  it('negeert een onbekende tafelvorm', () => {
+    opslag.setItem('wiezen.voorkeuren', JSON.stringify({ tafelvorm: 'driehoek' }))
+    expect(laadVoorkeuren(opslag).tafelvorm).toBe('rond')
   })
 })

@@ -4,13 +4,20 @@ import {
   type Config,
   type ContractConfig,
 } from '../domein/contracten'
+import { STANDAARD_PLOEG, type Ploeglid } from '../domein/ploeg'
 import { nieuwSpel, type Spel } from '../domein/spel'
+import { STANDAARD_VOORKEUREN, isTafelvorm, type Voorkeuren } from '../domein/voorkeuren'
 
 const SLEUTELS = {
   spel: 'wiezen.spel',
   config: 'wiezen.config',
   archief: 'wiezen.archief',
+  ploeg: 'wiezen.ploeg',
+  voorkeuren: 'wiezen.voorkeuren',
 } as const
+
+/** Zoveel spelers passen er aan tafel; de rest van de ploeg kijkt toe. */
+const ZETELS = 4
 
 function lees<T>(opslag: Storage, sleutel: string): T | undefined {
   const ruw = opslag.getItem(sleutel)
@@ -26,9 +33,20 @@ function schrijf(opslag: Storage, sleutel: string, waarde: unknown): void {
   opslag.setItem(sleutel, JSON.stringify(waarde))
 }
 
+export function laadPloeg(opslag: Storage): Ploeglid[] {
+  const ploeg = lees<Ploeglid[]>(opslag, SLEUTELS.ploeg)
+  return Array.isArray(ploeg) && ploeg.length > 0 ? ploeg : STANDAARD_PLOEG
+}
+
+export function bewaarPloeg(opslag: Storage, ploeg: Ploeglid[]): void {
+  schrijf(opslag, SLEUTELS.ploeg, ploeg)
+}
+
+/** Een verse partij zet de eerste vier van de ploeg aan tafel. */
 export function laadSpel(opslag: Storage): Spel {
   const spel = lees<Spel>(opslag, SLEUTELS.spel)
-  return spel?.rondes ? spel : nieuwSpel()
+  if (spel?.rondes) return spel
+  return nieuwSpel(laadPloeg(opslag).slice(0, ZETELS).map((lid) => lid.naam))
 }
 
 export function bewaarSpel(opslag: Storage, spel: Spel): void {
@@ -57,6 +75,19 @@ export function laadConfig(opslag: Storage): Config {
 
 export function bewaarConfig(opslag: Storage, config: Config): void {
   schrijf(opslag, SLEUTELS.config, config)
+}
+
+export function laadVoorkeuren(opslag: Storage): Voorkeuren {
+  const bewaard = lees<Partial<Voorkeuren>>(opslag, SLEUTELS.voorkeuren)
+  return {
+    tafelvorm: isTafelvorm(bewaard?.tafelvorm)
+      ? bewaard.tafelvorm
+      : STANDAARD_VOORKEUREN.tafelvorm,
+  }
+}
+
+export function bewaarVoorkeuren(opslag: Storage, voorkeuren: Voorkeuren): void {
+  schrijf(opslag, SLEUTELS.voorkeuren, voorkeuren)
 }
 
 export function laadArchief(opslag: Storage): Spel[] {
