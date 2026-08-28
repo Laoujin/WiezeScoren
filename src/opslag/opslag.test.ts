@@ -59,18 +59,24 @@ describe('config', () => {
   it('bewaart aangepaste waarden', () => {
     const config = {
       ...STANDAARD_CONFIG,
-      vragen: { ...STANDAARD_CONFIG.vragen, puntenGehaald: 5 },
+      madamWaarde: 5,
+      contracten: {
+        ...STANDAARD_CONFIG.contracten,
+        vragen: { ...STANDAARD_CONFIG.contracten.vragen, puntenGehaald: 5 },
+      },
     }
     bewaarConfig(opslag, config)
-    expect(laadConfig(opslag).vragen.puntenGehaald).toBe(5)
+    expect(laadConfig(opslag).contracten.vragen.puntenGehaald).toBe(5)
+    expect(laadConfig(opslag).madamWaarde).toBe(5)
   })
 
   it('vult ontbrekende velden aan met de standaardwaarde', () => {
-    opslag.setItem('wiezen.config', JSON.stringify({ vragen: { puntenGehaald: 9 } }))
+    opslag.setItem('wiezen.config', JSON.stringify({ contracten: { vragen: { puntenGehaald: 9 } } }))
     const config = laadConfig(opslag)
-    expect(config.vragen.puntenGehaald).toBe(9)
-    expect(config.vragen.slagenNodig).toBe(STANDAARD_CONFIG.vragen.slagenNodig)
-    expect(config.soloSlim).toEqual(STANDAARD_CONFIG.soloSlim)
+    expect(config.contracten.vragen.puntenGehaald).toBe(9)
+    expect(config.contracten.vragen.slagenNodig).toBe(STANDAARD_CONFIG.contracten.vragen.slagenNodig)
+    expect(config.contracten.soloSlim).toEqual(STANDAARD_CONFIG.contracten.soloSlim)
+    expect(config.madamWaarde).toBe(STANDAARD_CONFIG.madamWaarde)
   })
 })
 

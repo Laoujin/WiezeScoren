@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { CONTRACT_NAMEN, SPELER_IDS, type Config, type SpelerId } from '../domein/contracten'
+import { somVan } from '../domein/score'
 import {
   heeftOverrides,
-  puntenVanRonde,
+  potVan,
   rondeSluit,
-  somVan,
   totalen,
+  verloop,
   type Ronde,
   type Spel,
 } from '../domein/spel'
@@ -13,11 +14,16 @@ import { useTelling } from './useTelling'
 import { ZETELS, puntKleur, tekenPunt } from './zetels'
 
 function omschrijf(ronde: Ronde, spelers: string[], config: Config): string {
-  if (ronde.contract === 'passen') return 'Iedereen past'
   if (ronde.contract === 'correctie') return 'Handmatige correctie'
+  if (ronde.contract === 'passen') {
+    const dragers = SPELER_IDS.filter((s) => (ronde.madams?.[s] ?? 0) > 0)
+    if (dragers.length === 0) return 'Geen madams verdeeld'
+    return dragers.map((s) => `${spelers[s]} ${ronde.madams?.[s]}`).join(' · ')
+  }
   const namen = ronde.spelers.map((s) => spelers[s]).join(' + ')
-  const slagen = config[ronde.contract].allesOfNiets
-    ? ronde.slagen === config[ronde.contract].slagenNodig
+  const contract = config.contracten[ronde.contract]
+  const slagen = contract.allesOfNiets
+    ? ronde.slagen === contract.slagenNodig
       ? 'gehaald'
       : 'mislukt'
     : `${ronde.slagen} slagen`
@@ -59,7 +65,6 @@ function PuntCel({ punten, aangepast, onWijzig }: CelProps) {
       <button
         type="button"
         onClick={() => zetBewerkt(true)}
-        title="Klik om handmatig aan te passen"
         className={`w-full rounded px-2 py-0.5 text-right text-sm font-bold hover:bg-krijt/10 ${puntKleur(punten)} ${aangepast ? 'underline decoration-messing decoration-2 underline-offset-4' : ''}`}
       >
         {tekenPunt(punten)}
@@ -86,9 +91,18 @@ type Props = {
   onCorrectie: () => void
 }
 
-export function Scorebord({ spel, config, onWisRonde, onPasPuntAan, onHerstel, onCorrectie }: Props) {
+export function Scorebord({
+  spel,
+  config,
+  onWisRonde,
+  onPasPuntAan,
+  onHerstel,
+  onCorrectie,
+}: Props) {
+  const standen = verloop(spel, config)
   const stand = totalen(spel, config)
-  const eindsom = somVan(stand)
+  const pot = potVan(spel, config)
+  const eindsom = somVan(stand) + pot
 
   return (
     <section className="rounded-2xl border border-krijt/15 bg-vilt-diep/45 p-4 backdrop-blur-sm">
@@ -103,7 +117,7 @@ export function Scorebord({ spel, config, onWisRonde, onPasPuntAan, onHerstel, o
         </button>
       </header>
 
-      {spel.rondes.length === 0 ? (
+      {standen.length === 0 ? (
         <p className="py-8 text-center text-sm text-krijt-dof">
           Nog geen rondes. Kies wie speelt en welk contract.
         </p>
@@ -121,56 +135,58 @@ export function Scorebord({ spel, config, onWisRonde, onPasPuntAan, onHerstel, o
                     {spel.spelers[s]}
                   </th>
                 ))}
+                <th className="px-1 py-1 text-right font-medium">Pot</th>
                 <th className="w-6" />
               </tr>
             </thead>
             <tbody>
-              {spel.rondes.map((ronde, index) => {
-                const punten = puntenVanRonde(ronde, config)
-                const sluit = rondeSluit(ronde, config)
-                return (
-                  <tr
-                    key={ronde.id}
-                    className={`animatie-open border-t border-krijt/10 ${sluit ? '' : 'bg-hart/15'}`}
+              {standen.map((rij, index) => (
+                <tr
+                  key={rij.ronde.id}
+                  className={`animatie-open border-t border-krijt/10 ${rondeSluit(rij) ? '' : 'bg-hart/15'}`}
+                >
+                  <td className="px-2 py-1.5">
+                    <span className="block font-semibold">
+                      {index + 1}. {CONTRACT_NAMEN[rij.ronde.contract]}
+                    </span>
+                    <span className="block text-xs text-krijt-dof">
+                      {omschrijf(rij.ronde, spel.spelers, config)}
+                      {heeftOverrides(rij.ronde) && (
+                        <button
+                          type="button"
+                          onClick={() => onHerstel(rij.ronde.id)}
+                          className="ml-2 text-messing hover:underline"
+                        >
+                          herstel
+                        </button>
+                      )}
+                    </span>
+                  </td>
+                  {SPELER_IDS.map((s) => (
+                    <PuntCel
+                      key={s}
+                      punten={rij.punten[s]}
+                      aangepast={rij.ronde.overrides?.[s] !== undefined}
+                      onWijzig={(waarde) => onPasPuntAan(rij.ronde.id, s, waarde)}
+                    />
+                  ))}
+                  <td
+                    className={`px-2 py-1 text-right text-sm font-bold ${rij.potNa === rij.potVoor ? 'text-krijt-dof/50' : 'text-messing'}`}
                   >
-                    <td className="px-2 py-1.5">
-                      <span className="block font-semibold">
-                        {index + 1}. {CONTRACT_NAMEN[ronde.contract]}
-                      </span>
-                      <span className="block text-xs text-krijt-dof">
-                        {omschrijf(ronde, spel.spelers, config)}
-                        {heeftOverrides(ronde) && (
-                          <button
-                            type="button"
-                            onClick={() => onHerstel(ronde.id)}
-                            className="ml-2 text-messing hover:underline"
-                          >
-                            herstel
-                          </button>
-                        )}
-                      </span>
-                    </td>
-                    {SPELER_IDS.map((s) => (
-                      <PuntCel
-                        key={s}
-                        punten={punten[s]}
-                        aangepast={ronde.overrides?.[s] !== undefined}
-                        onWijzig={(waarde) => onPasPuntAan(ronde.id, s, waarde)}
-                      />
-                    ))}
-                    <td className="px-1 text-right">
-                      <button
-                        type="button"
-                        onClick={() => onWisRonde(ronde.id)}
-                        title="Ronde verwijderen"
-                        className="text-krijt-dof transition-colors hover:text-hart"
-                      >
-                        &times;
-                      </button>
-                    </td>
-                  </tr>
-                )
-              })}
+                    {rij.potNa}
+                  </td>
+                  <td className="px-1 text-right">
+                    <button
+                      type="button"
+                      onClick={() => onWisRonde(rij.ronde.id)}
+                      title="Ronde verwijderen"
+                      className="text-krijt-dof transition-colors hover:text-hart"
+                    >
+                      &times;
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
             <tfoot>
               <tr className="border-t-2 border-messing/50">
@@ -178,12 +194,15 @@ export function Scorebord({ spel, config, onWisRonde, onPasPuntAan, onHerstel, o
                 {SPELER_IDS.map((s) => (
                   <TotaalCel key={s} waarde={stand[s]} />
                 ))}
+                <td className="px-2 py-2 text-right font-display text-xl font-black text-messing">
+                  {pot}
+                </td>
                 <td />
               </tr>
               {eindsom !== 0 && (
                 <tr>
-                  <td colSpan={6} className="px-2 pt-1 text-right text-xs font-semibold text-hart">
-                    De stand komt niet uit op nul: {tekenPunt(eindsom)}
+                  <td colSpan={7} className="px-2 pt-1 text-right text-xs font-semibold text-hart">
+                    Scores plus pot komen niet uit op nul: {tekenPunt(eindsom)}
                   </td>
                 </tr>
               )}

@@ -1,44 +1,57 @@
 import {
+  AANTAL_MADAMS,
   CONTRACT_NAMEN,
   SPEELBARE_CONTRACTEN,
+  SPELER_IDS,
   isSpeelbaar,
+  telMadams,
   type Config,
   type ContractType,
   type SpelerId,
 } from '../domein/contracten'
+import { ZETELS } from './zetels'
 
-const ALLE_SLAGEN = Array.from({ length: 14 }, (_, i) => i)
+const ALLE_AANTALLEN = Array.from({ length: 14 }, (_, i) => i)
 
 function toegestaan(contract: ContractType, config: Config, aantalSpelers: number): boolean {
   if (contract === 'passen') return aantalSpelers === 0
   if (!isSpeelbaar(contract)) return false
-  return config[contract].kampGroottes.includes(aantalSpelers)
+  return config.contracten[contract].kampGroottes.includes(aantalSpelers)
 }
 
 type Props = {
   config: Config
+  spelers: string[]
   selectie: SpelerId[]
   contract: ContractType | null
   slagen: number
+  madams: Partial<Record<SpelerId, number>>
+  kanOpslaan: boolean
   onContract: (contract: ContractType) => void
   onSlagen: (slagen: number) => void
+  onMadam: (speler: SpelerId, aantal: number) => void
   onOpslaan: () => void
   onWis: () => void
 }
 
 export function ContractKeuze({
   config,
+  spelers,
   selectie,
   contract,
   slagen,
+  madams,
+  kanOpslaan,
   onContract,
   onSlagen,
+  onMadam,
   onOpslaan,
   onWis,
 }: Props) {
   const keuzes: ContractType[] = [...SPEELBARE_CONTRACTEN, 'passen']
-  const gekozen = contract && isSpeelbaar(contract) ? config[contract] : null
+  const gekozen = contract && isSpeelbaar(contract) ? config.contracten[contract] : null
   const gehaald = gekozen ? slagen === gekozen.slagenNodig : false
+  const verdeeld = telMadams(madams)
 
   return (
     <section className="mt-2 space-y-4">
@@ -46,7 +59,7 @@ export function ContractKeuze({
         {keuzes.map((keuze) => {
           const kan = toegestaan(keuze, config, selectie.length)
           const actief = contract === keuze
-          const naam = isSpeelbaar(keuze) ? config[keuze].naam : CONTRACT_NAMEN[keuze]
+          const naam = isSpeelbaar(keuze) ? config.contracten[keuze].naam : CONTRACT_NAMEN[keuze]
           return (
             <button
               key={keuze}
@@ -66,6 +79,50 @@ export function ContractKeuze({
           )
         })}
       </div>
+
+      {contract === 'passen' && (
+        <div className="animatie-open rounded-2xl border border-krijt/15 bg-vilt-diep/45 p-4">
+          <p className="mb-3 text-center text-xs tracking-[0.2em] text-krijt-dof uppercase">
+            Madams &middot; {verdeeld} van de {AANTAL_MADAMS} verdeeld &middot;{' '}
+            {config.madamWaarde} punten per stuk
+          </p>
+          <div className="space-y-2">
+            {SPELER_IDS.map((speler) => {
+              const aantal = madams[speler] ?? 0
+              return (
+                <div key={speler} className="flex items-center gap-3">
+                  <span className="flex-1 truncate text-sm">
+                    <span className={ZETELS[speler].rood ? 'text-hart' : 'text-krijt-dof'}>
+                      {ZETELS[speler].kleur}
+                    </span>{' '}
+                    {spelers[speler]}
+                  </span>
+                  <div className="flex gap-1">
+                    {[0, 1, 2, 3, 4].map((n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => onMadam(speler, n)}
+                        disabled={n > aantal && verdeeld - aantal + n > AANTAL_MADAMS}
+                        className={`h-8 w-8 rounded-lg text-sm font-bold transition-colors ${
+                          n === aantal
+                            ? 'bg-krijt text-vilt-diep'
+                            : 'bg-vilt-diep/70 text-krijt-dof hover:text-krijt disabled:cursor-not-allowed disabled:opacity-30'
+                        }`}
+                      >
+                        {n}
+                      </button>
+                    ))}
+                  </div>
+                  <span className="w-12 text-right text-sm font-bold text-hart">
+                    {aantal > 0 ? `-${aantal * config.madamWaarde}` : ''}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {gekozen && (
         <div className="animatie-open rounded-2xl border border-krijt/15 bg-vilt-diep/45 p-4">
@@ -92,7 +149,7 @@ export function ContractKeuze({
                 Slagen &middot; {gekozen.slagenNodig} nodig
               </p>
               <div className="flex flex-wrap justify-center gap-1.5">
-                {ALLE_SLAGEN.map((n) => (
+                {ALLE_AANTALLEN.map((n) => (
                   <button
                     key={n}
                     type="button"
@@ -117,7 +174,7 @@ export function ContractKeuze({
       <div className="flex justify-center gap-3">
         <button
           type="button"
-          disabled={!contract}
+          disabled={!kanOpslaan}
           onClick={onOpslaan}
           className="rounded-xl bg-messing px-6 py-2.5 font-display text-base font-black text-vilt-diep transition-transform hover:scale-[1.03] disabled:cursor-not-allowed disabled:bg-krijt/15 disabled:text-krijt-dof/50"
         >

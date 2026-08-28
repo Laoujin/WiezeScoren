@@ -35,16 +35,24 @@ export function bewaarSpel(opslag: Storage, spel: Spel): void {
   schrijf(opslag, SLEUTELS.spel, spel)
 }
 
+type BewaardeConfig = {
+  madamWaarde?: number
+  contracten?: Partial<Record<string, Partial<ContractConfig>>>
+}
+
 /** Bewaarde instellingen kunnen ouder zijn dan de contractdefinitie, dus veld per veld aanvullen. */
 export function laadConfig(opslag: Storage): Config {
-  const bewaard = lees<Partial<Record<string, Partial<ContractConfig>>>>(opslag, SLEUTELS.config)
+  const bewaard = lees<BewaardeConfig>(opslag, SLEUTELS.config)
   if (!bewaard) return STANDAARD_CONFIG
-  return Object.fromEntries(
-    SPEELBARE_CONTRACTEN.map((contract) => [
-      contract,
-      { ...STANDAARD_CONFIG[contract], ...bewaard[contract] },
-    ]),
-  ) as Config
+  return {
+    madamWaarde: bewaard.madamWaarde ?? STANDAARD_CONFIG.madamWaarde,
+    contracten: Object.fromEntries(
+      SPEELBARE_CONTRACTEN.map((contract) => [
+        contract,
+        { ...STANDAARD_CONFIG.contracten[contract], ...bewaard.contracten?.[contract] },
+      ]),
+    ) as Config['contracten'],
+  }
 }
 
 export function bewaarConfig(opslag: Storage, config: Config): void {

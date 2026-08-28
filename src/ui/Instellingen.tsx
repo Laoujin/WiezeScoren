@@ -6,12 +6,17 @@ import {
   type SpeelbaarContract,
 } from '../domein/contracten'
 
-const VELDEN: { sleutel: keyof ContractConfig; label: string }[] = [
+const GETALVELDEN: { sleutel: keyof ContractConfig; label: string }[] = [
   { sleutel: 'slagenNodig', label: 'Slagen nodig' },
   { sleutel: 'puntenGehaald', label: 'Gehaald' },
   { sleutel: 'puntenVerloren', label: 'Verloren' },
   { sleutel: 'perExtraSlag', label: 'Per extra slag' },
   { sleutel: 'perSlagTekort', label: 'Per slag tekort' },
+]
+
+const VINKVELDEN: { sleutel: keyof ContractConfig; label: string }[] = [
+  { sleutel: 'verdubbelBijAlleSlagen', label: 'Dubbel bij 13' },
+  { sleutel: 'wintDePot', label: 'Speelt om de pot' },
 ]
 
 type Props = {
@@ -20,63 +25,78 @@ type Props = {
 }
 
 export function Instellingen({ config, onWijzig }: Props) {
-  const zetVeld = (contract: SpeelbaarContract, veld: keyof ContractConfig, waarde: number) => {
-    onWijzig({ ...config, [contract]: { ...config[contract], [veld]: waarde } })
+  const zetVeld = (
+    contract: SpeelbaarContract,
+    veld: keyof ContractConfig,
+    waarde: number | boolean,
+  ) => {
+    onWijzig({
+      ...config,
+      contracten: {
+        ...config.contracten,
+        [contract]: { ...config.contracten[contract], [veld]: waarde },
+      },
+    })
   }
 
   return (
     <section className="rounded-2xl border border-krijt/15 bg-vilt-diep/45 p-5 backdrop-blur-sm">
       <h2 className="font-display text-2xl font-black tracking-tight">Instellingen</h2>
-      <p className="mt-1 mb-4 max-w-2xl text-sm text-krijt-dof">
-        De waarde hieronder is de inzet die elke tegenstander neerlegt. Het spelende kamp verdeelt de
-        hele pot, dus een solist wint driemaal de inzet en een duo eenmaal. Haalt het kamp alle
+      <p className="mt-1 mb-4 max-w-3xl text-sm text-krijt-dof">
+        De waarde hieronder is de inzet die elke tegenstander neerlegt. Het spelende kamp verdeelt
+        de hele inleg, dus een solist wint driemaal de inzet en een duo eenmaal. Haalt het kamp alle
         dertien slagen, dan verdubbelt de inzet voor de contracten die daarvoor aangevinkt staan.
-        Elke wijziging herrekent meteen de lopende partij.
+        Wie om de pot speelt, wint hem bovenop zijn punten en verdubbelt hem bij verlies. Elke
+        wijziging herrekent meteen de lopende partij.
       </p>
+
+      <label className="mb-5 flex w-fit items-center gap-3 rounded-xl border border-krijt/15 bg-vilt-diep/50 px-4 py-2.5 text-sm">
+        <span className="font-semibold">Een madam kost</span>
+        <input
+          type="number"
+          value={config.madamWaarde}
+          onChange={(e) => onWijzig({ ...config, madamWaarde: Number(e.target.value) || 0 })}
+          className="w-16 rounded bg-krijt/10 px-2 py-1 text-right outline-none focus:bg-krijt/20"
+        />
+        <span className="text-krijt-dof">punten, betaald aan de pot bij een pasronde</span>
+      </label>
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="text-xs tracking-[0.15em] text-krijt-dof uppercase">
               <th className="px-2 py-1 text-left font-medium">Contract</th>
-              {VELDEN.map((veld) => (
+              {[...GETALVELDEN, ...VINKVELDEN].map((veld) => (
                 <th key={veld.sleutel} className="px-2 py-1 text-right font-medium">
                   {veld.label}
                 </th>
               ))}
-              <th className="px-2 py-1 text-right font-medium">Dubbel bij 13</th>
             </tr>
           </thead>
           <tbody>
             {SPEELBARE_CONTRACTEN.map((contract) => (
               <tr key={contract} className="border-t border-krijt/10">
-                <td className="px-2 py-1.5 font-semibold">{config[contract].naam}</td>
-                {VELDEN.map((veld) => (
+                <td className="px-2 py-1.5 font-semibold">{config.contracten[contract].naam}</td>
+                {GETALVELDEN.map((veld) => (
                   <td key={veld.sleutel} className="px-2 py-1.5 text-right">
                     <input
                       type="number"
-                      value={config[contract][veld.sleutel] as number}
+                      value={config.contracten[contract][veld.sleutel] as number}
                       onChange={(e) => zetVeld(contract, veld.sleutel, Number(e.target.value) || 0)}
                       className="w-16 rounded bg-krijt/10 px-2 py-1 text-right outline-none focus:bg-krijt/20"
                     />
                   </td>
                 ))}
-                <td className="px-2 py-1.5 text-right">
-                  <input
-                    type="checkbox"
-                    checked={config[contract].verdubbelBijAlleSlagen}
-                    onChange={(e) =>
-                      onWijzig({
-                        ...config,
-                        [contract]: {
-                          ...config[contract],
-                          verdubbelBijAlleSlagen: e.target.checked,
-                        },
-                      })
-                    }
-                    className="h-4 w-4 accent-[var(--color-messing)]"
-                  />
-                </td>
+                {VINKVELDEN.map((veld) => (
+                  <td key={veld.sleutel} className="px-2 py-1.5 text-right">
+                    <input
+                      type="checkbox"
+                      checked={config.contracten[contract][veld.sleutel] as boolean}
+                      onChange={(e) => zetVeld(contract, veld.sleutel, e.target.checked)}
+                      className="h-4 w-4 accent-[var(--color-messing)]"
+                    />
+                  </td>
+                ))}
               </tr>
             ))}
           </tbody>

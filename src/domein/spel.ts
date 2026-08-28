@@ -1,5 +1,5 @@
 import { SPELER_IDS, type ContractType, type Config, type SpelerId } from './contracten'
-import { GEEN_PUNTEN, berekenPunten, type Punten } from './score'
+import { GEEN_PUNTEN, somVan, speelRonde, type Punten, type RondeUitkomst } from './score'
 
 export type Ronde = {
   id: string
@@ -7,6 +7,8 @@ export type Ronde = {
   contract: ContractType
   spelers: SpelerId[]
   slagen: number
+  /** Aantal madams per speler; enkel bij een pasronde. */
+  madams?: Partial<Record<SpelerId, number>>
   overrides?: Partial<Record<SpelerId, number>>
 }
 
@@ -14,6 +16,7 @@ export type RondeInvoer = {
   contract: ContractType
   spelers: SpelerId[]
   slagen: number
+  madams?: Partial<Record<SpelerId, number>>
 }
 
 export type Spel = {
@@ -24,7 +27,11 @@ export type Spel = {
   rondes: Ronde[]
 }
 
+export type Rondestand = RondeUitkomst & { ronde: Ronde }
+
 export const STANDAARD_NAMEN = ['Speler 1', 'Speler 2', 'Speler 3', 'Speler 4']
+
+export { somVan }
 
 function nieuweId(): string {
   return crypto.randomUUID()
@@ -80,12 +87,7 @@ function pasRondeAan(spel: Spel, rondeId: string, aanpassing: (ronde: Ronde) => 
   return { ...spel, rondes: spel.rondes.map((r) => (r.id === rondeId ? aanpassing(r) : r)) }
 }
 
-export function zetOverride(
-  spel: Spel,
-  rondeId: string,
-  speler: SpelerId,
-  punten: number,
-): Spel {
+export function zetOverride(spel: Spel, rondeId: string, speler: SpelerId, punten: number): Spel {
   return pasRondeAan(spel, rondeId, (r) => ({
     ...r,
     overrides: { ...r.overrides, [speler]: punten },
@@ -100,35 +102,45 @@ export function heeftOverrides(ronde: Ronde): boolean {
   return Object.keys(ronde.overrides ?? {}).length > 0
 }
 
-export function puntenVanRonde(ronde: Ronde, config: Config): Punten {
-  const berekend = berekenPunten(ronde, config)
-  if (!ronde.overrides) return berekend
-  const punten = { ...berekend }
+function metOverrides(ronde: Ronde, punten: Punten): Punten {
+  if (!ronde.overrides) return punten
+  const aangepast = { ...punten }
   for (const speler of SPELER_IDS) {
     const override = ronde.overrides[speler]
-    if (override !== undefined) punten[speler] = override
+    if (override !== undefined) aangepast[speler] = override
   }
-  return punten
+  return aangepast
 }
 
-export function somVan(punten: Punten): number {
-  return SPELER_IDS.reduce<number>((totaal, speler) => totaal + punten[speler], 0)
+/** Speelt de partij van voren af aan door, zodat elke ronde de pot van dat moment ziet. */
+export function verloop(spel: Spel, config: Config): Rondestand[] {
+  let pot = 0
+  return spel.rondes.map((ronde) => {
+    const uitkomst = speelRonde(ronde, config, pot)
+    pot = uitkomst.potNa
+    return { ...uitkomst, ronde, punten: metOverrides(ronde, uitkomst.punten) }
+  })
 }
 
-export function rondeSluit(ronde: Ronde, config: Config): boolean {
-  return somVan(puntenVanRonde(ronde, config)) === 0
+export function potVan(spel: Spel, config: Config): number {
+  return verloop(spel, config).at(-1)?.potNa ?? 0
+}
+
+/** Een ronde sluit wanneer de punten samen met de potbeweging op nul uitkomen. */
+export function rondeSluit(stand: Rondestand): boolean {
+  return somVan(stand.punten) + (stand.potNa - stand.potVoor) === 0
 }
 
 export function totalen(spel: Spel, config: Config): Punten {
-  return spel.rondes.reduce<Punten>((totaal, ronde) => {
-    const punten = puntenVanRonde(ronde, config)
-    return {
+  return verloop(spel, config).reduce<Punten>(
+    (totaal, { punten }) => ({
       0: totaal[0] + punten[0],
       1: totaal[1] + punten[1],
       2: totaal[2] + punten[2],
       3: totaal[3] + punten[3],
-    }
-  }, { ...GEEN_PUNTEN })
+    }),
+    { ...GEEN_PUNTEN },
+  )
 }
 
 export function hernoemSpeler(spel: Spel, speler: SpelerId, naam: string): Spel {
@@ -139,11 +151,4 @@ export function hernoemSpeler(spel: Spel, speler: SpelerId, naam: string): Spel 
 
 export function zetDeler(spel: Spel, deler: SpelerId): Spel {
   return { ...spel, deler }
-}
-
-export function leiders(spel: Spel, config: Config): SpelerId[] {
-  if (spel.rondes.length === 0) return []
-  const stand = totalen(spel, config)
-  const hoogste = Math.max(...SPELER_IDS.map((s) => stand[s]))
-  return SPELER_IDS.filter((s) => stand[s] === hoogste)
 }

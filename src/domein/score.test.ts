@@ -208,7 +208,10 @@ describe('berekenPunten', () => {
     it('gebruikt de ingestelde waarden', () => {
       const config: Config = {
         ...STANDAARD_CONFIG,
-        abondance: { ...STANDAARD_CONFIG.abondance, puntenGehaald: 10 },
+        contracten: {
+          ...STANDAARD_CONFIG.contracten,
+          abondance: { ...STANDAARD_CONFIG.contracten.abondance, puntenGehaald: 10 },
+        },
       }
       expect(
         berekenPunten(ronde({ contract: 'abondance', spelers: [1], slagen: 9 }), config),

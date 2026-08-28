@@ -81,15 +81,6 @@
   }
 }
 
-@keyframes gloed {
-  0%,
-  100% {
-    box-shadow: 0 0 0 1px var(--color-messing-diep), 0 0 22px -6px var(--color-messing);
-  }
-  50% {
-    box-shadow: 0 0 0 1px var(--color-messing), 0 0 34px -2px var(--color-messing);
-  }
-}
 
 @keyframes kaart-open {
   from {
@@ -108,10 +99,6 @@
 
 .animatie-chip {
   animation: chip-plof 0.4s cubic-bezier(0.2, 1.5, 0.4, 1) both;
-}
-
-.animatie-gloed {
-  animation: gloed 2.6s ease-in-out infinite;
 }
 
 .animatie-open {

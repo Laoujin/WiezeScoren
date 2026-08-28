@@ -142,6 +142,10 @@ export const CONTRACT_NAMEN: Record<ContractType, string> = {
   correctie: 'Correctie',
 }
 
+export function telMadams(madams: Partial<Record<SpelerId, number>> = {}): number {
+  return SPELER_IDS.reduce<number>((totaal, speler) => totaal + (madams[speler] ?? 0), 0)
+}
+
 export function isSpeelbaar(contract: ContractType): contract is SpeelbaarContract {
   return (SPEELBARE_CONTRACTEN as readonly string[]).includes(contract)
 }

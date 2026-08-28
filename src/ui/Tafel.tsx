@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
 import { SPELER_IDS, type SpelerId } from '../domein/contracten'
 import type { Punten } from '../domein/score'
+import { useState } from 'react'
 import { useTelling } from './useTelling'
 import { ZETELS, puntKleur, tekenPunt } from './zetels'
 
@@ -10,7 +10,6 @@ type ZetelProps = {
   totaal: number
   voorbeeld: number | null
   geselecteerd: boolean
-  leider: boolean
   onSelecteer: () => void
   onDeler: () => void
   onHernoem: (naam: string) => void
@@ -22,7 +21,6 @@ function Zetel({
   totaal,
   voorbeeld,
   geselecteerd,
-  leider,
   onSelecteer,
   onDeler,
   onHernoem,
@@ -38,6 +36,7 @@ function Zetel({
     >
       <button
         type="button"
+        data-zetel={speler}
         onClick={onSelecteer}
         onContextMenu={(e) => {
           e.preventDefault()
@@ -47,8 +46,7 @@ function Zetel({
           geselecteerd
             ? 'border-messing bg-messing/20 shadow-[0_0_28px_-8px_var(--color-messing)]'
             : 'border-krijt/15 bg-vilt-diep/55 hover:border-krijt/35'
-        } ${leider ? 'animatie-gloed' : ''}`}
-        title="Klik om te laten spelen, rechtsklik om deler te zetten"
+        }`}
       >
         <span className="flex items-baseline gap-2">
           <span className={`text-lg ${zetel.rood ? 'text-hart' : 'text-krijt-dof'}`}>
@@ -105,9 +103,9 @@ type TafelProps = {
   spelers: string[]
   totalen: Punten
   voorbeeld: Punten | null
+  pot: number
   deler: SpelerId
   selectie: SpelerId[]
-  leiders: SpelerId[]
   bericht: string
   onSelecteer: (speler: SpelerId) => void
   onDeler: (speler: SpelerId) => void
@@ -118,29 +116,34 @@ export function Tafel({
   spelers,
   totalen,
   voorbeeld,
+  pot,
   deler,
   selectie,
-  leiders,
   bericht,
   onSelecteer,
   onDeler,
   onHernoem,
 }: TafelProps) {
   const chip = ZETELS[deler]
-  const eersteRender = useRef(true)
-
-  useEffect(() => {
-    eersteRender.current = false
-  }, [])
+  const getoondePot = useTelling(pot)
 
   return (
     <div className="relative mx-auto aspect-square w-full max-w-[40rem] sm:aspect-4/3">
       <div className="lamplicht pointer-events-none absolute inset-x-0 top-[-14%] h-[70%]" />
 
       <div className="vilt absolute top-1/2 left-1/2 h-[52%] w-[32%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border-4 border-messing-diep/60 bg-vilt-licht shadow-[0_28px_60px_-20px_#000,inset_0_2px_30px_rgba(0,0,0,0.45)]">
-        <p className="absolute inset-0 flex items-center justify-center px-6 text-center font-display text-sm text-krijt/70 italic">
-          {bericht}
-        </p>
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5 px-4 text-center">
+          <span className="text-[0.6rem] tracking-[0.32em] text-krijt/50 uppercase">Pot</span>
+          <span
+            key={pot}
+            className={`font-display text-4xl leading-none font-black ${pot > 0 ? 'animatie-inslag text-messing' : 'text-krijt/30'}`}
+          >
+            {getoondePot}
+          </span>
+          {bericht && (
+            <span className="mt-1 font-display text-xs text-krijt/75 italic">{bericht}</span>
+          )}
+        </div>
       </div>
 
       <div
@@ -164,7 +167,6 @@ export function Tafel({
           totaal={totalen[speler]}
           voorbeeld={voorbeeld ? voorbeeld[speler] : null}
           geselecteerd={selectie.includes(speler)}
-          leider={leiders.includes(speler)}
           onSelecteer={() => onSelecteer(speler)}
           onDeler={() => onDeler(speler)}
           onHernoem={(naam) => onHernoem(speler, naam)}

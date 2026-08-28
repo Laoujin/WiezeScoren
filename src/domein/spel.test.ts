@@ -5,10 +5,10 @@ import {
   hernoemSpeler,
   maakRonde,
   nieuwSpel,
-  puntenVanRonde,
   rondeSluit,
   totalen,
   verwijderRonde,
+  verloop,
   voegRondeToe,
   wisOverrides,
   zetDeler,
@@ -91,7 +91,7 @@ describe('overrides', () => {
     let spel = metRonde(nieuwSpel(), { contract: 'vragen', spelers: [0, 1], slagen: 8 })
     const id = spel.rondes[0]!.id
     spel = zetOverride(spel, id, 0, 7)
-    expect(puntenVanRonde(spel.rondes[0]!, config)).toEqual({ 0: 7, 1: 2, 2: -2, 3: -2 })
+    expect(verloop(spel, config)[0]!.punten).toEqual({ 0: 7, 1: 2, 2: -2, 3: -2 })
     expect(totalen(spel, config)[0]).toBe(7)
   })
 
@@ -106,7 +106,7 @@ describe('overrides', () => {
     let spel = metRonde(nieuwSpel(), { contract: 'vragen', spelers: [0, 1], slagen: 8 })
     const id = spel.rondes[0]!.id
     spel = wisOverrides(zetOverride(spel, id, 0, 7), id)
-    expect(puntenVanRonde(spel.rondes[0]!, config)[0]).toBe(2)
+    expect(verloop(spel, config)[0]!.punten[0]).toBe(2)
     expect(heeftOverrides(spel.rondes[0]!)).toBe(false)
   })
 
@@ -121,13 +121,13 @@ describe('overrides', () => {
 describe('rondeSluit', () => {
   it('is waar wanneer de punten optellen tot nul', () => {
     const spel = metRonde(nieuwSpel(), { contract: 'vragen', spelers: [0, 1], slagen: 8 })
-    expect(rondeSluit(spel.rondes[0]!, config)).toBe(true)
+    expect(rondeSluit(verloop(spel, config)[0]!)).toBe(true)
   })
 
   it('is onwaar zodra een override het evenwicht breekt', () => {
     let spel = metRonde(nieuwSpel(), { contract: 'vragen', spelers: [0, 1], slagen: 8 })
     spel = zetOverride(spel, spel.rondes[0]!.id, 0, 7)
-    expect(rondeSluit(spel.rondes[0]!, config)).toBe(false)
+    expect(rondeSluit(verloop(spel, config)[0]!)).toBe(false)
   })
 })
 
