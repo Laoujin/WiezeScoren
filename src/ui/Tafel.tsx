@@ -49,6 +49,7 @@ type PlaquetteProps = {
   totaal: number
   voorbeeld: number | null
   geselecteerd: boolean
+  kiestDeler: boolean
   vertraging: number
   onSelecteer: () => void
   onDeler: () => void
@@ -65,6 +66,7 @@ function Plaquette({
   totaal,
   voorbeeld,
   geselecteerd,
+  kiestDeler,
   vertraging,
   onSelecteer,
   onDeler,
@@ -159,6 +161,16 @@ function Plaquette({
         )}
       </div>
 
+      {kiestDeler && (
+        <button
+          type="button"
+          data-delerkeuze={speler}
+          aria-label={`${naam} laten delen`}
+          onClick={onDeler}
+          className="absolute inset-0 z-20 rounded-xl ring-2 ring-messing ring-offset-2 ring-offset-vilt-diep"
+        />
+      )}
+
       {kiest && (
         <Ploegkiezer
           ploeg={ploeg}
@@ -208,6 +220,7 @@ export function Tafel({
 }: TafelProps) {
   const getoondePot = useTelling(pot, vertraging)
   const zetels = zetelsVan(vorm)
+  const [kiestDeler, zetKiestDeler] = useState(false)
 
   return (
     <div className="relative mx-auto aspect-square w-full max-w-[40rem] sm:aspect-4/3">
@@ -232,16 +245,23 @@ export function Tafel({
       </div>
 
       <div
-        className="deler-schuif pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2"
+        className="deler-schuif absolute z-10 -translate-x-1/2 -translate-y-1/2"
         style={plaats(zetels[deler].deler)}
       >
-        <span
+        <button
           key={deler}
-          className="animatie-chip flex h-8 w-8 items-center justify-center rounded-full border-2 border-messing bg-gradient-to-b from-messing to-messing-diep font-display text-sm font-black text-vilt-diep shadow-[0_6px_14px_-4px_#000]"
+          type="button"
+          data-deler
+          aria-pressed={kiestDeler}
+          aria-label={kiestDeler ? 'Stop met de deler verzetten' : 'De deler verzetten'}
+          onClick={() => zetKiestDeler((aan) => !aan)}
           title="Deler"
+          className={`animatie-chip flex h-8 w-8 items-center justify-center rounded-full border-2 border-messing bg-gradient-to-b from-messing to-messing-diep font-display text-sm font-black text-vilt-diep shadow-[0_6px_14px_-4px_#000] ${
+            kiestDeler ? 'ring-2 ring-krijt ring-offset-2 ring-offset-vilt-diep' : ''
+          }`}
         >
           D
-        </span>
+        </button>
       </div>
 
       {SPELER_IDS.map((speler) => {
@@ -257,9 +277,13 @@ export function Tafel({
             totaal={totalen[speler]}
             voorbeeld={voorbeeld ? voorbeeld[speler] : null}
             geselecteerd={selectie.includes(speler)}
+            kiestDeler={kiestDeler}
             vertraging={vertraging}
             onSelecteer={() => onSelecteer(speler)}
-            onDeler={() => onDeler(speler)}
+            onDeler={() => {
+              onDeler(speler)
+              zetKiestDeler(false)
+            }}
             onHernoem={(nieuw) => onHernoem(speler, nieuw)}
             onKiesZetel={(nieuw) => onKiesZetel(speler, nieuw)}
           />

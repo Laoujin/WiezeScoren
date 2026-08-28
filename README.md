@@ -27,17 +27,17 @@ http://localhost:5173
 
 ## Bediening
 
-| Handeling                    | Gevolg                                             |
-| ---------------------------- | -------------------------------------------------- |
-| Klik op een zetel            | die speler speelt mee, tot twee spelers            |
-| Klik op een avatar           | iemand anders uit de ploeg op die zetel            |
-| Rechtsklik op een zetel      | zet de deler                                       |
-| Dubbelklik op een naam       | hernoemen                                          |
-| Contractknop                 | actief zodra het aantal geselecteerde spelers past |
-| Passen                       | verdeel de vier madams over de spelers             |
-| Klik op een punt in de tabel | handmatig aanpassen                                |
-| `+ Correctie`                | lege rij met vier vrije velden                     |
-| `Nieuw spel`                 | partij naar het archief, namen blijven staan       |
+| Handeling                     | Gevolg                                             |
+| ----------------------------- | -------------------------------------------------- |
+| Klik op een zetel             | die speler speelt mee, tot twee spelers            |
+| Klik op een avatar            | iemand anders uit de ploeg op die zetel            |
+| Tik de D-fiche, dan een zetel | verzet de deler; rechtsklikken werkt ook           |
+| Dubbelklik op een naam        | hernoemen                                          |
+| Contractknop                  | actief zodra het aantal geselecteerde spelers past |
+| Passen                        | verdeel de vier madams over de spelers             |
+| Klik op een punt in de tabel  | handmatig aanpassen                                |
+| `+ Correctie`                 | lege rij met vier vrije velden                     |
+| `Nieuw spel`                  | partij naar het archief, namen blijven staan       |
 
 Een rij kleurt rood zodra de punten samen met de potbeweging niet op nul uitkomen. De deler
 schuift automatisch door na elke ronde, behalve na een correctie.
