@@ -3,6 +3,7 @@ import {
   STANDAARD_CONFIG,
   type Config,
   type ContractConfig,
+  type SpeelbaarContract,
 } from '../domein/contracten'
 import { STANDAARD_PLOEG, type Ploeglid } from '../domein/ploeg'
 import { nieuwSpel, type Spel } from '../domein/spel'
@@ -58,6 +59,15 @@ type BewaardeConfig = {
   contracten?: Partial<Record<string, Partial<ContractConfig>>>
 }
 
+/** Deze velden horen bij de spelregel zelf en zijn niet instelbaar; ze blijven dus standaard. */
+const VASTE_VELDEN = ['naam', 'kampGroottes', 'hoogstens', 'geenSlagenteller'] as const
+
+function vasteVelden(contract: SpeelbaarContract): Partial<ContractConfig> {
+  return Object.fromEntries(
+    VASTE_VELDEN.map((veld) => [veld, STANDAARD_CONFIG.contracten[contract][veld]]),
+  )
+}
+
 /** Bewaarde instellingen kunnen ouder zijn dan de contractdefinitie, dus veld per veld aanvullen. */
 export function laadConfig(opslag: Storage): Config {
   const bewaard = lees<BewaardeConfig>(opslag, SLEUTELS.config)
@@ -67,7 +77,11 @@ export function laadConfig(opslag: Storage): Config {
     contracten: Object.fromEntries(
       SPEELBARE_CONTRACTEN.map((contract) => [
         contract,
-        { ...STANDAARD_CONFIG.contracten[contract], ...bewaard.contracten?.[contract] },
+        {
+          ...STANDAARD_CONFIG.contracten[contract],
+          ...bewaard.contracten?.[contract],
+          ...vasteVelden(contract),
+        },
       ]),
     ) as Config['contracten'],
   }

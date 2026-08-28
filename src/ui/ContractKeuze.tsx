@@ -165,7 +165,7 @@ export function ContractKeuze({
 
       {gekozen && (
         <div className="animatie-open border-t border-krijt/10 px-4 py-4">
-          {gekozen.allesOfNiets ? (
+          {gekozen.geenSlagenteller ? (
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { CONTRACT_NAMEN, SPELER_IDS, type Config, type SpelerId } from '../domein/contracten'
-import { somVan } from '../domein/score'
+import { contractGehaald, somVan } from '../domein/score'
 import {
   heeftOverrides,
   potVan,
@@ -22,8 +22,8 @@ function omschrijf(ronde: Ronde, spelers: string[], config: Config): string {
   }
   const namen = ronde.spelers.map((s) => spelers[s]).join(' + ')
   const contract = config.contracten[ronde.contract]
-  const slagen = contract.allesOfNiets
-    ? ronde.slagen === contract.slagenNodig
+  const slagen = contract.geenSlagenteller
+    ? contractGehaald(ronde, config)
       ? 'gehaald'
       : 'mislukt'
     : `${ronde.slagen} slagen`

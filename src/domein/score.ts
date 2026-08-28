@@ -26,7 +26,7 @@ export function verdeel(bedrag: number, aantal: number): number[] {
 export function contractGehaald(ronde: Ronde, config: Config): boolean {
   if (!isSpeelbaar(ronde.contract)) return false
   const c = config.contracten[ronde.contract]
-  return c.allesOfNiets ? ronde.slagen === c.slagenNodig : ronde.slagen >= c.slagenNodig
+  return c.hoogstens ? ronde.slagen <= c.slagenNodig : ronde.slagen >= c.slagenNodig
 }
 
 /**

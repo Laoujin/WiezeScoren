@@ -86,6 +86,15 @@ describe('App', () => {
     expect(JSON.parse(localStorage.getItem('wiezen.spel')!).deler).toBe(3)
   })
 
+  it('vraagt bij abondance enkel of het gehaald is', () => {
+    render(<App />)
+    fireEvent.click(zetel(0))
+    fireEvent.click(knopMet('Abondance'))
+    expect(knopMetTekst('Gehaald')).toBeTruthy()
+    expect(knopMetTekst('Mislukt')).toBeTruthy()
+    expect(screen.queryByText(/Slagen .* nodig/)).toBeNull()
+  })
+
   it('wisselt de tafel van rond naar vierkant en bewaart dat', () => {
     render(<App />)
     fireEvent.click(screen.getByTitle('Vierkante tafel'))

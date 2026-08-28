@@ -34,8 +34,10 @@ export type ContractConfig = {
   wintDePot: boolean
   /** Toegelaten aantal spelers in het spelende kamp. */
   kampGroottes: number[]
-  /** Geen slagenteller: het contract slaagt enkel op exact `slagenNodig`. */
-  allesOfNiets: boolean
+  /** Het kamp mag hoogstens `slagenNodig` slagen pakken in plaats van minstens zoveel. */
+  hoogstens: boolean
+  /** Het aantal slagen weegt niet op de punten, dus de invoer vraagt enkel gehaald of niet. */
+  geenSlagenteller: boolean
 }
 
 export type Config = {
@@ -57,7 +59,8 @@ export const STANDAARD_CONFIG: Config = {
       verdubbelBijAlleSlagen: true,
       wintDePot: false,
       kampGroottes: [2],
-      allesOfNiets: false,
+      hoogstens: false,
+      geenSlagenteller: false,
     },
     troel: {
       naam: 'Troel',
@@ -69,7 +72,8 @@ export const STANDAARD_CONFIG: Config = {
       verdubbelBijAlleSlagen: true,
       wintDePot: false,
       kampGroottes: [2],
-      allesOfNiets: false,
+      hoogstens: false,
+      geenSlagenteller: false,
     },
     alleen: {
       naam: 'Alleen gaan',
@@ -81,7 +85,8 @@ export const STANDAARD_CONFIG: Config = {
       verdubbelBijAlleSlagen: true,
       wintDePot: false,
       kampGroottes: [1],
-      allesOfNiets: false,
+      hoogstens: false,
+      geenSlagenteller: false,
     },
     abondance: {
       naam: 'Abondance',
@@ -93,7 +98,8 @@ export const STANDAARD_CONFIG: Config = {
       verdubbelBijAlleSlagen: false,
       wintDePot: true,
       kampGroottes: [1],
-      allesOfNiets: false,
+      hoogstens: false,
+      geenSlagenteller: true,
     },
     miserie: {
       naam: 'Miserie',
@@ -105,7 +111,8 @@ export const STANDAARD_CONFIG: Config = {
       verdubbelBijAlleSlagen: false,
       wintDePot: true,
       kampGroottes: [1, 2],
-      allesOfNiets: true,
+      hoogstens: true,
+      geenSlagenteller: true,
     },
     miserieOpTafel: {
       naam: 'Miserie op tafel',
@@ -117,7 +124,8 @@ export const STANDAARD_CONFIG: Config = {
       verdubbelBijAlleSlagen: false,
       wintDePot: true,
       kampGroottes: [1, 2],
-      allesOfNiets: true,
+      hoogstens: true,
+      geenSlagenteller: true,
     },
     soloSlim: {
       naam: 'Solo slim',
@@ -129,7 +137,8 @@ export const STANDAARD_CONFIG: Config = {
       verdubbelBijAlleSlagen: false,
       wintDePot: true,
       kampGroottes: [1],
-      allesOfNiets: true,
+      hoogstens: false,
+      geenSlagenteller: true,
     },
   },
 }

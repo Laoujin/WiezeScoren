@@ -7,8 +7,8 @@ import {
   type ContractType,
   type SpelerId,
 } from './domein/contracten'
-import { speelRonde, type Punten } from './domein/score'
-import { totalenVan, verloop } from './domein/spel'
+import { contractGehaald, speelRonde, type Punten } from './domein/score'
+import { totalenVan, verloop, type Ronde } from './domein/spel'
 import { Archief } from './ui/Archief'
 import { ContractKeuze } from './ui/ContractKeuze'
 import { Instellingen } from './ui/Instellingen'
@@ -64,19 +64,17 @@ export function App() {
   const kanOpslaan =
     contract !== null && (contract !== 'passen' || telMadams(madams) === AANTAL_MADAMS)
 
-  const voorbeeld: Punten | null = contract
-    ? speelRonde(
-        { id: 'voorbeeld', deler: spel.deler, contract, spelers: selectie, slagen, madams },
-        config,
-        pot,
-      ).punten
+  const proefronde: Ronde | null = contract
+    ? { id: 'voorbeeld', deler: spel.deler, contract, spelers: selectie, slagen, madams }
     : null
+  const voorbeeld: Punten | null = proefronde ? speelRonde(proefronde, config, pot).punten : null
+  const gehaald = proefronde !== null && contractGehaald(proefronde, config)
 
   const bericht = (() => {
     if (contract === 'passen') return 'Verdeel de madams.'
     if (contract && isSpeelbaar(contract)) {
       const c = config.contracten[contract]
-      if (c.allesOfNiets) return `${c.naam} — ${slagen === c.slagenNodig ? 'gehaald' : 'mislukt'}`
+      if (c.geenSlagenteller) return `${c.naam} — ${gehaald ? 'gehaald' : 'mislukt'}`
       if (c.verdubbelBijAlleSlagen && slagen === ALLE_SLAGEN)
         return `${c.naam} — alle slagen, dubbel!`
       return `${c.naam} — ${slagen} van de ${c.slagenNodig} slagen`

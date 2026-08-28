@@ -104,6 +104,16 @@ describe('config', () => {
     expect(config.contracten.soloSlim).toEqual(STANDAARD_CONFIG.contracten.soloSlim)
     expect(config.madamWaarde).toBe(STANDAARD_CONFIG.madamWaarde)
   })
+
+  it('houdt de vaste contracteigenschappen op de standaardwaarde', () => {
+    opslag.setItem(
+      'wiezen.config',
+      JSON.stringify({
+        contracten: { abondance: { geenSlagenteller: false, kampGroottes: [1, 2], naam: 'Oud' } },
+      }),
+    )
+    expect(laadConfig(opslag).contracten.abondance).toEqual(STANDAARD_CONFIG.contracten.abondance)
+  })
 })
 
 describe('archiveer', () => {
