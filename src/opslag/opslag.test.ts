@@ -84,8 +84,8 @@ describe('ploeg', () => {
   })
 
   it('laat een lid zonder standaardavatar met rust', () => {
-    opslag.setItem('wiezen.ploeg', JSON.stringify([{ id: 'zus', naam: 'Zus' }]))
-    expect(laadPloeg(opslag)).toEqual([{ id: 'zus', naam: 'Zus' }])
+    opslag.setItem('wiezen.ploeg', JSON.stringify([{ id: 'gast', naam: 'Gast' }]))
+    expect(laadPloeg(opslag)).toEqual([{ id: 'gast', naam: 'Gast' }])
   })
 
   it('valt terug op de standaardploeg bij een lege lijst', () => {

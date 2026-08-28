@@ -12,7 +12,7 @@ export const STANDAARD_PLOEG: Ploeglid[] = [
   { id: 'gert', naam: 'Gert', avatar: 'gert.webp' },
   { id: 'moe', naam: 'Moe', avatar: 'lieve.webp' },
   { id: 'va', naam: 'Va', avatar: 'guido.webp' },
-  { id: 'zus', naam: 'Zus' },
+  { id: 'zus', naam: 'Zus', avatar: 'zus.webp' },
 ]
 
 /** Zit de speler al aan tafel, dan ruilen de twee zetels van plaats. */

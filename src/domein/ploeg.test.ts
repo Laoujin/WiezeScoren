@@ -15,6 +15,10 @@ describe('STANDAARD_PLOEG', () => {
   it('geeft elk lid een eigen id', () => {
     expect(new Set(STANDAARD_PLOEG.map((l) => l.id)).size).toBe(STANDAARD_PLOEG.length)
   })
+
+  it('geeft elk lid een avatar', () => {
+    expect(STANDAARD_PLOEG.filter((l) => !l.avatar)).toEqual([])
+  })
 })
 
 describe('zetOpZetel', () => {
