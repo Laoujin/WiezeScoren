@@ -1,0 +1,749 @@
+<!doctype html>
+<title>Op de lei</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Archivo:wght@400;500;600;700&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  :root {
+    --lei: #232a2b;
+    --lei-licht: #2e3839;
+    --hout: #6b4a2c;
+    --hout-diep: #3f2a17;
+    --krijt: #f2f0e6;
+    --krijt-dof: #a7b0ab;
+    --krijt-blauw: #9cc7da;
+    --krijt-roos: #e79a92;
+    --krijt-geel: #ecd07a;
+    --krijt-groen: #a3d3a0;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    padding: clamp(0.6rem, 2vw, 1.6rem);
+    color: var(--krijt);
+    font-family: Archivo, system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    background:
+      repeating-linear-gradient(
+        92deg,
+        rgb(0 0 0 / 0.22) 0 4px,
+        transparent 4px 26px,
+        rgb(255 255 255 / 0.03) 26px 28px
+      ),
+      linear-gradient(150deg, #7d5731, var(--hout) 45%, var(--hout-diep));
+  }
+
+  .lijst {
+    max-width: 78rem;
+    margin: 0 auto;
+    padding: clamp(0.9rem, 2.4vw, 1.8rem);
+    border-radius: 0.4rem;
+    background:
+      radial-gradient(120% 80% at 22% 8%, rgb(255 255 255 / 0.055), transparent 55%),
+      radial-gradient(90% 70% at 82% 96%, rgb(255 255 255 / 0.04), transparent 60%),
+      linear-gradient(160deg, var(--lei-licht), var(--lei) 55%, #1b2122);
+    box-shadow:
+      inset 0 0 0 3px rgb(0 0 0 / 0.55),
+      inset 0 0 90px rgb(0 0 0 / 0.55),
+      0 24px 50px -26px #000;
+  }
+
+  /* krijtstof: vegen die niemand ooit helemaal wegkrijgt */
+  .lijst::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+      radial-gradient(38% 12% at 68% 22%, rgb(242 240 230 / 0.055), transparent 70%),
+      radial-gradient(30% 9% at 24% 61%, rgb(242 240 230 / 0.045), transparent 70%),
+      radial-gradient(46% 8% at 52% 88%, rgb(242 240 230 / 0.04), transparent 70%);
+  }
+  .lijst {
+    position: relative;
+  }
+
+  .hand {
+    font-family: Caveat, 'Comic Sans MS', cursive;
+    font-weight: 700;
+  }
+
+  /* ---- kop ---- */
+
+  header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1rem;
+  }
+  h1 {
+    margin: 0;
+    position: relative;
+    font-family: Caveat, cursive;
+    font-weight: 700;
+    font-size: clamp(3rem, 8vw, 5rem);
+    line-height: 0.85;
+    letter-spacing: 0.01em;
+    color: var(--krijt);
+    text-shadow: 0 0 12px rgb(242 240 230 / 0.22);
+  }
+  h1 .kleuren {
+    display: block;
+    font-family: Archivo, sans-serif;
+    font-weight: 500;
+    font-size: 0.62rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--krijt-dof);
+    margin-top: 0.7rem;
+  }
+  .streep {
+    display: block;
+    width: 11rem;
+    height: 6px;
+    margin-top: 0.15rem;
+    border-radius: 40% 60% 55% 45%;
+    background: var(--krijt-geel);
+    opacity: 0.75;
+    rotate: -1.2deg;
+  }
+  .doodle {
+    color: var(--krijt-dof);
+    font-size: 1.6rem;
+    letter-spacing: 0.35em;
+    rotate: -6deg;
+    opacity: 0.65;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    align-items: center;
+  }
+  .tab {
+    position: relative;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    padding: 0.35rem 0.7rem;
+    font-family: Caveat, cursive;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--krijt-dof);
+  }
+  .tab.aan {
+    color: var(--krijt);
+  }
+  .tab.aan::after {
+    content: '';
+    position: absolute;
+    inset: -0.25rem -0.35rem;
+    border: 2.5px solid var(--krijt-geel);
+    border-radius: 52% 48% 45% 55% / 58% 42% 55% 42%;
+    rotate: -2deg;
+    opacity: 0.85;
+  }
+
+  /* ---- indeling ---- */
+
+  main {
+    display: grid;
+    gap: 1.6rem;
+    align-items: start;
+    border-top: 2px solid rgb(242 240 230 / 0.18);
+    padding-top: 1.4rem;
+  }
+  @media (min-width: 68rem) {
+    main {
+      grid-template-columns: minmax(0, 1fr) 26rem;
+      gap: 2.2rem;
+    }
+  }
+
+  /* ---- de getekende tafel ---- */
+
+  .tafel {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr 1fr;
+    grid-template-rows: auto minmax(8rem, auto) auto;
+    gap: 0.9rem;
+    place-items: center;
+  }
+  .zetel-n {
+    grid-area: 1 / 2;
+  }
+  .zetel-w {
+    grid-area: 2 / 1;
+  }
+  .zetel-o {
+    grid-area: 2 / 3;
+  }
+  .zetel-z {
+    grid-area: 3 / 2;
+  }
+
+  .blad {
+    grid-area: 2 / 2;
+    width: 100%;
+    aspect-ratio: 1.25;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.15rem;
+    border: 3px solid rgb(242 240 230 / 0.35);
+    border-radius: 49% 51% 47% 53% / 52% 48% 53% 47%;
+    background: radial-gradient(65% 60% at 50% 40%, rgb(242 240 230 / 0.04), transparent 70%);
+  }
+  .blad .label {
+    font-size: 0.58rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--krijt-dof);
+  }
+  .blad .som {
+    font-family: Caveat, cursive;
+    font-weight: 700;
+    font-size: 3.4rem;
+    line-height: 0.9;
+    color: var(--krijt-geel);
+    text-shadow: 0 0 14px rgb(236 208 122 / 0.3);
+  }
+
+  .speler {
+    width: 100%;
+    max-width: 15rem;
+    padding: 0.55rem 0.7rem 0.65rem;
+    border-radius: 0.3rem;
+    background: none;
+    border: 2px dashed transparent;
+    text-align: left;
+    color: inherit;
+    cursor: pointer;
+  }
+  .speler.speelt {
+    border-color: rgb(236 208 122 / 0.75);
+    background: rgb(236 208 122 / 0.07);
+  }
+  .speler .naam {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-family: Caveat, cursive;
+    font-weight: 700;
+    font-size: 1.55rem;
+    line-height: 1;
+    color: var(--krijt);
+  }
+  .speler .naam .d {
+    font-family: Archivo, sans-serif;
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    padding: 0.15rem 0.4rem;
+    border: 1.5px solid var(--krijt-blauw);
+    border-radius: 999px;
+    color: var(--krijt-blauw);
+  }
+  .speler .naam .prev {
+    font-family: Archivo, sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  /* ---- turven ---- */
+
+  .turven {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.42rem;
+    margin: 0.4rem 0 0.15rem;
+    min-height: 1.15rem;
+  }
+  .groep {
+    position: relative;
+    display: flex;
+    gap: 3px;
+    padding-right: 2px;
+  }
+  .groep i {
+    display: block;
+    width: 2.5px;
+    height: 1.05rem;
+    border-radius: 2px;
+    background: currentColor;
+    opacity: 0.9;
+  }
+  .groep i:nth-child(2) {
+    rotate: 2.5deg;
+  }
+  .groep i:nth-child(4) {
+    rotate: -2deg;
+  }
+  .groep.vol::after {
+    content: '';
+    position: absolute;
+    left: -2px;
+    right: -2px;
+    top: 50%;
+    height: 2.5px;
+    border-radius: 2px;
+    background: currentColor;
+    rotate: -22deg;
+    opacity: 0.9;
+  }
+  .op {
+    color: var(--krijt-groen);
+  }
+  .neer {
+    color: var(--krijt-roos);
+  }
+  .nul {
+    color: var(--krijt-dof);
+  }
+  .cijfer {
+    font-family: Archivo, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---- contracten ---- */
+
+  .contracten {
+    margin-top: 1.6rem;
+    padding-top: 1.2rem;
+    border-top: 2px solid rgb(242 240 230 / 0.18);
+  }
+  .kolommen {
+    display: grid;
+    gap: 1.1rem 1.6rem;
+  }
+  @media (min-width: 36rem) {
+    .kolommen {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  h3 {
+    margin: 0 0 0.6rem;
+    font-family: Caveat, cursive;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--krijt-blauw);
+  }
+  .keuzes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem 0.9rem;
+  }
+  .keuze {
+    position: relative;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    padding: 0.3rem 0.55rem;
+    font-family: Caveat, cursive;
+    font-weight: 700;
+    font-size: 1.45rem;
+    line-height: 1.05;
+    color: var(--krijt);
+  }
+  .keuze.uit {
+    color: rgb(242 240 230 / 0.22);
+    cursor: not-allowed;
+  }
+  .keuze.aan::after {
+    content: '';
+    position: absolute;
+    inset: -0.3rem -0.55rem;
+    border: 3px solid var(--krijt-geel);
+    border-radius: 55% 45% 52% 48% / 62% 38% 60% 40%;
+    rotate: -2.5deg;
+  }
+
+  .slagen {
+    margin-top: 1.2rem;
+  }
+  .rij {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+  .n {
+    width: 2.1rem;
+    height: 2.1rem;
+    display: grid;
+    place-items: center;
+    background: none;
+    cursor: pointer;
+    font: 700 0.95rem Archivo, sans-serif;
+    color: var(--krijt-dof);
+    border: 2px solid rgb(242 240 230 / 0.14);
+    border-radius: 46% 54% 51% 49% / 53% 47% 52% 48%;
+  }
+  .n.genoeg {
+    color: var(--krijt);
+    border-color: rgb(242 240 230 / 0.35);
+  }
+  .n.aan {
+    color: var(--lei);
+    background: var(--krijt);
+    border-color: var(--krijt);
+  }
+
+  .afsluit {
+    margin-top: 1.3rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+  }
+  .bericht {
+    font-family: Caveat, cursive;
+    font-weight: 500;
+    font-size: 1.45rem;
+    color: var(--krijt-dof);
+  }
+  .wis {
+    background: none;
+    border: 0;
+    cursor: pointer;
+    font-family: Caveat, cursive;
+    font-size: 1.3rem;
+    color: var(--krijt-dof);
+    text-decoration: underline wavy rgb(242 240 230 / 0.3);
+  }
+  .opslaan {
+    cursor: pointer;
+    padding: 0.5rem 1.5rem;
+    font-family: Caveat, cursive;
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: var(--lei);
+    background: var(--krijt-geel);
+    border: 0;
+    border-radius: 48% 52% 47% 53% / 55% 45% 58% 42%;
+    box-shadow: 0 0 26px -8px var(--krijt-geel);
+  }
+
+  /* ---- het bord rechts ---- */
+
+  .bord h2 {
+    margin: 0 0 0.2rem;
+    font-family: Caveat, cursive;
+    font-weight: 700;
+    font-size: 2.1rem;
+    line-height: 1;
+  }
+  .bord .sub {
+    font-size: 0.6rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--krijt-dof);
+  }
+  table {
+    width: 100%;
+    margin-top: 0.9rem;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  thead th {
+    padding-bottom: 0.4rem;
+    font-family: Caveat, cursive;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--krijt-blauw);
+    text-align: right;
+    border-bottom: 2px solid rgb(242 240 230 / 0.25);
+  }
+  thead th:first-child {
+    text-align: left;
+  }
+  tbody td {
+    padding: 0.4rem 0.25rem;
+    text-align: right;
+    font-weight: 700;
+    border-bottom: 1px solid rgb(242 240 230 / 0.1);
+  }
+  tbody td:first-child {
+    text-align: left;
+    font-weight: 400;
+  }
+  .ronde {
+    font-family: Caveat, cursive;
+    font-weight: 700;
+    font-size: 1.15rem;
+    display: block;
+    line-height: 1.05;
+  }
+  .wie {
+    display: block;
+    font-size: 0.62rem;
+    color: var(--krijt-dof);
+  }
+  tfoot td {
+    padding-top: 0.6rem;
+    text-align: right;
+    font-family: Caveat, cursive;
+    font-weight: 700;
+    font-size: 1.7rem;
+    border-top: 3px double rgb(242 240 230 / 0.4);
+  }
+  tfoot td:first-child {
+    text-align: left;
+    font-size: 1.25rem;
+    color: var(--krijt-dof);
+  }
+  .geel {
+    color: var(--krijt-geel);
+  }
+
+  .poef {
+    margin-top: 1.4rem;
+    padding: 0.7rem 0.9rem;
+    border: 2px solid rgb(242 240 230 / 0.2);
+    border-radius: 0.3rem;
+    font-family: Caveat, cursive;
+    font-size: 1.2rem;
+    color: var(--krijt-dof);
+    rotate: -0.6deg;
+  }
+  .poef b {
+    color: var(--krijt);
+  }
+
+  footer {
+    margin-top: 1.8rem;
+    padding-top: 1rem;
+    border-top: 2px solid rgb(242 240 230 / 0.14);
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--krijt-dof);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--krijt-geel);
+    outline-offset: 3px;
+  }
+</style>
+
+<div class="lijst">
+  <header>
+    <div>
+      <h1>
+        Wiezen
+        <span class="streep"></span>
+        <span class="kleuren">Kleurenwiezen &middot; vier man &middot; ronde 5</span>
+      </h1>
+    </div>
+    <nav>
+      <button class="tab aan">Tafel</button>
+      <button class="tab">Archief</button>
+      <button class="tab">Instellingen</button>
+      <button class="tab">Nieuw spel</button>
+      <span class="doodle">&spades;&hearts;&diams;&clubs;</span>
+    </nav>
+  </header>
+
+  <main>
+    <div>
+      <div class="tafel">
+        <button class="zetel-n speler">
+          <span class="naam">Gert <span class="prev neer">&minus;3</span></span>
+          <span class="turven nul">
+            <span class="cijfer">0</span>
+          </span>
+        </button>
+
+        <button class="zetel-w speler">
+          <span class="naam">Lieve <span class="d">deelt</span></span>
+          <span class="turven neer">
+            <span class="groep vol"><i></i><i></i><i></i><i></i></span>
+            <span class="groep vol"><i></i><i></i><i></i><i></i></span>
+            <span class="groep vol"><i></i><i></i><i></i><i></i></span>
+            <span class="groep vol"><i></i><i></i><i></i><i></i></span>
+            <span class="groep vol"><i></i><i></i><i></i><i></i></span>
+            <span class="groep"><i></i></span>
+            <span class="cijfer">&minus;26</span>
+          </span>
+        </button>
+
+        <div class="blad">
+          <span class="label">Pot</span>
+          <span class="som">12</span>
+          <span class="turven geel" style="justify-content: center">
+            <span class="groep vol"><i></i><i></i><i></i><i></i></span>
+            <span class="groep vol"><i></i><i></i><i></i><i></i></span>
+            <span class="groep"><i></i><i></i></span>
+          </span>
+        </div>
+
+        <button class="zetel-o speler speelt">
+          <span class="naam">Guido <span class="prev op">+3</span></span>
+          <span class="turven op">
+            <span class="groep vol"><i></i><i></i><i></i><i></i></span>
+            <span class="groep"><i></i><i></i><i></i></span>
+            <span class="cijfer">+8</span>
+          </span>
+        </button>
+
+        <button class="zetel-z speler speelt">
+          <span class="naam">Wouter <span class="prev op">+3</span></span>
+          <span class="turven op">
+            <span class="groep vol"><i></i><i></i><i></i><i></i></span>
+            <span class="groep"><i></i></span>
+            <span class="cijfer">+6</span>
+          </span>
+        </button>
+      </div>
+
+      <section class="contracten">
+        <div class="kolommen">
+          <div>
+            <h3>Om de punten</h3>
+            <div class="keuzes">
+              <button class="keuze aan">Vragen</button>
+              <button class="keuze">Troel</button>
+              <button class="keuze uit">Alleen gaan</button>
+            </div>
+          </div>
+          <div>
+            <h3>Om de pot</h3>
+            <div class="keuzes">
+              <button class="keuze uit">Abondance</button>
+              <button class="keuze">Miserie</button>
+              <button class="keuze">Miserie op tafel</button>
+              <button class="keuze uit">Solo slim</button>
+              <button class="keuze uit">Iedereen past</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="slagen">
+          <h3>Slagen &mdash; 8 nodig</h3>
+          <div class="rij">
+            <button class="n">0</button>
+            <button class="n">1</button>
+            <button class="n">2</button>
+            <button class="n">3</button>
+            <button class="n">4</button>
+            <button class="n">5</button>
+            <button class="n">6</button>
+            <button class="n">7</button>
+            <button class="n genoeg">8</button>
+            <button class="n aan">9</button>
+            <button class="n genoeg">10</button>
+            <button class="n genoeg">11</button>
+            <button class="n genoeg">12</button>
+            <button class="n genoeg">13</button>
+          </div>
+        </div>
+
+        <div class="afsluit">
+          <p class="bericht">Wouter en Guido samen &mdash; 9 van de 8 slagen</p>
+          <div style="display: flex; gap: 1rem; align-items: center">
+            <button class="wis">wissen</button>
+            <button class="opslaan">Ronde opslaan</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="bord">
+      <h2>Scorebord</h2>
+      <span class="sub">4 rondes &middot; + correctie</span>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Ronde</th>
+            <th>Wo</th>
+            <th>Ge</th>
+            <th>Gu</th>
+            <th>Li</th>
+            <th>Pot</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span class="ronde">Vragen</span>
+              <span class="wie">Wouter + Gert &middot; 9 slagen</span>
+            </td>
+            <td class="op">+3</td>
+            <td class="op">+3</td>
+            <td class="neer">&minus;3</td>
+            <td class="neer">&minus;3</td>
+            <td class="nul">0</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="ronde">Alleen gaan</span>
+              <span class="wie">Guido &middot; 6 slagen</span>
+            </td>
+            <td class="neer">&minus;2</td>
+            <td class="neer">&minus;2</td>
+            <td class="op">+6</td>
+            <td class="neer">&minus;2</td>
+            <td class="nul">0</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="ronde">Iedereen past</span>
+              <span class="wie">Gert 2 &middot; Lieve 2</span>
+            </td>
+            <td class="nul">0</td>
+            <td class="neer">&minus;6</td>
+            <td class="nul">0</td>
+            <td class="neer">&minus;6</td>
+            <td class="geel">12</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="ronde">Miserie</span>
+              <span class="wie">Lieve &middot; mislukt</span>
+            </td>
+            <td class="op">+5</td>
+            <td class="op">+5</td>
+            <td class="op">+5</td>
+            <td class="neer">&minus;15</td>
+            <td class="nul">12</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>Totaal</td>
+            <td class="op">6</td>
+            <td class="nul">0</td>
+            <td class="op">8</td>
+            <td class="neer">&minus;26</td>
+            <td class="geel">12</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <p class="poef">Nog op de poef: <b>Guido</b> &mdash; 3 pintjes.</p>
+    </aside>
+  </main>
+
+  <footer>
+    Klik een zetel om die speler te laten spelen &middot; rechtsklik zet de deler &middot;
+    dubbelklik een naam om te hernoemen
+  </footer>
+</div>

@@ -1,0 +1,918 @@
+<!doctype html>
+<title>Stamcafé</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=Special+Elite&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  :root {
+    --eik: #3b2517;
+    --eik-diep: #1d0f07;
+    --eik-licht: #55341f;
+    --messing: #c8973f;
+    --messing-diep: #7d5a1e;
+    --nicotine: #f0e3c6;
+    --vilt: #1e5c42;
+    --vilt-diep: #123a2a;
+    --rood: #a8362a;
+    --papier: #e8dfc9;
+  }
+  :root {
+    --nicotine-dof: #b0a084;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--nicotine);
+    font-family: Archivo, system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--eik-diep);
+    background-image:
+      radial-gradient(120% 70% at 50% -8%, rgb(255 214 140 / 0.22), transparent 60%),
+      repeating-linear-gradient(
+        90deg,
+        rgb(0 0 0 / 0.28) 0 2px,
+        transparent 2px 62px,
+        rgb(255 255 255 / 0.035) 62px 64px,
+        transparent 64px 124px
+      ),
+      linear-gradient(180deg, var(--eik-licht), var(--eik) 42%, var(--eik-diep));
+    background-attachment: fixed;
+  }
+
+  .lambrisering {
+    position: fixed;
+    inset: auto 0 0 0;
+    height: 34vh;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, transparent, rgb(0 0 0 / 0.45)),
+      repeating-linear-gradient(90deg, rgb(0 0 0 / 0.35) 0 3px, transparent 3px 92px);
+    border-top: 3px solid rgb(0 0 0 / 0.5);
+  }
+
+  .app {
+    position: relative;
+    max-width: 76rem;
+    margin: 0 auto;
+    padding: 0 1rem 4rem;
+  }
+
+  /* ---- het uithangbord ---- */
+
+  .uithang {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 3.4rem;
+  }
+
+  .kettingen {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    translate: -50% 0;
+    width: 15rem;
+    height: 3.4rem;
+    display: flex;
+    justify-content: space-between;
+  }
+  .ketting {
+    width: 6px;
+    background:
+      radial-gradient(circle at 50% 25%, var(--messing) 2.5px, transparent 3px) 0 0 / 6px 11px
+        repeat-y,
+      linear-gradient(90deg, transparent 2px, rgb(0 0 0 / 0.5) 2px 4px, transparent 4px);
+    opacity: 0.9;
+  }
+
+  .bord {
+    position: relative;
+    transform-origin: 50% -3.4rem;
+    animation: wieg 7s ease-in-out infinite;
+    padding: 0.7rem 2.6rem 0.9rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    background: linear-gradient(168deg, #b8302a, #7e1f1c 55%, #5c1512);
+    box-shadow:
+      inset 0 0 0 4px var(--nicotine),
+      inset 0 0 0 7px #7e1f1c,
+      inset 0 3px 12px rgb(255 255 255 / 0.22),
+      0 18px 34px -16px #000;
+  }
+  @keyframes wieg {
+    0%,
+    100% {
+      rotate: -0.7deg;
+    }
+    50% {
+      rotate: 0.7deg;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bord {
+      animation: none;
+    }
+  }
+
+  .bord::before,
+  .bord::after {
+    content: '';
+    position: absolute;
+    top: 0.42rem;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #f0d79a, var(--messing) 55%, #6a4a15);
+  }
+  .bord::before {
+    left: 0.5rem;
+  }
+  .bord::after {
+    right: 0.5rem;
+  }
+
+  .bord h1 {
+    margin: 0;
+    font-family: Anton, Impact, sans-serif;
+    font-size: clamp(2.6rem, 7vw, 4.2rem);
+    line-height: 0.92;
+    letter-spacing: 0.06em;
+    color: var(--nicotine);
+    text-shadow:
+      0 2px 0 #4a100e,
+      0 5px 14px rgb(0 0 0 / 0.5);
+  }
+  .bord .ondertitel {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: #f0c9a3;
+  }
+  .pips {
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.5em;
+    color: var(--nicotine);
+    opacity: 0.75;
+  }
+
+  /* ---- messing balk ---- */
+
+  .balk {
+    margin: 1.8rem 0 1.4rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    padding: 0.45rem 0.6rem;
+    border-radius: 0.4rem;
+    background: linear-gradient(180deg, #4b2e1c, #2a1810);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.09),
+      inset 0 -2px 0 rgb(0 0 0 / 0.4);
+    border: 1px solid rgb(0 0 0 / 0.45);
+  }
+  .plaatjes {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .plaatje {
+    font: 600 0.78rem/1 Archivo, sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 0.6rem 1rem;
+    border-radius: 0.25rem;
+    color: #e9cf9c;
+    background: linear-gradient(180deg, #40281a, #2b1a10);
+    border: 1px solid rgb(200 151 63 / 0.35);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08);
+    cursor: pointer;
+  }
+  .plaatje.aan {
+    color: #2b1a10;
+    background: linear-gradient(180deg, #f0d79a, var(--messing) 55%, #9a712a);
+    border-color: #f0d79a;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.6),
+      0 0 22px -6px var(--messing);
+  }
+  .poef {
+    font-family: 'Special Elite', Courier, monospace;
+    font-size: 0.8rem;
+    color: #d8b98a;
+    padding-right: 0.4rem;
+  }
+  .poef b {
+    color: var(--messing);
+  }
+
+  /* ---- indeling ---- */
+
+  main {
+    display: grid;
+    gap: 1.6rem;
+    align-items: start;
+  }
+  @media (min-width: 66rem) {
+    main {
+      grid-template-columns: minmax(0, 1fr) 25rem;
+    }
+  }
+
+  /* ---- de tafel onder de lamp ---- */
+
+  .tafelzone {
+    position: relative;
+    padding: 3.2rem 0 1rem;
+  }
+  .lamp {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    translate: -50% 0;
+    width: 4.4rem;
+  }
+  .kap {
+    height: 1.9rem;
+    background: linear-gradient(180deg, #7d5a1e, var(--messing) 40%, #5e4415);
+    clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
+    border-radius: 0.2rem 0.2rem 0.4rem 0.4rem;
+  }
+  .kap::after {
+    content: '';
+    display: block;
+    position: relative;
+    top: 1.75rem;
+    height: 6px;
+    border-radius: 50%;
+    background: #ffe6a8;
+    box-shadow: 0 0 26px 10px rgb(255 220 150 / 0.55);
+  }
+  .schijnsel {
+    position: absolute;
+    top: 1.7rem;
+    left: 50%;
+    translate: -50% 0;
+    width: min(34rem, 88%);
+    height: 22rem;
+    pointer-events: none;
+    background: radial-gradient(60% 70% at 50% 0%, rgb(255 220 150 / 0.24), transparent 72%);
+    clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%);
+  }
+
+  .tafel {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1.15fr 1fr;
+    grid-template-rows: auto minmax(9rem, auto) auto;
+    gap: 0.7rem;
+    place-items: center;
+  }
+  .zetel-n {
+    grid-area: 1 / 2;
+  }
+  .zetel-w {
+    grid-area: 2 / 1;
+  }
+  .zetel-o {
+    grid-area: 2 / 3;
+  }
+  .zetel-z {
+    grid-area: 3 / 2;
+  }
+  .blad {
+    grid-area: 2 / 2;
+    width: 100%;
+    aspect-ratio: 1.35;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.2rem;
+    border-radius: 50%;
+    background:
+      radial-gradient(70% 60% at 50% 24%, rgb(255 240 200 / 0.16), transparent 62%),
+      linear-gradient(180deg, #24704f, var(--vilt) 55%, var(--vilt-diep));
+    border: 5px solid var(--messing-diep);
+    box-shadow:
+      0 26px 44px -22px #000,
+      inset 0 2px 24px rgb(0 0 0 / 0.5);
+  }
+  .blad .label {
+    font-size: 0.55rem;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: rgb(240 227 198 / 0.5);
+  }
+  .fiches {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    margin: 0.15rem 0 0.3rem;
+  }
+  .fiche {
+    width: 2.4rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    box-shadow:
+      inset 0 0 0 2px rgb(255 255 255 / 0.3),
+      0 1px 2px rgb(0 0 0 / 0.55);
+  }
+  .fiche.r {
+    background: linear-gradient(180deg, #d4695c, var(--rood) 55%, #6d1f16);
+  }
+  .fiche.w {
+    background: linear-gradient(180deg, #fff, #e5dcc4 55%, #9c9280);
+  }
+  .pot-getal {
+    font-family: Anton, sans-serif;
+    font-size: 2.1rem;
+    line-height: 1;
+    color: var(--messing);
+    text-shadow: 0 2px 0 rgb(0 0 0 / 0.5);
+  }
+
+  /* ---- naamplaatjes ---- */
+
+  .naamplaat {
+    width: 100%;
+    max-width: 15rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.65rem;
+    border-radius: 0.3rem;
+    background: linear-gradient(168deg, #3a2416, #22140c);
+    border: 1px solid rgb(200 151 63 / 0.22);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.07),
+      0 10px 20px -14px #000;
+  }
+  .naamplaat.speelt {
+    background: linear-gradient(168deg, #6b4a18, #3a2610);
+    border-color: var(--messing);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.2),
+      0 0 30px -8px var(--messing);
+  }
+  .kop {
+    flex: none;
+    width: 2.3rem;
+    height: 2.3rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    font: 700 0.85rem Archivo, sans-serif;
+    color: #2b1a10;
+    background: linear-gradient(180deg, #f0d79a, #c8973f);
+    border: 2px solid rgb(0 0 0 / 0.3);
+  }
+  .naam {
+    display: block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgb(240 227 198 / 0.6);
+  }
+  .punten {
+    display: block;
+    font-family: Anton, sans-serif;
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+  .op {
+    color: #8fd8a8;
+  }
+  .neer {
+    color: #e08477;
+  }
+  .nul {
+    color: rgb(240 227 198 / 0.55);
+  }
+  .voorbeeld {
+    margin-left: auto;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.25rem;
+    border: 1px solid currentColor;
+  }
+  .deler {
+    margin-left: auto;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    font: 700 0.75rem Anton, sans-serif;
+    color: #2b1a10;
+    background: linear-gradient(180deg, #f0d79a, #c8973f);
+    box-shadow: 0 4px 10px -3px #000;
+  }
+
+  /* ---- contracten ---- */
+
+  .kaart {
+    margin-top: 1.4rem;
+    border-radius: 0.5rem;
+    background: linear-gradient(180deg, rgb(58 36 22 / 0.9), rgb(28 17 10 / 0.94));
+    border: 1px solid rgb(0 0 0 / 0.5);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.08),
+      0 16px 30px -22px #000;
+    overflow: hidden;
+  }
+  .kaart > .streep {
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--messing), transparent);
+  }
+  .groepen {
+    display: grid;
+    gap: 1rem 1.4rem;
+    padding: 1rem;
+  }
+  @media (min-width: 34rem) {
+    .groepen {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .groep h3 {
+    margin: 0 0 0.55rem;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: #a5896a;
+  }
+  .knoppen {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.45rem;
+  }
+  .tap {
+    font: 600 0.82rem Archivo, sans-serif;
+    padding: 0.7rem 0.5rem;
+    border-radius: 0.3rem;
+    color: #ecd9b4;
+    background: linear-gradient(180deg, #3d2517, #26160d);
+    border: 1px solid rgb(200 151 63 / 0.28);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.07);
+    cursor: pointer;
+  }
+  .tap.aan {
+    color: #2b1a10;
+    background: linear-gradient(180deg, #f0d79a, var(--messing) 55%, #9a712a);
+    border-color: #f0d79a;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.6),
+      0 0 24px -6px var(--messing);
+  }
+  .tap.uit {
+    color: rgb(236 217 180 / 0.25);
+    border-color: rgb(255 255 255 / 0.05);
+    background: rgb(0 0 0 / 0.25);
+    cursor: not-allowed;
+  }
+  .slagenrij {
+    padding: 0 1rem 1rem;
+  }
+  .slagenrij h3 {
+    margin: 0 0 0.5rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: #a5896a;
+  }
+  .slagen {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.3rem;
+  }
+  .slag {
+    padding: 0.45rem 0;
+    border-radius: 0.25rem;
+    font: 700 0.82rem Archivo, sans-serif;
+    color: #b9a58a;
+    background: rgb(0 0 0 / 0.3);
+    border: 1px solid rgb(255 255 255 / 0.05);
+    cursor: pointer;
+  }
+  .slag.genoeg {
+    color: #ecd9b4;
+    background: rgb(30 92 66 / 0.55);
+  }
+  .slag.aan {
+    color: #2b1a10;
+    background: var(--nicotine);
+  }
+  .voet {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+    padding: 0.8rem 1rem;
+    border-top: 1px solid rgb(0 0 0 / 0.5);
+    background: rgb(0 0 0 / 0.28);
+  }
+  .bericht {
+    font-family: 'Special Elite', Courier, monospace;
+    font-size: 0.85rem;
+    color: #d8b98a;
+  }
+  .knop-wis {
+    font: 600 0.8rem Archivo, sans-serif;
+    padding: 0.65rem 1rem;
+    border-radius: 0.3rem;
+    color: #a5896a;
+    background: transparent;
+    border: 1px solid rgb(255 255 255 / 0.14);
+    cursor: pointer;
+  }
+  .knop-op {
+    font: 700 0.92rem Archivo, sans-serif;
+    letter-spacing: 0.04em;
+    padding: 0.65rem 1.5rem;
+    border-radius: 0.3rem;
+    color: #2b1a10;
+    background: linear-gradient(180deg, #f0d79a, var(--messing) 55%, #9a712a);
+    border: 1px solid #f0d79a;
+    box-shadow: 0 8px 18px -10px var(--messing);
+    cursor: pointer;
+  }
+
+  /* ---- de rekening ---- */
+
+  .rekening {
+    position: relative;
+    padding: 0.75rem 0.75rem 1.1rem;
+    border-radius: 0.35rem;
+    background: #2a1a11;
+    border: 1px solid rgb(0 0 0 / 0.6);
+    box-shadow: 0 20px 34px -24px #000;
+  }
+  .klem {
+    position: absolute;
+    top: -0.7rem;
+    left: 50%;
+    translate: -50% 0;
+    width: 6rem;
+    height: 1.4rem;
+    border-radius: 0.2rem;
+    background: linear-gradient(180deg, #f0d79a, var(--messing) 45%, #6a4a15);
+    box-shadow: 0 6px 12px -6px #000;
+  }
+  .blaadje {
+    padding: 1.2rem 0.9rem 1rem;
+    border-radius: 0.15rem;
+    color: #2c2419;
+    background:
+      repeating-linear-gradient(180deg, transparent 0 27px, rgb(60 90 140 / 0.16) 27px 28px),
+      linear-gradient(180deg, #f3ecd8, var(--papier));
+    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08);
+  }
+  .blaadje h2 {
+    margin: 0 0 0.6rem;
+    font-family: 'Special Elite', Courier, monospace;
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .blaadje h2 span {
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #8a5a4a;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+  thead th {
+    font-size: 0.55rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #7d6b52;
+    font-weight: 600;
+    padding-bottom: 0.3rem;
+    text-align: right;
+  }
+  thead th:first-child {
+    text-align: left;
+  }
+  tbody td {
+    padding: 0.28rem 0.2rem;
+    text-align: right;
+    border-top: 1px solid rgb(0 0 0 / 0.08);
+    font-weight: 700;
+  }
+  tbody td:first-child {
+    text-align: left;
+    font-weight: 500;
+  }
+  .ronde {
+    font-family: 'Special Elite', Courier, monospace;
+    font-size: 0.82rem;
+  }
+  .wie {
+    display: block;
+    font-family: Archivo, sans-serif;
+    font-size: 0.62rem;
+    color: #7d6b52;
+  }
+  .p {
+    color: #1d5e3a;
+  }
+  .m {
+    color: #9a2b1f;
+  }
+  .o {
+    color: #9a9282;
+  }
+  tfoot td {
+    padding-top: 0.5rem;
+    border-top: 2px solid #9a2b1f;
+    text-align: right;
+    font-family: Anton, sans-serif;
+    font-size: 1.15rem;
+  }
+  tfoot td:first-child {
+    text-align: left;
+    font-family: 'Special Elite', monospace;
+    font-size: 0.8rem;
+  }
+
+  .viltje {
+    margin-top: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-family: 'Special Elite', monospace;
+    font-size: 0.75rem;
+    color: #bfa484;
+  }
+  .mat {
+    flex: none;
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    font-size: 0.5rem;
+    line-height: 1.1;
+    letter-spacing: 0.1em;
+    color: #7e1f1c;
+    background: #e8dfc9;
+    border: 3px double #b8302a;
+    rotate: -8deg;
+  }
+
+  footer {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.72rem;
+    color: #9c866a;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--messing);
+    outline-offset: 2px;
+  }
+</style>
+
+<div class="lambrisering"></div>
+
+<div class="app">
+  <div class="uithang">
+    <div class="kettingen">
+      <div class="ketting"></div>
+      <div class="ketting"></div>
+    </div>
+    <div class="bord">
+      <h1>WIEZEN</h1>
+      <span class="ondertitel">Kleurenwiezen &middot; vier man</span>
+      <div class="pips">&spades; &hearts; &diams; &clubs;</div>
+    </div>
+  </div>
+
+  <div class="balk">
+    <div class="plaatjes">
+      <button class="plaatje aan">Tafel</button>
+      <button class="plaatje">Archief</button>
+      <button class="plaatje">Instellingen</button>
+      <button class="plaatje">Nieuw spel</button>
+    </div>
+    <div class="poef">Ronde <b>5</b> &middot; pot <b>12</b> &middot; Lieve deelt</div>
+  </div>
+
+  <main>
+    <div>
+      <div class="tafelzone">
+        <div class="lamp"><div class="kap"></div></div>
+        <div class="schijnsel"></div>
+
+        <div class="tafel">
+          <div class="zetel-n naamplaat">
+            <span class="kop">G</span>
+            <span>
+              <span class="naam">Gert</span>
+              <span class="punten nul">0</span>
+            </span>
+            <span class="voorbeeld neer">&minus;3</span>
+          </div>
+
+          <div class="zetel-w naamplaat">
+            <span class="kop">L</span>
+            <span>
+              <span class="naam">Lieve</span>
+              <span class="punten neer">&minus;26</span>
+            </span>
+            <span class="deler" title="Deler">D</span>
+          </div>
+
+          <div class="blad">
+            <span class="label">Pot</span>
+            <div class="fiches">
+              <span class="fiche w"></span>
+              <span class="fiche r"></span>
+              <span class="fiche w"></span>
+            </div>
+            <span class="pot-getal">12</span>
+          </div>
+
+          <div class="zetel-o naamplaat speelt">
+            <span class="kop">G</span>
+            <span>
+              <span class="naam">Guido</span>
+              <span class="punten op">+8</span>
+            </span>
+            <span class="voorbeeld op">+3</span>
+          </div>
+
+          <div class="zetel-z naamplaat speelt">
+            <span class="kop">W</span>
+            <span>
+              <span class="naam">Wouter</span>
+              <span class="punten op">+6</span>
+            </span>
+            <span class="voorbeeld op">+3</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="kaart">
+        <div class="streep"></div>
+        <div class="groepen">
+          <div class="groep">
+            <h3>Om de punten</h3>
+            <div class="knoppen">
+              <button class="tap aan">Vragen</button>
+              <button class="tap">Troel</button>
+              <button class="tap uit">Alleen gaan</button>
+              <button class="tap uit">Abondance</button>
+            </div>
+          </div>
+          <div class="groep">
+            <h3>Om de pot</h3>
+            <div class="knoppen">
+              <button class="tap">Miserie</button>
+              <button class="tap">Miserie op tafel</button>
+              <button class="tap uit">Solo slim</button>
+              <button class="tap uit">Iedereen past</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="slagenrij">
+          <h3>Slagen &middot; 8 nodig</h3>
+          <div class="slagen">
+            <button class="slag">0</button>
+            <button class="slag">1</button>
+            <button class="slag">2</button>
+            <button class="slag">3</button>
+            <button class="slag">4</button>
+            <button class="slag">5</button>
+            <button class="slag">6</button>
+            <button class="slag">7</button>
+            <button class="slag genoeg">8</button>
+            <button class="slag aan">9</button>
+            <button class="slag genoeg">10</button>
+            <button class="slag genoeg">11</button>
+            <button class="slag genoeg">12</button>
+            <button class="slag genoeg">13</button>
+          </div>
+        </div>
+
+        <div class="voet">
+          <p class="bericht">Vragen &mdash; 9 van de 8 slagen</p>
+          <div style="display: flex; gap: 0.5rem">
+            <button class="knop-wis">Wissen</button>
+            <button class="knop-op">Ronde opslaan</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="rekening">
+      <div class="klem"></div>
+      <div class="blaadje">
+        <h2>Scorebord <span>+ correctie</span></h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Ronde</th>
+              <th>Wouter</th>
+              <th>Gert</th>
+              <th>Guido</th>
+              <th>Lieve</th>
+              <th>Pot</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span class="ronde">1. Vragen</span>
+                <span class="wie">Wouter + Gert &middot; 9 slagen</span>
+              </td>
+              <td class="p">+3</td>
+              <td class="p">+3</td>
+              <td class="m">&minus;3</td>
+              <td class="m">&minus;3</td>
+              <td class="o">0</td>
+            </tr>
+            <tr>
+              <td>
+                <span class="ronde">2. Alleen gaan</span>
+                <span class="wie">Guido &middot; 6 slagen</span>
+              </td>
+              <td class="m">&minus;2</td>
+              <td class="m">&minus;2</td>
+              <td class="p">+6</td>
+              <td class="m">&minus;2</td>
+              <td class="o">0</td>
+            </tr>
+            <tr>
+              <td>
+                <span class="ronde">3. Iedereen past</span>
+                <span class="wie">Gert 2 &middot; Lieve 2</span>
+              </td>
+              <td class="o">0</td>
+              <td class="m">&minus;6</td>
+              <td class="o">0</td>
+              <td class="m">&minus;6</td>
+              <td class="p">12</td>
+            </tr>
+            <tr>
+              <td>
+                <span class="ronde">4. Miserie</span>
+                <span class="wie">Lieve &middot; mislukt</span>
+              </td>
+              <td class="p">+5</td>
+              <td class="p">+5</td>
+              <td class="p">+5</td>
+              <td class="m">&minus;15</td>
+              <td class="o">12</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Totaal</td>
+              <td class="p">6</td>
+              <td class="o">0</td>
+              <td class="p">8</td>
+              <td class="m">&minus;26</td>
+              <td style="color: #9a6a1f">12</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="viltje">
+        <div class="mat">SINDS<br />1897</div>
+        <p style="margin: 0">Wie de pot wint, betaalt de volgende ronde.</p>
+      </div>
+    </aside>
+  </main>
+
+  <footer>
+    Klik een zetel om die speler te laten spelen &middot; rechtsklik zet de deler &middot;
+    dubbelklik een naam om te hernoemen
+  </footer>
+</div>

@@ -1,0 +1,803 @@
+<!doctype html>
+<title>Bierviltje</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&family=Archivo:wght@400;500;600;700&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  :root {
+    --karton: #e7ddc5;
+    --karton-diep: #d8cbad;
+    --inkt: #1b2a45;
+    --rood: #bb3326;
+    --goud: #b08a30;
+    --groen: #2f6b4a;
+    --dof: #7a7360;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    padding: clamp(1rem, 3vw, 2.4rem);
+    color: var(--inkt);
+    font-family: Archivo, system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--karton);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgb(27 42 69 / 0.1) 1px, transparent 1.5px),
+      radial-gradient(140% 90% at 50% -10%, rgb(255 255 255 / 0.5), transparent 60%);
+    background-size:
+      4px 4px,
+      auto;
+  }
+
+  /* drukkersmerken: dit vel komt van de pers */
+  .snijteken {
+    position: fixed;
+    width: 26px;
+    height: 26px;
+    pointer-events: none;
+    background:
+      linear-gradient(var(--rood) 0 0) center / 1px 100% no-repeat,
+      linear-gradient(var(--rood) 0 0) center / 100% 1px no-repeat;
+    opacity: 0.5;
+  }
+  .snijteken.lb {
+    left: 10px;
+    bottom: 10px;
+  }
+  .snijteken.rb {
+    right: 10px;
+    bottom: 10px;
+  }
+  .snijteken.rt {
+    right: 10px;
+    top: 10px;
+  }
+
+  .vel {
+    max-width: 74rem;
+    margin: 0 auto;
+  }
+
+  /* ---- de mat als kop ---- */
+
+  header {
+    display: grid;
+    gap: 1.4rem;
+    align-items: center;
+    justify-items: center;
+    text-align: center;
+    padding-bottom: 1.6rem;
+  }
+  @media (min-width: 56rem) {
+    header {
+      grid-template-columns: 15rem 1fr;
+      text-align: left;
+      justify-items: start;
+    }
+  }
+
+  .mat {
+    position: relative;
+    width: 15rem;
+    height: 15rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--karton);
+    box-shadow:
+      0 0 0 3px var(--rood),
+      0 0 0 6px var(--karton),
+      0 0 0 8px var(--inkt),
+      0 8px 0 -2px var(--karton-diep);
+  }
+  .mat svg {
+    position: absolute;
+    inset: 0;
+  }
+  .mat .kern {
+    text-align: center;
+    z-index: 1;
+  }
+  .mat .kern strong {
+    display: block;
+    font-family: Bevan, Georgia, serif;
+    font-size: 2.35rem;
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    color: var(--rood);
+  }
+  .mat .kern span {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.4em;
+    color: var(--inkt);
+  }
+
+  .kopregel h1 {
+    margin: 0;
+    font-family: Bevan, Georgia, serif;
+    font-size: clamp(1.5rem, 3.4vw, 2.35rem);
+    line-height: 1.05;
+    color: var(--inkt);
+    text-wrap: balance;
+    max-width: 22ch;
+  }
+  .kopregel p {
+    margin: 0.6rem 0 1.1rem;
+    max-width: 46ch;
+    font-size: 0.92rem;
+    color: var(--dof);
+  }
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .tab {
+    cursor: pointer;
+    padding: 0.55rem 1.1rem;
+    font: 700 0.72rem Archivo, sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--inkt);
+    background: transparent;
+    border: 2px solid var(--inkt);
+    border-radius: 999px;
+  }
+  .tab.aan {
+    color: var(--karton);
+    background: var(--inkt);
+  }
+  .tab.rood {
+    color: var(--rood);
+    border-color: var(--rood);
+  }
+
+  /* ---- indeling ---- */
+
+  main {
+    display: grid;
+    gap: 2rem;
+    align-items: start;
+    border-top: 3px solid var(--inkt);
+    padding-top: 1.8rem;
+  }
+  @media (min-width: 68rem) {
+    main {
+      grid-template-columns: minmax(0, 1fr) 25rem;
+      gap: 2.6rem;
+    }
+  }
+
+  /* ---- viltjes op tafel ---- */
+
+  .tafel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem;
+  }
+  @media (min-width: 44rem) {
+    .tafel {
+      grid-template-columns: 1fr 11rem 1fr;
+      grid-template-rows: auto auto;
+      align-items: center;
+    }
+    .pot {
+      grid-area: 1 / 2 / 3 / 3;
+    }
+  }
+
+  .viltje {
+    position: relative;
+    padding: 0.85rem 0.9rem 0.95rem;
+    border-radius: 0.65rem;
+    background: var(--karton);
+    box-shadow:
+      0 0 0 2px var(--inkt),
+      0 0 0 5px var(--karton),
+      0 0 0 6px var(--inkt),
+      0 6px 0 -2px var(--karton-diep);
+    text-align: left;
+    cursor: pointer;
+    border: 0;
+    font: inherit;
+    color: inherit;
+  }
+  .viltje.speelt {
+    box-shadow:
+      0 0 0 2px var(--rood),
+      0 0 0 5px var(--karton),
+      0 0 0 6px var(--rood),
+      0 6px 0 -2px var(--karton-diep);
+    background:
+      radial-gradient(circle at 1px 1px, rgb(187 51 38 / 0.14) 1px, transparent 1.5px) 0 0 / 4px 4px,
+      var(--karton);
+  }
+  .viltje .rol {
+    font: 700 0.58rem Archivo, sans-serif;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--dof);
+  }
+  .viltje .naam {
+    display: block;
+    font-family: Bevan, Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.15;
+    margin: 0.1rem 0 0.35rem;
+  }
+  .viltje .score {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .viltje .score b {
+    font-family: Bevan, Georgia, serif;
+    font-size: 2.1rem;
+    line-height: 0.9;
+  }
+  .op {
+    color: var(--groen);
+  }
+  .neer {
+    color: var(--rood);
+  }
+  .nul {
+    color: var(--dof);
+  }
+  .prev {
+    font: 700 0.75rem Archivo, sans-serif;
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+    border: 2px solid currentColor;
+  }
+  .stempel {
+    position: absolute;
+    top: -0.6rem;
+    right: -0.5rem;
+    rotate: -12deg;
+    font: 700 0.6rem Archivo, sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.55rem;
+    color: var(--rood);
+    border: 2px solid var(--rood);
+    border-radius: 0.25rem;
+    background: var(--karton);
+  }
+
+  .pot {
+    display: grid;
+    place-items: center;
+    justify-self: center;
+  }
+  .stapel {
+    position: relative;
+    width: 9.5rem;
+    height: 9.5rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--karton);
+    box-shadow:
+      0 0 0 2px var(--goud),
+      0 0 0 5px var(--karton),
+      0 0 0 7px var(--goud),
+      0 5px 0 -1px var(--karton-diep),
+      0 11px 0 -2px var(--karton-diep),
+      0 17px 0 -3px var(--karton-diep);
+  }
+  .stapel .label {
+    font: 700 0.58rem Archivo, sans-serif;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--dof);
+    text-align: center;
+  }
+  .stapel .waarde {
+    font-family: Bevan, Georgia, serif;
+    font-size: 3rem;
+    line-height: 0.85;
+    color: var(--goud);
+  }
+
+  /* ---- de bestelbon ---- */
+
+  .bon {
+    margin-top: 2rem;
+    border: 3px solid var(--inkt);
+    border-radius: 0.35rem;
+    background: var(--karton);
+  }
+  .bon > h2 {
+    margin: 0;
+    padding: 0.55rem 1rem;
+    font-family: Bevan, Georgia, serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    color: var(--karton);
+    background: var(--inkt);
+  }
+  .groepen {
+    display: grid;
+    gap: 1.1rem 1.5rem;
+    padding: 1.1rem;
+  }
+  @media (min-width: 36rem) {
+    .groepen {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  h3 {
+    margin: 0 0 0.6rem;
+    font: 700 0.6rem Archivo, sans-serif;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--dof);
+    border-bottom: 2px solid var(--karton-diep);
+    padding-bottom: 0.35rem;
+  }
+  .lijst {
+    display: grid;
+    gap: 0.4rem;
+  }
+  .regel {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.35rem 0.5rem;
+    cursor: pointer;
+    background: none;
+    border: 2px solid transparent;
+    border-radius: 0.3rem;
+    font: 600 0.95rem Archivo, sans-serif;
+    color: var(--inkt);
+    text-align: left;
+  }
+  .regel .stippels {
+    flex: 1;
+    height: 0.55em;
+    border-bottom: 2px dotted var(--karton-diep);
+  }
+  .regel .inzet {
+    font-weight: 700;
+    color: var(--dof);
+  }
+  .regel.aan {
+    color: var(--karton);
+    background: var(--rood);
+    border-color: var(--rood);
+  }
+  .regel.aan .stippels {
+    border-bottom-color: rgb(231 221 197 / 0.45);
+  }
+  .regel.aan .inzet {
+    color: var(--karton);
+  }
+  .regel.uit {
+    color: rgb(27 42 69 / 0.28);
+    cursor: not-allowed;
+  }
+
+  .slagenvak {
+    padding: 0 1.1rem 1.1rem;
+  }
+  .slagen {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.35rem;
+  }
+  @media (min-width: 36rem) {
+    .slagen {
+      grid-template-columns: repeat(14, 1fr);
+    }
+  }
+  .n {
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font: 700 0.85rem Archivo, sans-serif;
+    color: var(--dof);
+    background: none;
+    border: 2px solid var(--karton-diep);
+    border-radius: 50%;
+  }
+  .n.genoeg {
+    color: var(--inkt);
+    border-color: var(--inkt);
+  }
+  .n.aan {
+    color: var(--karton);
+    background: var(--inkt);
+    border-color: var(--inkt);
+  }
+
+  .voet {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    padding: 0.9rem 1.1rem;
+    border-top: 3px solid var(--inkt);
+  }
+  .bericht {
+    margin: 0;
+    font-family: Bevan, Georgia, serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--dof);
+  }
+  .wis {
+    cursor: pointer;
+    padding: 0.6rem 1rem;
+    font: 700 0.72rem Archivo, sans-serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dof);
+    background: none;
+    border: 2px solid var(--karton-diep);
+    border-radius: 999px;
+  }
+  .opslaan {
+    cursor: pointer;
+    padding: 0.6rem 1.4rem;
+    font: 700 0.78rem Archivo, sans-serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--karton);
+    background: var(--rood);
+    border: 2px solid var(--rood);
+    border-radius: 999px;
+  }
+
+  /* ---- de rekening ---- */
+
+  aside {
+    border: 3px solid var(--inkt);
+    border-radius: 0.35rem;
+    padding: 1rem;
+  }
+  aside h2 {
+    margin: 0 0 0.15rem;
+    font-family: Bevan, Georgia, serif;
+    font-size: 1.35rem;
+  }
+  aside .sub {
+    font: 700 0.58rem Archivo, sans-serif;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--dof);
+  }
+  table {
+    width: 100%;
+    margin-top: 0.9rem;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  thead th {
+    padding: 0 0.2rem 0.35rem;
+    font: 700 0.55rem Archivo, sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--dof);
+    text-align: right;
+    border-bottom: 2px solid var(--inkt);
+  }
+  thead th:first-child {
+    text-align: left;
+  }
+  tbody td {
+    padding: 0.4rem 0.2rem;
+    text-align: right;
+    font-weight: 700;
+    border-bottom: 1px dotted var(--karton-diep);
+  }
+  tbody td:first-child {
+    text-align: left;
+    font-weight: 400;
+  }
+  .ronde {
+    display: block;
+    font-family: Bevan, Georgia, serif;
+    font-size: 0.82rem;
+    line-height: 1.2;
+  }
+  .wie {
+    display: block;
+    font-size: 0.62rem;
+    color: var(--dof);
+  }
+  tfoot td {
+    padding-top: 0.6rem;
+    text-align: right;
+    font-family: Bevan, Georgia, serif;
+    font-size: 1.2rem;
+    border-top: 3px double var(--inkt);
+  }
+  tfoot td:first-child {
+    text-align: left;
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--dof);
+  }
+  .goud {
+    color: var(--goud);
+  }
+
+  footer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 3px solid var(--inkt);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.6rem;
+    font-size: 0.72rem;
+    color: var(--dof);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--rood);
+    outline-offset: 3px;
+  }
+</style>
+
+<span class="snijteken lb"></span>
+<span class="snijteken rb"></span>
+<span class="snijteken rt"></span>
+
+<div class="vel">
+  <header>
+    <div class="mat">
+      <svg viewBox="0 0 240 240" aria-hidden="true">
+        <defs>
+          <path id="boog-boven" d="M 30 120 A 90 90 0 0 1 210 120" fill="none" />
+          <path id="boog-onder" d="M 34 120 A 86 86 0 0 0 206 120" fill="none" />
+        </defs>
+        <text
+          font-family="Archivo, sans-serif"
+          font-size="15"
+          font-weight="700"
+          letter-spacing="4"
+          fill="#1b2a45"
+        >
+          <textPath href="#boog-boven" startOffset="50%" text-anchor="middle">
+            KLEURENWIEZEN
+          </textPath>
+        </text>
+        <text
+          font-family="Archivo, sans-serif"
+          font-size="12"
+          font-weight="700"
+          letter-spacing="3.5"
+          fill="#b08a30"
+        >
+          <textPath href="#boog-onder" startOffset="50%" text-anchor="middle">
+            VIER MAN &#183; ÉÉN POT
+          </textPath>
+        </text>
+      </svg>
+      <div class="kern">
+        <strong>WIEZEN</strong>
+        <span>&spades;&hearts;&diams;&clubs;</span>
+      </div>
+    </div>
+
+    <div class="kopregel">
+      <h1>Het scorebord dat op de toog blijft liggen</h1>
+      <p>
+        Ronde 5 van de partij. Lieve deelt, de pot staat op 12 en Wouter en Guido zitten samen in
+        het spel.
+      </p>
+      <nav>
+        <button class="tab aan">Tafel</button>
+        <button class="tab">Archief</button>
+        <button class="tab">Instellingen</button>
+        <button class="tab rood">Nieuw spel</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div>
+      <div class="tafel">
+        <button class="viltje">
+          <span class="rol">Noord</span>
+          <span class="naam">Gert</span>
+          <span class="score"><b class="nul">0</b><span class="prev neer">&minus;3</span></span>
+        </button>
+
+        <button class="viltje speelt">
+          <span class="rol">Oost &middot; speelt</span>
+          <span class="naam">Guido</span>
+          <span class="score"><b class="op">+8</b><span class="prev op">+3</span></span>
+        </button>
+
+        <div class="pot">
+          <div class="stapel">
+            <div>
+              <span class="label">De pot</span>
+              <span class="waarde">12</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="viltje">
+          <span class="stempel">deelt</span>
+          <span class="rol">West</span>
+          <span class="naam">Lieve</span>
+          <span class="score"><b class="neer">&minus;26</b></span>
+        </button>
+
+        <button class="viltje speelt">
+          <span class="rol">Zuid &middot; speelt</span>
+          <span class="naam">Wouter</span>
+          <span class="score"><b class="op">+6</b><span class="prev op">+3</span></span>
+        </button>
+      </div>
+
+      <section class="bon">
+        <h2>Wat wordt het deze ronde?</h2>
+
+        <div class="groepen">
+          <div>
+            <h3>Om de punten</h3>
+            <div class="lijst">
+              <button class="regel aan">
+                Vragen <span class="stippels"></span><span class="inzet">2</span>
+              </button>
+              <button class="regel">
+                Troel <span class="stippels"></span><span class="inzet">4</span>
+              </button>
+              <button class="regel uit">
+                Alleen gaan <span class="stippels"></span><span class="inzet">2</span>
+              </button>
+            </div>
+          </div>
+          <div>
+            <h3>Om de pot</h3>
+            <div class="lijst">
+              <button class="regel uit">
+                Abondance <span class="stippels"></span><span class="inzet">15</span>
+              </button>
+              <button class="regel">
+                Miserie <span class="stippels"></span><span class="inzet">15</span>
+              </button>
+              <button class="regel">
+                Miserie op tafel <span class="stippels"></span><span class="inzet">30</span>
+              </button>
+              <button class="regel uit">
+                Solo slim <span class="stippels"></span><span class="inzet">50</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="slagenvak">
+          <h3>Slagen &middot; 8 nodig</h3>
+          <div class="slagen">
+            <button class="n">0</button>
+            <button class="n">1</button>
+            <button class="n">2</button>
+            <button class="n">3</button>
+            <button class="n">4</button>
+            <button class="n">5</button>
+            <button class="n">6</button>
+            <button class="n">7</button>
+            <button class="n genoeg">8</button>
+            <button class="n aan">9</button>
+            <button class="n genoeg">10</button>
+            <button class="n genoeg">11</button>
+            <button class="n genoeg">12</button>
+            <button class="n genoeg">13</button>
+          </div>
+        </div>
+
+        <div class="voet">
+          <p class="bericht">Vragen &mdash; 9 van de 8 slagen</p>
+          <div style="display: flex; gap: 0.5rem">
+            <button class="wis">Wissen</button>
+            <button class="opslaan">Ronde opslaan</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside>
+      <h2>Scorebord</h2>
+      <span class="sub">4 rondes &middot; + correctie</span>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Ronde</th>
+            <th>Wo</th>
+            <th>Ge</th>
+            <th>Gu</th>
+            <th>Li</th>
+            <th>Pot</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span class="ronde">Vragen</span>
+              <span class="wie">Wouter + Gert &middot; 9 slagen</span>
+            </td>
+            <td class="op">+3</td>
+            <td class="op">+3</td>
+            <td class="neer">&minus;3</td>
+            <td class="neer">&minus;3</td>
+            <td class="nul">0</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="ronde">Alleen gaan</span>
+              <span class="wie">Guido &middot; 6 slagen</span>
+            </td>
+            <td class="neer">&minus;2</td>
+            <td class="neer">&minus;2</td>
+            <td class="op">+6</td>
+            <td class="neer">&minus;2</td>
+            <td class="nul">0</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="ronde">Iedereen past</span>
+              <span class="wie">Gert 2 &middot; Lieve 2</span>
+            </td>
+            <td class="nul">0</td>
+            <td class="neer">&minus;6</td>
+            <td class="nul">0</td>
+            <td class="neer">&minus;6</td>
+            <td class="goud">12</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="ronde">Miserie</span>
+              <span class="wie">Lieve &middot; mislukt</span>
+            </td>
+            <td class="op">+5</td>
+            <td class="op">+5</td>
+            <td class="op">+5</td>
+            <td class="neer">&minus;15</td>
+            <td class="nul">12</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>Totaal</td>
+            <td class="op">6</td>
+            <td class="nul">0</td>
+            <td class="op">8</td>
+            <td class="neer">&minus;26</td>
+            <td class="goud">12</td>
+          </tr>
+        </tfoot>
+      </table>
+    </aside>
+  </main>
+
+  <footer>
+    <span
+      >Klik een zetel om die speler te laten spelen &middot; rechtsklik zet de deler &middot;
+      dubbelklik een naam om te hernoemen</span
+    >
+    <span>Drukproef &mdash; niet op schaal</span>
+  </footer>
+</div>
