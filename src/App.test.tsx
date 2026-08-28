@@ -2,17 +2,11 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { App } from './App'
-import { BAAN_FINISH, BAAN_START } from './domein/koers'
 
-function baanKnop(speler: number): HTMLElement {
+function zetel(speler: number): HTMLElement {
   const knop = document.querySelector(`[data-zetel="${speler}"]`)
-  if (!(knop instanceof HTMLElement)) throw new Error(`geen renner ${speler}`)
+  if (!(knop instanceof HTMLElement)) throw new Error(`geen zetel ${speler}`)
   return knop
-}
-
-function rennerPositie(speler: number): number {
-  const renner = baanKnop(speler).parentElement?.querySelector<HTMLElement>('.renner-schuif')
-  return Number.parseFloat(renner!.style.left)
 }
 
 function knopMetTekst(tekst: string): HTMLElement {
@@ -31,7 +25,13 @@ function knopMet(deel: string): HTMLElement {
   return knop
 }
 
-describe('App op de koers', () => {
+function totalen(): string[] {
+  return Array.from(document.querySelectorAll('tfoot tr:first-child td')).map((c) =>
+    c.textContent!.trim(),
+  )
+}
+
+describe('App', () => {
   beforeEach(() => {
     localStorage.clear()
     vi.stubGlobal('matchMedia', () => ({ matches: false }))
@@ -42,48 +42,54 @@ describe('App op de koers', () => {
     vi.unstubAllGlobals()
   })
 
-  it('zet het veld aan de start zolang er geen rit gereden is', () => {
+  it('begint met een leeg scorebord en een lege pot', () => {
     render(<App />)
-    expect(screen.getByText(/Het veld staat aan de start/)).toBeTruthy()
-    expect([0, 1, 2, 3].map(rennerPositie)).toEqual([50, 50, 50, 50])
+    expect(screen.getByText(/Nog geen rondes/)).toBeTruthy()
+    expect(screen.getByText('Pot').nextElementSibling).toBeTruthy()
   })
 
-  it('legt een rit vast en verplaatst de renners', () => {
+  it('toont de punten van een ronde voor je ze opslaat', () => {
     render(<App />)
-
-    fireEvent.click(baanKnop(0))
-    fireEvent.click(baanKnop(2))
+    fireEvent.click(zetel(0))
+    fireEvent.click(zetel(2))
     fireEvent.click(knopMet('Vragen'))
     fireEvent.click(knopMetTekst('9'))
-
     expect(screen.getAllByText('+3').length).toBeGreaterThan(0)
+  })
 
-    fireEvent.click(knopMetTekst('🏁 Aankomst'))
+  it('legt een ronde vast in het scorebord', () => {
+    render(<App />)
+    fireEvent.click(zetel(0))
+    fireEvent.click(zetel(2))
+    fireEvent.click(knopMet('Vragen'))
+    fireEvent.click(knopMetTekst('9'))
+    fireEvent.click(knopMetTekst('Ronde opslaan'))
 
-    expect(rennerPositie(0)).toBe(BAAN_FINISH)
-    expect(rennerPositie(1)).toBe(BAAN_START)
-    expect(screen.getByText(/Speler 1 en Speler 3/)).toBeTruthy()
-    expect(knopMet('Rittenboek').textContent).toContain('1')
+    expect(screen.getByText(/1\. Vragen/)).toBeTruthy()
+    expect(totalen()).toEqual(['Totaal', '3', '-3', '3', '-3', '0', ''])
+  })
+
+  it('stopt de madams van een pasronde in de pot', () => {
+    render(<App />)
+    fireEvent.click(knopMet('Iedereen past'))
+    const madamKnoppen = Array.from(
+      document.querySelectorAll<HTMLElement>('.animatie-open button'),
+    )
+    fireEvent.click(madamKnoppen[4]!)
+    fireEvent.click(knopMetTekst('Ronde opslaan'))
+    expect(totalen()).toEqual(['Totaal', '-12', '0', '0', '0', '12', ''])
   })
 
   it('verzet de deler met een rechtsklik', () => {
     render(<App />)
-    fireEvent.contextMenu(baanKnop(3))
-    expect(screen.getByTitle(/Deelt deze ronde/).closest('[data-zetel]')).toBe(baanKnop(3))
+    fireEvent.contextMenu(zetel(3))
+    expect(JSON.parse(localStorage.getItem('wiezen.spel')!).deler).toBe(3)
   })
 
-  it('opent het rittenboek achter een knop', () => {
+  it('wisselt de tafel van rond naar vierkant en bewaart dat', () => {
     render(<App />)
-    expect(screen.queryByText('Rittenboek')).toBeNull()
-    fireEvent.click(knopMet('Rittenboek'))
-    expect(screen.getByText('Rittenboek')).toBeTruthy()
-  })
-
-  it('wisselt naar de klassieke tafel en terug', () => {
-    render(<App />)
-    fireEvent.click(knopMet('Klassieke tafel'))
-    expect(document.querySelector('.renner-schuif')).toBeNull()
-    fireEvent.click(knopMet('Terug naar de koers'))
-    expect(document.querySelector('.renner-schuif')).not.toBeNull()
+    fireEvent.click(screen.getByTitle('Vierkante tafel'))
+    expect(JSON.parse(localStorage.getItem('wiezen.voorkeuren')!).tafelvorm).toBe('vierkant')
+    expect(document.querySelector('.vilt')!.className).toContain('rounded-3xl')
   })
 })

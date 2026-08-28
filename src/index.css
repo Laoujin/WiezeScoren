@@ -131,7 +131,6 @@
   }
 }
 
-
 @keyframes kaart-open {
   from {
     opacity: 0;
@@ -214,87 +213,4 @@
 
 .munt-boog {
   animation: munt-boog 0.85s ease-out both;
-}
-
-/* ── De koers: vier renners op asfalt, de score bepaalt hun plaats in het veld ─────────── */
-.asfalt {
-  background:
-    linear-gradient(180deg, rgb(255 255 255 / 0.05), transparent 40%),
-    repeating-linear-gradient(
-      90deg,
-      rgb(0 0 0 / 0.22) 0 2px,
-      transparent 2px 6px
-    ),
-    linear-gradient(180deg, #23302b, #16211d);
-}
-
-.middenstreep {
-  background: repeating-linear-gradient(
-    90deg,
-    rgb(243 238 226 / 0.34) 0 14px,
-    transparent 14px 30px
-  );
-}
-
-.finishboog {
-  background:
-    repeating-conic-gradient(#f3eee2 0% 25%, #0b1f18 0% 50%) 0 0 / 10px 10px;
-  opacity: 0.55;
-}
-
-/* De renner rijdt naar zijn nieuwe plaats zodra de stand verschuift. */
-.renner-schuif {
-  transition: left 1.05s cubic-bezier(0.33, 1.28, 0.5, 1);
-}
-
-@keyframes trappen {
-  0%,
-  100% {
-    transform: translateY(0) rotate(-0.6deg);
-  }
-  50% {
-    transform: translateY(-2px) rotate(0.8deg);
-  }
-}
-
-.trap {
-  animation: trappen 0.9s ease-in-out infinite;
-}
-
-/* Een fiche op de premieslinger: te klein voor het perspectief van een echte fiche. */
-.premiefiche {
-  width: 1rem;
-  height: 0.5rem;
-  border-radius: 0.125rem;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--fiche) 88%, white), var(--fiche));
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.5);
-}
-
-@keyframes been-trappen {
-  0%,
-  100% {
-    d: path('M19 25 L23 17');
-  }
-  50% {
-    d: path('M19 19 L23 17');
-  }
-}
-
-.trap-been {
-  animation: been-trappen 0.5s ease-in-out infinite;
-}
-
-@keyframes slingeren {
-  0%,
-  100% {
-    transform: rotate(-1.1deg);
-  }
-  50% {
-    transform: rotate(1.1deg);
-  }
-}
-
-.premie-slinger {
-  transform-origin: 50% 0;
-  animation: slingeren 3.4s ease-in-out infinite;
 }
