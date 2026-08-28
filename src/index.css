@@ -51,6 +51,18 @@
   background-blend-mode: screen, overlay;
 }
 
+/* Het vergulde spiegelkader van een brasserie: een messing bies met een donkere sponning
+   ertussen. De ringen zijn box-shadows, dus panelen mogen minstens 5px binnenmarge houden. */
+.kader {
+  border: 1px solid rgb(217 164 65 / 0.4);
+  border-radius: 0.2rem;
+  background: linear-gradient(180deg, rgb(7 26 19 / 0.72), rgb(4 14 10 / 0.84));
+  box-shadow:
+    inset 0 0 0 4px rgb(4 14 10 / 0.7),
+    inset 0 0 0 5px rgb(217 164 65 / 0.22),
+    0 24px 48px -28px #000;
+}
+
 /* De lamp boven de tafel. */
 .lamplicht {
   background: radial-gradient(closest-side, rgb(255 226 160 / 0.28), transparent 72%);
