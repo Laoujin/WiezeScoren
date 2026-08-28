@@ -92,7 +92,7 @@ export function ContractKeuze({
   ]
 
   return (
-    <Kader className="overflow-hidden p-1.5 backdrop-blur-sm">
+    <Kader className="self-start overflow-hidden p-1.5 backdrop-blur-sm">
       <div className="grid gap-x-5 gap-y-4 p-4 sm:grid-cols-2 lg:grid-cols-1">
         {groepen.map((groep) => (
           <div key={groep.titel}>

@@ -18,6 +18,16 @@ describe('Kader', () => {
     expect(document.querySelectorAll('[data-hoek]').length).toBe(4)
   })
 
+  it('laat de sierhoeken weg wanneer erom gevraagd wordt', () => {
+    render(<Kader sierhoeken={false}>inhoud</Kader>)
+    expect(document.querySelectorAll('[data-hoek]').length).toBe(0)
+  })
+
+  it('kan als nav renderen', () => {
+    render(<Kader as="nav">inhoud</Kader>)
+    expect(screen.getByText('inhoud').tagName).toBe('NAV')
+  })
+
   it('neemt extra klassen over', () => {
     render(<Kader className="p-5">inhoud</Kader>)
     expect(screen.getByText('inhoud').className).toContain('p-5')

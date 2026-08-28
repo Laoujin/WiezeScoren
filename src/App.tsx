@@ -12,6 +12,7 @@ import { totalenVan, verloop, type Ronde } from './domein/spel'
 import { Archief } from './ui/Archief'
 import { ContractKeuze } from './ui/ContractKeuze'
 import { Instellingen } from './ui/Instellingen'
+import { Kader } from './ui/Kader'
 import { Scorebord } from './ui/Scorebord'
 import { Tafel } from './ui/Tafel'
 import { Tafelvormkiezer } from './ui/Tafelvormkiezer'
@@ -114,12 +115,12 @@ export function App() {
 
   return (
     <div className="mx-auto min-h-screen max-w-6xl px-3 pt-5 pb-10 sm:px-4">
-      <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
+      <Kader as="header" className="mb-4 flex flex-wrap items-center justify-between gap-3 p-5">
         <h1 className="font-display text-3xl font-black tracking-tight sm:text-4xl">
           Wiezen
           <span className="ml-2 align-middle text-lg text-messing">♠♥♦♣</span>
         </h1>
-        <nav className="flex flex-wrap items-center gap-1 rounded-xl border border-krijt/15 bg-vilt-diep/50 p-1">
+        <Kader as="nav" sierhoeken={false} className="flex flex-wrap items-center gap-1 p-2.5">
           {TABBLADEN.map((tab) => (
             <button
               key={tab.sleutel}
@@ -143,8 +144,8 @@ export function App() {
           </button>
           <span className="mx-1 h-6 w-px bg-krijt/15" />
           <Tafelvormkiezer vorm={spelState.tafelvorm} onVorm={spelState.zetTafelvorm} />
-        </nav>
-      </header>
+        </Kader>
+      </Kader>
 
       {weergave === 'tafel' && (
         <main className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_26rem]">

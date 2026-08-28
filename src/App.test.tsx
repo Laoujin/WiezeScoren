@@ -136,6 +136,19 @@ describe('App', () => {
     expect(kaders.some((k) => k.textContent?.includes('Om de punten'))).toBe(true)
   })
 
+  it('laat de contractkeuze niet meerekken met de linkerkolom', () => {
+    render(<App />)
+    const contracten = screen.getByText('Om de punten').closest('.kader')!
+    expect(contracten.className).toContain('self-start')
+  })
+
+  it('omlijst de navigatie, maar zonder sierhoeken in de smalle balk', () => {
+    render(<App />)
+    const nav = document.querySelector('header nav')!
+    expect(nav.className).toContain('kader')
+    expect(nav.querySelectorAll('[data-hoek]')).toHaveLength(0)
+  })
+
   it('linkt in de voettekst naar de repo', () => {
     render(<App />)
     const link = screen.getByTitle('Broncode op GitHub')

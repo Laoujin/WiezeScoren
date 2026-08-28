@@ -27,17 +27,26 @@ function Sierhoek({ plek }: { plek: keyof typeof HOEKEN }) {
 }
 
 type Props = {
+  as?: 'section' | 'nav' | 'header'
+  /** De sierhoeken eisen zo'n 21px vrije rand; een smalle balk zet ze daarom af. */
+  sierhoeken?: boolean
   className?: string
   children: ReactNode
 }
 
-export function Kader({ className = '', children }: Props) {
+export function Kader({
+  as: Element = 'section',
+  sierhoeken = true,
+  className = '',
+  children,
+}: Props) {
   return (
-    <section className={`kader relative ${className}`}>
-      {(Object.keys(HOEKEN) as (keyof typeof HOEKEN)[]).map((plek) => (
-        <Sierhoek key={plek} plek={plek} />
-      ))}
+    <Element className={`kader relative ${className}`}>
+      {sierhoeken &&
+        (Object.keys(HOEKEN) as (keyof typeof HOEKEN)[]).map((plek) => (
+          <Sierhoek key={plek} plek={plek} />
+        ))}
       {children}
-    </section>
+    </Element>
   )
 }
