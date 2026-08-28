@@ -29,14 +29,15 @@ http://localhost:5173
 
 | Handeling                    | Gevolg                                             |
 | ---------------------------- | -------------------------------------------------- |
-| Klik op een zetel            | die speler speelt mee, tot twee spelers             |
-| Rechtsklik op een zetel      | zet de deler                                        |
-| Dubbelklik op een naam       | hernoemen                                           |
-| Contractknop                 | actief zodra het aantal geselecteerde spelers past  |
-| Passen                       | verdeel de vier madams over de spelers              |
-| Klik op een punt in de tabel | handmatig aanpassen                                 |
-| `+ Correctie`                | lege rij met vier vrije velden                      |
-| `Nieuw spel`                 | partij naar het archief, namen blijven staan        |
+| Klik op een zetel            | die speler speelt mee, tot twee spelers            |
+| Klik op een avatar           | iemand anders uit de ploeg op die zetel            |
+| Rechtsklik op een zetel      | zet de deler                                       |
+| Dubbelklik op een naam       | hernoemen                                          |
+| Contractknop                 | actief zodra het aantal geselecteerde spelers past |
+| Passen                       | verdeel de vier madams over de spelers             |
+| Klik op een punt in de tabel | handmatig aanpassen                                |
+| `+ Correctie`                | lege rij met vier vrije velden                     |
+| `Nieuw spel`                 | partij naar het archief, namen blijven staan       |
 
 Een rij kleurt rood zodra de punten samen met de potbeweging niet op nul uitkomen. De deler
 schuift automatisch door na elke ronde, behalve na een correctie.
@@ -65,17 +66,51 @@ vragen met dertien slagen is (2 + 5) x 2 = 14 per tegenstander.
 
 De pot begint op nul en staat midden op de tafel.
 
-| Gebeurtenis                       | Gevolg                                                        |
-| --------------------------------- | -------------------------------------------------------------- |
-| Iedereen past                     | elke speler betaalt 3 punten per madam die hij vasthoudt, in de pot |
-| Contract om de pot gehaald        | het kamp krijgt de pot bovenop zijn punten, de pot gaat naar nul   |
-| Contract om de pot niet gehaald   | het kamp betaalt het potbedrag, waardoor de pot verdubbelt         |
+| Gebeurtenis                     | Gevolg                                                              |
+| ------------------------------- | ------------------------------------------------------------------- |
+| Iedereen past                   | elke speler betaalt 3 punten per madam die hij vasthoudt, in de pot |
+| Contract om de pot gehaald      | het kamp krijgt de pot bovenop zijn punten, de pot gaat naar nul    |
+| Contract om de pot niet gehaald | het kamp betaalt het potbedrag, waardoor de pot verdubbelt          |
 
 De vier madams worden altijd volledig verdeeld, dus een pasronde stopt twaalf punten in de pot.
 Bij twee miseriespelers wordt de pot gedeeld. Scores en pot samen komen altijd op nul uit.
 
 Alle waarden zijn aanpasbaar onder Instellingen. Een wijziging herrekent de lopende partij, want
 rondes bewaren alleen hun invoer.
+
+## De ploeg
+
+De ploeg staat vast op vijf: Wouter, Gert, Moe, Va en Zus. Vier ervan zitten aan tafel. Klik een
+avatar om iemand anders op die zetel te zetten; zit die al aan tafel, dan ruilen de twee van
+plaats. Dubbelklik een naam om te hernoemen, dat volgt de persoon zodat zijn avatar meegaat.
+
+### Avatars maken
+
+De avatars zijn karikaturen, gemaakt uit gewone portretfoto's. Het script zoekt de
+gezichtspunten, blaast neus, ogen, mond, kin en schedel op, brengt de foto naar vlakke
+kleurvlakken met zwarte lijnen, en snijdt er een ronde WebP uit.
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install mediapipe opencv-python-headless
+.venv/bin/python scripts/avatars.py ~/fotos/*.jpg
+```
+
+De uitvoer belandt in `public/spelers/` als `<naam>.webp`, 256 px en rond uitgesneden. Zet die
+bestandsnaam in het `avatar`-veld van het ploeglid; ontbreekt hij of laadt hij niet, dan toont de
+app de initialen.
+
+| Knop        | Standaard | Doet                |
+| ----------- | --------- | ------------------- |
+| `--ogen`    | 1.35      | ogen vergroten      |
+| `--neus`    | 1.30      | neus vergroten      |
+| `--mond`    | 1.15      | mond vergroten      |
+| `--kin`     | 1.12      | kin verlengen       |
+| `--schedel` | 1.10      | schedel verbreden   |
+| `--lijnen`  | 0.85      | zwartheid contouren |
+
+1.0 zet een kenmerk uit. Per persoon bijstellen loont: een karikatuur werkt pas wanneer je
+overdrijft wat al opvalt.
 
 ## Opslag
 
@@ -84,6 +119,7 @@ rondes bewaren alleen hun invoer.
 | `wiezen.spel`    | de lopende partij                   |
 | `wiezen.config`  | de contractwaarden                  |
 | `wiezen.archief` | afgesloten partijen, nieuwste eerst |
+| `wiezen.ploeg`   | de vaste ploeg met hun avatars      |
 
 De pot hoort bij de partij en gaat dus mee het archief in.
 
@@ -94,7 +130,9 @@ De pot hoort bij de partij en gaat dus mee het archief in.
 | `src/domein/contracten.ts` | contracttypes en standaardwaarden           |
 | `src/domein/score.ts`      | `berekenPunten` en `speelRonde`             |
 | `src/domein/betalingen.ts` | wie aan wie betaalt, met de pot als knoop   |
-| `src/domein/spel.ts`       | partijstate, rondes, potverloop, totalen     |
+| `src/domein/spel.ts`       | partijstate, rondes, potverloop, totalen    |
+| `src/domein/ploeg.ts`      | de vaste ploeg en wie op welke zetel zit    |
+| `scripts/avatars.py`       | foto naar karikatuur-avatar                 |
 | `src/opslag/opslag.ts`     | laden, bewaren, archiveren                  |
 | `src/ui/`                  | tafel, contractknoppen, scorebord, schermen |
 
