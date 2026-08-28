@@ -22,6 +22,7 @@ import {
   bewaarConfig,
   bewaarPloeg,
   bewaarSpel,
+  heropen,
   laadArchief,
   laadConfig,
   laadPloeg,
@@ -86,6 +87,14 @@ export function useSpel() {
     zetArchief(laadArchief(localStorage))
   }, [spel])
 
+  const heropenUitArchief = useCallback(
+    (spelId: string) => {
+      zetSpel(heropen(localStorage, spel, spelId))
+      zetArchief(laadArchief(localStorage))
+    },
+    [spel],
+  )
+
   const wisUitArchief = useCallback(
     (spelId: string) => {
       const rest = archief.filter((s) => s.id !== spelId)
@@ -111,6 +120,7 @@ export function useSpel() {
     kiesZetel,
     kiesDeler,
     startNieuwSpel,
+    heropenUitArchief,
     wisUitArchief,
   }
 }

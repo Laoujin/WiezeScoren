@@ -7,10 +7,11 @@ const DATUM = new Intl.DateTimeFormat('nl-BE', { dateStyle: 'long', timeStyle: '
 type Props = {
   archief: Spel[]
   config: Config
+  onHeropen: (spelId: string) => void
   onWis: (spelId: string) => void
 }
 
-export function Archief({ archief, config, onWis }: Props) {
+export function Archief({ archief, config, onHeropen, onWis }: Props) {
   return (
     <section className="rounded-2xl border border-krijt/15 bg-vilt-diep/45 p-5 backdrop-blur-sm">
       <h2 className="font-display text-2xl font-black tracking-tight">Archief</h2>
@@ -42,14 +43,24 @@ export function Archief({ archief, config, onWis }: Props) {
                     </span>
                   ))}
                 </div>
-                <button
-                  type="button"
-                  onClick={() => onWis(spel.id)}
-                  className="text-krijt-dof transition-colors hover:text-hart"
-                  title="Uit het archief verwijderen"
-                >
-                  &times;
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => onHeropen(spel.id)}
+                    className="rounded-lg border border-krijt/20 px-3 py-1.5 text-sm font-semibold text-krijt-dof transition-colors hover:border-messing hover:text-messing"
+                    title="Deze partij weer aan tafel brengen"
+                  >
+                    Heropenen
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onWis(spel.id)}
+                    className="text-krijt-dof transition-colors hover:text-hart"
+                    title="Uit het archief verwijderen"
+                  >
+                    &times;
+                  </button>
+                </div>
               </li>
             )
           })}

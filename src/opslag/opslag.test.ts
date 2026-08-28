@@ -4,6 +4,7 @@ import { maakRonde, nieuwSpel, voegRondeToe } from '../domein/spel'
 import { STANDAARD_PLOEG } from '../domein/ploeg'
 import {
   archiveer,
+  heropen,
   bewaarVoorkeuren,
   bewaarPloeg,
   bewaarConfig,
@@ -140,6 +141,37 @@ describe('archiveer', () => {
     archiveer(opslag, eerste)
     archiveer(opslag, tweede)
     expect(laadArchief(opslag).map((s) => s.id)).toEqual([tweede.id, eerste.id])
+  })
+})
+
+describe('heropen', () => {
+  function metRonde(namen?: string[]) {
+    return voegRondeToe(
+      nieuwSpel(namen),
+      maakRonde({ contract: 'vragen', spelers: [0, 1], slagen: 9 }),
+    )
+  }
+
+  it('maakt de gearchiveerde partij weer de lopende', () => {
+    const oud = metRonde(['An', 'Bo', 'Cis', 'Dirk'])
+    const lopend = archiveer(opslag, oud)
+    expect(heropen(opslag, lopend, oud.id)).toEqual(oud)
+    expect(laadSpel(opslag)).toEqual(oud)
+    expect(laadArchief(opslag)).toEqual([])
+  })
+
+  it('archiveert de lopende partij in ruil', () => {
+    const oud = metRonde(['An', 'Bo', 'Cis', 'Dirk'])
+    archiveer(opslag, oud)
+    const lopend = metRonde()
+    heropen(opslag, lopend, oud.id)
+    expect(laadArchief(opslag)).toEqual([lopend])
+  })
+
+  it('laat een onbekende partij de lopende ongemoeid', () => {
+    const lopend = metRonde()
+    expect(heropen(opslag, lopend, 'onbekend')).toEqual(lopend)
+    expect(laadArchief(opslag)).toEqual([])
   })
 })
 

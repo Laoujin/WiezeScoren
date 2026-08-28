@@ -96,6 +96,12 @@ export function App() {
     wisKeuze()
   }
 
+  const heropenPartij = (spelId: string) => {
+    spelState.heropenUitArchief(spelId)
+    wisKeuze()
+    zetWeergave('tafel')
+  }
+
   const nieuwSpelStarten = () => {
     if (spel.rondes.length > 0 && !confirm('Partij afsluiten en naar het archief verplaatsen?'))
       return
@@ -194,7 +200,12 @@ export function App() {
       )}
 
       {weergave === 'archief' && (
-        <Archief archief={spelState.archief} config={config} onWis={spelState.wisUitArchief} />
+        <Archief
+          archief={spelState.archief}
+          config={config}
+          onHeropen={heropenPartij}
+          onWis={spelState.wisUitArchief}
+        />
       )}
 
       <footer className="mt-10 border-t border-krijt/10 pt-4 text-center text-xs leading-relaxed text-krijt-dof">

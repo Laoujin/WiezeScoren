@@ -119,6 +119,18 @@ export function archiveer(opslag: Storage, spel: Spel): Spel {
   return vers
 }
 
+/** Ruilt de lopende partij om met een gearchiveerde; een lege lopende partij verdwijnt gewoon. */
+export function heropen(opslag: Storage, lopend: Spel, spelId: string): Spel {
+  const archief = laadArchief(opslag)
+  const gezocht = archief.find((s) => s.id === spelId)
+  if (!gezocht) return lopend
+
+  const rest = archief.filter((s) => s.id !== spelId)
+  bewaarArchief(opslag, lopend.rondes.length > 0 ? [lopend, ...rest] : rest)
+  bewaarSpel(opslag, gezocht)
+  return gezocht
+}
+
 export function wisAlles(opslag: Storage): void {
   for (const sleutel of Object.values(SLEUTELS)) opslag.removeItem(sleutel)
 }

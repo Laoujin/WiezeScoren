@@ -86,6 +86,23 @@ describe('App', () => {
     expect(JSON.parse(localStorage.getItem('wiezen.spel')!).deler).toBe(3)
   })
 
+  it('opent een gearchiveerde partij opnieuw', () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+    render(<App />)
+    fireEvent.click(zetel(0))
+    fireEvent.click(zetel(2))
+    fireEvent.click(knopMet('Vragen'))
+    fireEvent.click(knopMetTekst('9'))
+    fireEvent.click(knopMetTekst('Ronde opslaan'))
+    fireEvent.click(knopMetTekst('Nieuw spel'))
+    expect(screen.getByText(/Nog geen rondes/)).toBeTruthy()
+
+    fireEvent.click(knopMetTekst('Archief'))
+    fireEvent.click(knopMetTekst('Heropenen'))
+    expect(screen.getByText(/1\. Vragen/)).toBeTruthy()
+    expect(totalen()).toEqual(['Totaal', '3', '-3', '3', '-3', '0', ''])
+  })
+
   it('zet het scorebord onder de tafel en de contractkeuze ernaast', () => {
     render(<App />)
     const kolom = document.querySelector('main > div')!
