@@ -3,7 +3,10 @@ import { SPELER_IDS, type SpelerId } from '../domein/contracten'
 import type { Ploeglid } from '../domein/ploeg'
 import type { Punten } from '../domein/score'
 import type { Tafelvorm } from '../domein/voorkeuren'
+import { saldoVan } from '../domein/betalingen'
 import { Avatar } from './Avatar'
+import { Kluis } from './Kluis'
+import { Viering } from './Viering'
 import { MuntStroom } from './MuntStroom'
 import { Ploegkiezer } from './Ploegkiezer'
 import type { Vlucht } from './useMuntStroom'
@@ -50,6 +53,8 @@ type PlaquetteProps = {
   voorbeeld: number | null
   geselecteerd: boolean
   kiestDeler: boolean
+  /** Wat deze zetel netto opstrijkt in de lopende geldstroom; nul als er niets beweegt. */
+  saldo: number
   vertraging: number
   onSelecteer: () => void
   onDeler: () => void
@@ -67,6 +72,7 @@ function Plaquette({
   voorbeeld,
   geselecteerd,
   kiestDeler,
+  saldo,
   vertraging,
   onSelecteer,
   onDeler,
@@ -99,18 +105,21 @@ function Plaquette({
             : 'plaquette border-krijt/12 hover:border-krijt/30'
         }`}
       >
-        <button
-          type="button"
-          title={`${naam} vervangen`}
-          onClick={() => zetKiest((open) => !open)}
-          className="rounded-full transition-transform hover:scale-110"
-        >
-          <Avatar
-            naam={naam}
-            avatar={lid?.avatar}
-            className={`h-9 w-9 text-lg ${geselecteerd ? 'border-messing' : ''}`}
-          />
-        </button>
+        <span data-avatar className="relative shrink-0">
+          <button
+            type="button"
+            title={`${naam} vervangen`}
+            onClick={() => zetKiest((open) => !open)}
+            className="block rounded-full transition-transform hover:scale-110"
+          >
+            <Avatar
+              naam={naam}
+              avatar={lid?.avatar}
+              className={`h-9 w-9 text-lg ${geselecteerd ? 'border-messing' : ''}`}
+            />
+          </button>
+          {saldo !== 0 && <Kluis vlucht={vertraging} />}
+        </span>
 
         <button
           type="button"
@@ -160,6 +169,10 @@ function Plaquette({
           </span>
         )}
       </div>
+
+      {saldo !== 0 && (
+        <Viering soort={saldo > 0 ? 'confetti' : 'traan'} vertraging={vertraging} />
+      )}
 
       {kiestDeler && (
         <button
@@ -278,6 +291,7 @@ export function Tafel({
             voorbeeld={voorbeeld ? voorbeeld[speler] : null}
             geselecteerd={selectie.includes(speler)}
             kiestDeler={kiestDeler}
+            saldo={vlucht ? saldoVan(vlucht.betalingen, speler) : 0}
             vertraging={vertraging}
             onSelecteer={() => onSelecteer(speler)}
             onDeler={() => {

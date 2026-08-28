@@ -37,3 +37,11 @@ export function betalingen({ punten, potVoor, potNa }: RondeUitkomst): Betaling[
   }
   return stroom
 }
+
+/** Wat een knoop netto overhoudt aan een reeks betalingen. */
+export function saldoVan(stroom: Betaling[], knoop: Knoop): number {
+  return stroom.reduce(
+    (totaal, b) => totaal + (b.naar === knoop ? b.bedrag : 0) - (b.van === knoop ? b.bedrag : 0),
+    0,
+  )
+}

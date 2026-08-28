@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { betalingen } from './betalingen'
+import { betalingen, saldoVan } from './betalingen'
 import { GEEN_PUNTEN } from './score'
 
 const geen = { ...GEEN_PUNTEN }
@@ -75,5 +75,29 @@ describe('betalingen', () => {
     expect(betalingen({ punten: { 0: 5, 1: -2, 2: 0, 3: 0 }, potVoor: 0, potNa: 0 })).toEqual([
       { van: 1, naar: 0, bedrag: 2 },
     ])
+  })
+})
+
+describe('saldoVan', () => {
+  const stroom = [
+    { van: 1 as const, naar: 0 as const, bedrag: 2 },
+    { van: 1 as const, naar: 2 as const, bedrag: 3 },
+    { van: 'pot' as const, naar: 0 as const, bedrag: 5 },
+  ]
+
+  it('telt op wat een knoop ontvangt', () => {
+    expect(saldoVan(stroom, 0)).toBe(7)
+  })
+
+  it('telt af wat een knoop betaalt', () => {
+    expect(saldoVan(stroom, 1)).toBe(-5)
+  })
+
+  it('geeft nul voor wie buiten de stroom blijft', () => {
+    expect(saldoVan(stroom, 3)).toBe(0)
+  })
+
+  it('rekent de pot mee als knoop', () => {
+    expect(saldoVan(stroom, 'pot')).toBe(-5)
   })
 })

@@ -195,3 +195,40 @@ describe('tafelvorm', () => {
     expect(banen()[0]!.style.left).toBe(`${zetels[1].plaquette.x}%`)
   })
 })
+
+describe('kluis en viering', () => {
+  beforeEach(() => {
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+  })
+
+  afterEach(() => {
+    cleanup()
+    vi.unstubAllGlobals()
+  })
+
+  function plaquette(speler: number): HTMLElement {
+    return document.querySelector<HTMLElement>(`[data-plaquette="${speler}"]`)!
+  }
+
+  it('maakt van de avatar een kluis bij elke speler in de geldstroom', () => {
+    toon(VLUCHT)
+    expect(plaquette(0).querySelector('[data-kluis]')).toBeTruthy()
+    expect(plaquette(1).querySelector('[data-kluis]')).toBeTruthy()
+    expect(plaquette(2).querySelector('[data-kluis]')).toBeTruthy()
+    expect(plaquette(3).querySelector('[data-kluis]')).toBeNull()
+  })
+
+  it('viert de ontvangers met confetti en beweent de betaler', () => {
+    toon(VLUCHT)
+    expect(plaquette(0).querySelector('[data-viering="confetti"]')).toBeTruthy()
+    expect(plaquette(2).querySelector('[data-viering="confetti"]')).toBeTruthy()
+    expect(plaquette(1).querySelector('[data-viering="traan"]')).toBeTruthy()
+    expect(plaquette(3).querySelector('[data-viering]')).toBeNull()
+  })
+
+  it('laat kluis en viering weg zonder geldstroom', () => {
+    toon(null)
+    expect(document.querySelector('[data-kluis]')).toBeNull()
+    expect(document.querySelector('[data-viering]')).toBeNull()
+  })
+})

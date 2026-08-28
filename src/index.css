@@ -140,6 +140,138 @@
   right: 0.42rem;
 }
 
+/* De kluisdeur over de avatar. De cyclus loopt gelijk met de muntvlucht: open zwaaien, de munten
+   laten passeren, en dichtvallen op het moment dat het geld landt. */
+.kluisvak {
+  perspective: 320px;
+}
+
+.kluisgat {
+  background: radial-gradient(circle at 50% 38%, #123024 0%, #030c08 72%);
+  box-shadow: inset 0 2px 8px rgb(0 0 0 / 0.9);
+}
+
+.kluisdeur {
+  transform-origin: left center;
+  background: radial-gradient(circle at 34% 26%, #f2dcab 0%, var(--color-messing) 46%, #7a5619 100%);
+  border: 2px solid var(--color-messing-diep);
+  box-shadow:
+    inset 0 0 0 3px rgb(74 53 18 / 0.45),
+    0 6px 14px -6px #000;
+  animation: kluis-cyclus var(--kluis-duur) cubic-bezier(0.5, 0, 0.35, 1) both;
+}
+
+.kluiswiel {
+  border: 2px solid rgb(74 53 18 / 0.85);
+  animation: kluis-wiel var(--kluis-duur) ease-in-out both;
+}
+
+.kluiswiel::before,
+.kluiswiel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  border-radius: 1px;
+  background: rgb(74 53 18 / 0.9);
+}
+
+.kluiswiel::before {
+  width: 100%;
+  height: 2px;
+}
+
+.kluiswiel::after {
+  width: 2px;
+  height: 100%;
+}
+
+@keyframes kluis-cyclus {
+  0% {
+    transform: rotateY(0deg);
+  }
+  16%,
+  74% {
+    transform: rotateY(-108deg);
+  }
+  100% {
+    transform: rotateY(0deg);
+  }
+}
+
+@keyframes kluis-wiel {
+  0%,
+  74% {
+    rotate: 0deg;
+  }
+  100% {
+    rotate: 405deg;
+  }
+}
+
+/* De snippers van de winnaar. */
+.snipper {
+  width: 5px;
+  height: 8px;
+  border-radius: 1px;
+  background: var(--snipper);
+  opacity: 0;
+  animation: snipper-vlucht 1.4s cubic-bezier(0.16, 0.7, 0.35, 1) both;
+}
+
+@keyframes snipper-vlucht {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4) rotate(0deg);
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1) rotate(var(--draai));
+  }
+}
+
+/* De traan van wie betaalt: rolt langs de avatar naar beneden. */
+.traan {
+  width: 7px;
+  height: 10px;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: linear-gradient(180deg, #cfe6f2, #7fb3cd);
+  box-shadow: inset -1px -1px 2px rgb(255 255 255 / 0.5);
+  opacity: 0;
+  animation: traan-val 2s ease-in both;
+}
+
+.traan::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 2px;
+  border-left: 2px solid transparent;
+  border-right: 2px solid transparent;
+  border-bottom: 5px solid #a9d0e2;
+}
+
+@keyframes traan-val {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.5);
+  }
+  16% {
+    opacity: 1;
+    transform: none;
+  }
+  42% {
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(38px) scaleY(1.25);
+  }
+}
+
 /* De lamp boven de tafel. */
 .lamplicht {
   background: radial-gradient(closest-side, rgb(255 226 160 / 0.28), transparent 72%);
