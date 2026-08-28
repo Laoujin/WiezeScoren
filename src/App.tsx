@@ -115,7 +115,7 @@ export function App() {
 
   return (
     <div className="mx-auto min-h-screen max-w-6xl px-3 pt-5 pb-10 sm:px-4">
-      <Kader as="header" className="mb-4 flex flex-wrap items-center justify-between gap-3 p-5">
+      <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-display text-3xl font-black tracking-tight sm:text-4xl">
           Wiezen
           <span className="ml-2 align-middle text-lg text-messing">♠♥♦♣</span>
@@ -145,11 +145,11 @@ export function App() {
           <span className="mx-1 h-6 w-px bg-krijt/15" />
           <Tafelvormkiezer vorm={spelState.tafelvorm} onVorm={spelState.zetTafelvorm} />
         </Kader>
-      </Kader>
+      </header>
 
       {weergave === 'tafel' && (
         <main className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_26rem]">
-          <div className="min-w-0">
+          <div className="min-w-0 lg:col-start-1 lg:row-start-1">
             <Tafel
               spelers={spel.spelers}
               ploeg={spelState.ploeg}
@@ -166,21 +166,10 @@ export function App() {
               onHernoem={spelState.hernoem}
               onKiesZetel={spelState.kiesZetel}
             />
-            <div className="mt-5">
-              <Scorebord
-                spel={spel}
-                config={config}
-                onWisRonde={spelState.wisRonde}
-                onPasPuntAan={spelState.pasPuntAan}
-                onHerstel={spelState.herstelPunten}
-                onCorrectie={() =>
-                  spelState.speelRonde({ contract: 'correctie', spelers: [], slagen: 0 })
-                }
-              />
-            </div>
           </div>
 
           <ContractKeuze
+            className="lg:col-start-2 lg:row-span-2 lg:row-start-1"
             config={config}
             spelers={spel.spelers}
             selectie={selectie}
@@ -194,6 +183,18 @@ export function App() {
             onMadam={(speler, aantal) => zetMadams((huidig) => ({ ...huidig, [speler]: aantal }))}
             onOpslaan={bewaarRonde}
             onWis={wisKeuze}
+          />
+
+          <Scorebord
+            className="lg:col-start-1 lg:row-start-2"
+            spel={spel}
+            config={config}
+            onWisRonde={spelState.wisRonde}
+            onPasPuntAan={spelState.pasPuntAan}
+            onHerstel={spelState.herstelPunten}
+            onCorrectie={() =>
+              spelState.speelRonde({ contract: 'correctie', spelers: [], slagen: 0 })
+            }
           />
         </main>
       )}

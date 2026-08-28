@@ -103,11 +103,16 @@ describe('App', () => {
     expect(totalen()).toEqual(['Totaal', '3', '-3', '3', '-3', '0', ''])
   })
 
-  it('zet het scorebord onder de tafel en de contractkeuze ernaast', () => {
+  it('zet op een smal scherm de contractkeuze boven het scorebord', () => {
     render(<App />)
-    const kolom = document.querySelector('main > div')!
-    expect(kolom.contains(screen.getByText('Scorebord'))).toBe(true)
-    expect(kolom.contains(screen.getByText('Om de punten'))).toBe(false)
+    const volgorde = Array.from(document.querySelectorAll('main > *')).map((el) =>
+      el.textContent?.includes('Om de punten')
+        ? 'contracten'
+        : el.textContent?.includes('Scorebord')
+          ? 'scorebord'
+          : 'tafel',
+    )
+    expect(volgorde).toEqual(['tafel', 'contracten', 'scorebord'])
   })
 
   it('vraagt bij abondance enkel of het gehaald is', () => {

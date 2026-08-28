@@ -27,7 +27,7 @@ function Sierhoek({ plek }: { plek: keyof typeof HOEKEN }) {
 }
 
 type Props = {
-  as?: 'section' | 'nav' | 'header'
+  as?: 'section' | 'nav'
   /** De sierhoeken eisen zo'n 21px vrije rand; een smalle balk zet ze daarom af. */
   sierhoeken?: boolean
   className?: string

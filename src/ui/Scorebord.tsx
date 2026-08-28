@@ -84,6 +84,7 @@ function TotaalCel({ waarde }: { waarde: number }) {
 }
 
 type Props = {
+  className?: string
   spel: Spel
   config: Config
   onWisRonde: (rondeId: string) => void
@@ -93,6 +94,7 @@ type Props = {
 }
 
 export function Scorebord({
+  className = '',
   spel,
   config,
   onWisRonde,
@@ -106,7 +108,7 @@ export function Scorebord({
   const eindsom = somVan(stand) + pot
 
   return (
-    <Kader className="min-w-0 p-5 backdrop-blur-sm">
+    <Kader className={`min-w-0 p-5 backdrop-blur-sm ${className}`}>
       <header className="mb-3 flex items-baseline justify-between gap-3">
         <h2 className="font-display text-xl font-black tracking-tight">Scorebord</h2>
         <button

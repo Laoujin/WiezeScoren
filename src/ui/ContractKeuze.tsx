@@ -46,6 +46,7 @@ function ContractKnop({ label, actief, bruikbaar, onClick }: KnopProps) {
 }
 
 type Props = {
+  className?: string
   config: Config
   spelers: string[]
   selectie: SpelerId[]
@@ -62,6 +63,7 @@ type Props = {
 }
 
 export function ContractKeuze({
+  className = '',
   config,
   spelers,
   selectie,
@@ -92,7 +94,7 @@ export function ContractKeuze({
   ]
 
   return (
-    <Kader className="self-start overflow-hidden p-1.5 backdrop-blur-sm">
+    <Kader className={`self-start overflow-hidden p-1.5 backdrop-blur-sm ${className}`}>
       <div className="grid gap-x-5 gap-y-4 p-4 sm:grid-cols-2 lg:grid-cols-1">
         {groepen.map((groep) => (
           <div key={groep.titel}>
