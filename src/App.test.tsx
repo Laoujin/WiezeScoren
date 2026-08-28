@@ -154,6 +154,34 @@ describe('App', () => {
     expect(nav.querySelectorAll('[data-hoek]')).toHaveLength(0)
   })
 
+  it('klapt de navigatie open en weer dicht met de menuknop', () => {
+    render(<App />)
+    const menu = screen.getByText('Menu').closest('button')!
+    expect(menu.getAttribute('aria-expanded')).toBe('false')
+    fireEvent.click(menu)
+    expect(menu.getAttribute('aria-expanded')).toBe('true')
+    fireEvent.click(knopMetTekst('Archief'))
+    expect(menu.getAttribute('aria-expanded')).toBe('false')
+  })
+
+  it('zet de titel op een uithangbord met enkel het woord Wiezen', () => {
+    render(<App />)
+    const titel = document.querySelector('h1')!
+    expect(titel.className).toContain('bord')
+    expect(titel.textContent).toBe('Wiezen')
+  })
+
+  it('hangt het bord aan twee kettingen', () => {
+    render(<App />)
+    const uithang = document.querySelector('h1')!.closest('.uithang')!
+    expect(uithang.querySelectorAll('.ketting')).toHaveLength(2)
+  })
+
+  it('houdt het bord buiten de header, zodat het geen rij inneemt', () => {
+    render(<App />)
+    expect(document.querySelector('h1')!.closest('header')).toBeNull()
+  })
+
   it('linkt in de voettekst naar de repo', () => {
     render(<App />)
     const link = screen.getByTitle('Broncode op GitHub')

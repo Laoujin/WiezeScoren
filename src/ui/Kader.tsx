@@ -30,6 +30,12 @@ type Props = {
   as?: 'section' | 'nav'
   /** De sierhoeken eisen zo'n 21px vrije rand; een smalle balk zet ze daarom af. */
   sierhoeken?: boolean
+  /**
+   * De sierhoeken hangen absoluut in het kader, dus er moet een positie staan. Via deze prop en
+   * niet via className: twee positie-utilities in hetzelfde class-attribuut laten de volgorde in
+   * de gegenereerde CSS beslissen, en daar wint `relative` van `absolute`.
+   */
+  positie?: string
   className?: string
   children: ReactNode
 }
@@ -37,11 +43,12 @@ type Props = {
 export function Kader({
   as: Element = 'section',
   sierhoeken = true,
+  positie = 'relative',
   className = '',
   children,
 }: Props) {
   return (
-    <Element className={`kader relative ${className}`}>
+    <Element className={`kader ${positie} ${className}`}>
       {sierhoeken &&
         (Object.keys(HOEKEN) as (keyof typeof HOEKEN)[]).map((plek) => (
           <Sierhoek key={plek} plek={plek} />

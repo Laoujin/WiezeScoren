@@ -15,6 +15,12 @@
   --font-sans: 'Archivo', system-ui, sans-serif;
 }
 
+/* Het donkere vlak van een plaquette. Staat los omdat de actieve staat er een laag boven legt
+   en dus dezelfde plaat nodig heeft. */
+:root {
+  --plaat: linear-gradient(158deg, rgb(11 38 27 / 0.94), rgb(4 17 12 / 0.96));
+}
+
 @layer base {
   html {
     color-scheme: dark;
@@ -25,7 +31,12 @@
     min-height: 100vh;
     background:
       radial-gradient(130% 80% at 50% 118%, rgb(0 0 0 / 0.7) 0%, transparent 58%),
-      radial-gradient(120% 90% at 50% -10%, #1f7452 0%, var(--color-vilt) 36%, var(--color-vilt-diep) 100%);
+      radial-gradient(
+        120% 90% at 50% -10%,
+        #1f7452 0%,
+        var(--color-vilt) 36%,
+        var(--color-vilt-diep) 100%
+      );
     background-attachment: fixed;
     color: var(--color-krijt);
     font-family: var(--font-sans);
@@ -63,20 +74,88 @@
     0 24px 48px -28px #000;
 }
 
+/* Het uithangbord hangt aan twee kettingen die de bovenrand van de pagina uit lopen. De
+   plaatsing staat hier en niet als Tailwind-utility in de markup: deze regel is ongelaagd en zou
+   `absolute` uit de utility-layer overrulen, waardoor het bord in de flow blijft staan. */
+.uithang {
+  position: absolute;
+  top: 0;
+  left: 1.25rem;
+  z-index: 30;
+  width: max-content;
+  padding-top: 1.5rem;
+}
+
+.kettingen {
+  position: absolute;
+  top: 0;
+  right: 1.2rem;
+  left: 1.2rem;
+  height: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.ketting {
+  width: 5px;
+  opacity: 0.9;
+  background:
+    radial-gradient(circle at 50% 25%, var(--color-messing) 2px, transparent 2.5px) 0 0 / 5px 9px
+      repeat-y,
+    linear-gradient(90deg, transparent 1.5px, rgb(0 0 0 / 0.5) 1.5px 3.5px, transparent 3.5px);
+}
+
+/* Het emaillen uithangbord van een stamcafe: rode plaat met een krijtwitte bies en twee
+   messing klinknagels. */
+.bord {
+  position: relative;
+  padding: 0.4rem 1.6rem 0.5rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(168deg, #d4483a, #a83127 55%, #7d2119);
+  box-shadow:
+    inset 0 0 0 3px var(--color-krijt),
+    inset 0 0 0 5px #a83127,
+    inset 0 3px 12px rgb(255 255 255 / 0.22),
+    0 14px 26px -14px #000;
+  text-shadow:
+    0 2px 0 #58120f,
+    0 5px 14px rgb(0 0 0 / 0.5);
+}
+
+/* De klinknagels in de hoeken van de plaat. */
+.bord::before,
+.bord::after {
+  content: '';
+  position: absolute;
+  top: 0.42rem;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #f0d79a, var(--color-messing) 55%, #6a4a15);
+}
+.bord::before {
+  left: 0.42rem;
+}
+.bord::after {
+  right: 0.42rem;
+}
+
 /* De lamp boven de tafel. */
 .lamplicht {
   background: radial-gradient(closest-side, rgb(255 226 160 / 0.28), transparent 72%);
 }
 
 .plaquette {
-  background: linear-gradient(158deg, rgb(11 38 27 / 0.94), rgb(4 17 12 / 0.96));
+  background: var(--plaat);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.07),
     0 12px 26px -16px #000;
 }
 
+/* De messing gloed ligt als laag boven --plaat en vervangt die niet: anders valt het donkere
+   vlak weg en kijk je dwars door de plaquette op het vilt. */
 .plaquette-actief {
-  background: linear-gradient(158deg, rgb(217 164 65 / 0.26), rgb(138 100 32 / 0.16));
+  background: linear-gradient(158deg, rgb(217 164 65 / 0.26), rgb(138 100 32 / 0.16)), var(--plaat);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.18),
     0 0 34px -8px var(--color-messing);
