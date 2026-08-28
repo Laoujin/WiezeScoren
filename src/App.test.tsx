@@ -128,6 +128,14 @@ describe('App', () => {
     expect(document.querySelector('.vilt')!.className).toContain('rounded-3xl')
   })
 
+  it('omlijst zowel het scorebord als de contractkeuze', () => {
+    render(<App />)
+    const kaders = Array.from(document.querySelectorAll('main .kader'))
+    expect(kaders.length).toBe(2)
+    expect(kaders.some((k) => k.textContent?.includes('Scorebord'))).toBe(true)
+    expect(kaders.some((k) => k.textContent?.includes('Om de punten'))).toBe(true)
+  })
+
   it('linkt in de voettekst naar de repo', () => {
     render(<App />)
     const link = screen.getByTitle('Broncode op GitHub')

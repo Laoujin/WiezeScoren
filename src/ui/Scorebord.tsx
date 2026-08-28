@@ -10,6 +10,7 @@ import {
   type Ronde,
   type Spel,
 } from '../domein/spel'
+import { Kader } from './Kader'
 import { useTelling } from './useTelling'
 import { puntKleur, tekenPunt } from './zetels'
 
@@ -105,7 +106,7 @@ export function Scorebord({
   const eindsom = somVan(stand) + pot
 
   return (
-    <section className="min-w-0 rounded-2xl border border-krijt/15 bg-vilt-diep/45 p-4 backdrop-blur-sm">
+    <Kader className="min-w-0 p-5 backdrop-blur-sm">
       <header className="mb-3 flex items-baseline justify-between gap-3">
         <h2 className="font-display text-xl font-black tracking-tight">Scorebord</h2>
         <button
@@ -207,6 +208,6 @@ export function Scorebord({
           </table>
         </div>
       )}
-    </section>
+    </Kader>
   )
 }
