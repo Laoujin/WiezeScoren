@@ -32,12 +32,14 @@ function omschrijf(ronde: Ronde, spelers: string[], config: Config): string {
 }
 
 type CelProps = {
-  punten: number
+  waarde: number
   aangepast: boolean
-  onWijzig: (punten: number) => void
+  toon: (waarde: number) => string
+  klasse: string
+  onWijzig: (waarde: number) => void
 }
 
-function PuntCel({ punten, aangepast, onWijzig }: CelProps) {
+function BewerkbareCel({ waarde, aangepast, toon, klasse, onWijzig }: CelProps) {
   const [bewerkt, zetBewerkt] = useState(false)
 
   if (bewerkt) {
@@ -46,7 +48,7 @@ function PuntCel({ punten, aangepast, onWijzig }: CelProps) {
         <input
           autoFocus
           type="number"
-          defaultValue={punten}
+          defaultValue={waarde}
           onBlur={(e) => {
             onWijzig(Number(e.target.value) || 0)
             zetBewerkt(false)
@@ -66,9 +68,9 @@ function PuntCel({ punten, aangepast, onWijzig }: CelProps) {
       <button
         type="button"
         onClick={() => zetBewerkt(true)}
-        className={`w-full rounded px-2 py-0.5 text-right text-sm font-bold hover:bg-krijt/10 ${puntKleur(punten)} ${aangepast ? 'underline decoration-messing decoration-2 underline-offset-4' : ''}`}
+        className={`w-full rounded px-2 py-0.5 text-right text-sm font-bold hover:bg-krijt/10 ${klasse} ${aangepast ? 'underline decoration-messing decoration-2 underline-offset-4' : ''}`}
       >
-        {tekenPunt(punten)}
+        {toon(waarde)}
       </button>
     </td>
   )
@@ -89,6 +91,7 @@ type Props = {
   config: Config
   onWisRonde: (rondeId: string) => void
   onPasPuntAan: (rondeId: string, speler: SpelerId, punten: number) => void
+  onPasPotAan: (rondeId: string, pot: number) => void
   onHerstel: (rondeId: string) => void
   onCorrectie: () => void
 }
@@ -99,6 +102,7 @@ export function Scorebord({
   config,
   onWisRonde,
   onPasPuntAan,
+  onPasPotAan,
   onHerstel,
   onCorrectie,
 }: Props) {
@@ -163,18 +167,22 @@ export function Scorebord({
                     </span>
                   </td>
                   {SPELER_IDS.map((s) => (
-                    <PuntCel
+                    <BewerkbareCel
                       key={s}
-                      punten={rij.punten[s]}
+                      waarde={rij.punten[s]}
                       aangepast={rij.ronde.overrides?.[s] !== undefined}
+                      toon={tekenPunt}
+                      klasse={puntKleur(rij.punten[s])}
                       onWijzig={(waarde) => onPasPuntAan(rij.ronde.id, s, waarde)}
                     />
                   ))}
-                  <td
-                    className={`px-2 py-1 text-right text-sm font-bold ${rij.potNa === rij.potVoor ? 'text-krijt-dof/50' : 'text-messing'}`}
-                  >
-                    {rij.potNa}
-                  </td>
+                  <BewerkbareCel
+                    waarde={rij.potNa}
+                    aangepast={rij.ronde.potOverride !== undefined}
+                    toon={String}
+                    klasse={rij.potNa === rij.potVoor ? 'text-krijt-dof/50' : 'text-messing'}
+                    onWijzig={(waarde) => onPasPotAan(rij.ronde.id, waarde)}
+                  />
                   <td className="px-1 text-right">
                     <button
                       type="button"

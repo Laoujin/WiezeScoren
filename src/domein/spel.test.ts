@@ -13,6 +13,7 @@ import {
   wisOverrides,
   zetDeler,
   zetOverride,
+  zetPotOverride,
   type Spel,
 } from './spel'
 
@@ -115,6 +116,46 @@ describe('overrides', () => {
     const id = spel.rondes[0]!.id
     spel = zetOverride(zetOverride(spel, id, 0, 5), id, 3, -5)
     expect(totalen(spel, config)).toEqual({ 0: 5, 1: 0, 2: 0, 3: -5 })
+  })
+})
+
+describe('pot-override', () => {
+  it('vervangt de potstand na die ronde', () => {
+    let spel = metRonde(nieuwSpel(), {
+      contract: 'passen',
+      spelers: [],
+      slagen: 0,
+      madams: { 0: 4 },
+    })
+    const id = spel.rondes[0]!.id
+    expect(verloop(spel, config)[0]!.potNa).toBe(12)
+    spel = zetPotOverride(spel, id, 20)
+    expect(verloop(spel, config)[0]!.potNa).toBe(20)
+  })
+
+  it('laat een latere ronde vanaf de gecorrigeerde pot verder rekenen', () => {
+    let spel = metRonde(nieuwSpel(), { contract: 'correctie', spelers: [], slagen: 0 })
+    spel = zetPotOverride(spel, spel.rondes[0]!.id, 9)
+    spel = metRonde(spel, { contract: 'passen', spelers: [], slagen: 0, madams: { 1: 1 } })
+    const rijen = verloop(spel, config)
+    expect(rijen[1]!.potVoor).toBe(9)
+    expect(rijen[1]!.potNa).toBe(12)
+  })
+
+  it('markeert de ronde als handmatig aangepast en herstelt bij het wissen', () => {
+    let spel = metRonde(nieuwSpel(), { contract: 'correctie', spelers: [], slagen: 0 })
+    const id = spel.rondes[0]!.id
+    spel = zetPotOverride(spel, id, 7)
+    expect(heeftOverrides(spel.rondes[0]!)).toBe(true)
+    spel = wisOverrides(spel, id)
+    expect(heeftOverrides(spel.rondes[0]!)).toBe(false)
+    expect(verloop(spel, config)[0]!.potNa).toBe(0)
+  })
+
+  it('breekt het evenwicht van de ronde wanneer de pot niet bij de punten past', () => {
+    let spel = metRonde(nieuwSpel(), { contract: 'vragen', spelers: [0, 1], slagen: 8 })
+    spel = zetPotOverride(spel, spel.rondes[0]!.id, 5)
+    expect(rondeSluit(verloop(spel, config)[0]!)).toBe(false)
   })
 })
 

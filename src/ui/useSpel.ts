@@ -10,6 +10,7 @@ import {
   zetDeler,
   zetZetel,
   zetOverride,
+  zetPotOverride,
   type RondeInvoer,
   type Spel,
 } from '../domein/spel'
@@ -52,6 +53,10 @@ export function useSpel() {
 
   const pasPuntAan = useCallback((rondeId: string, speler: SpelerId, punten: number) => {
     zetSpel((huidig) => zetOverride(huidig, rondeId, speler, punten))
+  }, [])
+
+  const pasPotAan = useCallback((rondeId: string, pot: number) => {
+    zetSpel((huidig) => zetPotOverride(huidig, rondeId, pot))
   }, [])
 
   const herstelPunten = useCallback((rondeId: string) => {
@@ -115,6 +120,7 @@ export function useSpel() {
     speelRonde,
     wisRonde,
     pasPuntAan,
+    pasPotAan,
     herstelPunten,
     hernoem,
     kiesZetel,

@@ -11,6 +11,8 @@ export type Ronde = {
   /** Aantal madams per speler; enkel bij een pasronde. */
   madams?: Partial<Record<SpelerId, number>>
   overrides?: Partial<Record<SpelerId, number>>
+  /** De potstand na deze ronde, handmatig gezet. Latere rondes rekenen hiervanaf verder. */
+  potOverride?: number
 }
 
 export type RondeInvoer = {
@@ -95,12 +97,16 @@ export function zetOverride(spel: Spel, rondeId: string, speler: SpelerId, punte
   }))
 }
 
+export function zetPotOverride(spel: Spel, rondeId: string, pot: number): Spel {
+  return pasRondeAan(spel, rondeId, (r) => ({ ...r, potOverride: pot }))
+}
+
 export function wisOverrides(spel: Spel, rondeId: string): Spel {
-  return pasRondeAan(spel, rondeId, ({ overrides: _weg, ...rest }) => rest)
+  return pasRondeAan(spel, rondeId, ({ overrides: _weg, potOverride: _potWeg, ...rest }) => rest)
 }
 
 export function heeftOverrides(ronde: Ronde): boolean {
-  return Object.keys(ronde.overrides ?? {}).length > 0
+  return Object.keys(ronde.overrides ?? {}).length > 0 || ronde.potOverride !== undefined
 }
 
 function metOverrides(ronde: Ronde, punten: Punten): Punten {
@@ -118,8 +124,9 @@ export function verloop(spel: Spel, config: Config): Rondestand[] {
   let pot = 0
   return spel.rondes.map((ronde) => {
     const uitkomst = speelRonde(ronde, config, pot)
-    pot = uitkomst.potNa
-    return { ...uitkomst, ronde, punten: metOverrides(ronde, uitkomst.punten) }
+    const potNa = ronde.potOverride ?? uitkomst.potNa
+    pot = potNa
+    return { ...uitkomst, potNa, ronde, punten: metOverrides(ronde, uitkomst.punten) }
   })
 }
 

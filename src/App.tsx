@@ -226,6 +226,7 @@ export function App() {
               config={config}
               onWisRonde={spelState.wisRonde}
               onPasPuntAan={spelState.pasPuntAan}
+              onPasPotAan={spelState.pasPotAan}
               onHerstel={spelState.herstelPunten}
               onCorrectie={() =>
                 spelState.speelRonde({ contract: 'correctie', spelers: [], slagen: 0 })
