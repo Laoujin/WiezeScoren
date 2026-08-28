@@ -2,7 +2,9 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { GEEN_PUNTEN } from '../domein/score'
+import type { Tafelvorm } from '../domein/voorkeuren'
 import { Tafel } from './Tafel'
+import { zetelsVan } from './zetels'
 
 const VLUCHT = {
   id: 'ronde-1',
@@ -12,10 +14,15 @@ const VLUCHT = {
   ],
 }
 
-function toon(vlucht: typeof VLUCHT | null) {
+function toon(
+  vlucht: typeof VLUCHT | null,
+  vorm: Tafelvorm = 'rond',
+  onVorm: (vorm: Tafelvorm) => void = () => {},
+) {
   render(
     <Tafel
       spelers={['Az', 'Bo', 'Cy', 'Di']}
+      ploeg={[{ id: 'bo', naam: 'Bo' }]}
       totalen={{ ...GEEN_PUNTEN }}
       voorbeeld={null}
       pot={0}
@@ -23,9 +30,12 @@ function toon(vlucht: typeof VLUCHT | null) {
       selectie={[]}
       vlucht={vlucht}
       vertraging={vlucht ? 850 : 0}
+      vorm={vorm}
       onSelecteer={() => {}}
       onDeler={() => {}}
       onHernoem={() => {}}
+      onKiesZetel={() => {}}
+      onVorm={onVorm}
     />,
   )
 }
@@ -78,6 +88,51 @@ describe('Tafel', () => {
   it('zet de deler en de zetels op hun plek', () => {
     toon(null)
     expect(screen.getByTitle('Deler').parentElement?.style.top).toBe('65%')
-    expect(screen.getByText('Bo').closest('div')?.style.left).toBe('15%')
+    expect(screen.getByText('Bo').closest('[data-plaquette]')?.getAttribute('style')).toContain('left: 15%')
+  })
+})
+
+describe('tafelvorm', () => {
+  beforeEach(() => {
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+  })
+
+  afterEach(() => {
+    cleanup()
+    vi.unstubAllGlobals()
+  })
+
+  it('zet de zetels op de plek die bij de gekozen vorm hoort', () => {
+    for (const vorm of ['rond', 'vierkant'] as const) {
+      cleanup()
+      toon(null, vorm)
+      const zetels = zetelsVan(vorm)
+      const plek = document
+        .querySelector<HTMLElement>('button[data-zetel="1"]')!
+        .closest<HTMLElement>('.absolute')!
+      expect(plek.style.left).toBe(`${zetels[1].plaquette.x}%`)
+      expect(plek.style.top).toBe(`${zetels[1].plaquette.y}%`)
+    }
+  })
+
+  it('maakt de tafel rond of hoekig', () => {
+    toon(null, 'rond')
+    expect(document.querySelector('.vilt')!.className).toContain('rounded-[50%]')
+    cleanup()
+    toon(null, 'vierkant')
+    expect(document.querySelector('.vilt')!.className).toContain('rounded-3xl')
+  })
+
+  it('laat de vorm omschakelen', () => {
+    const gekozen: Tafelvorm[] = []
+    toon(null, 'rond', (vorm) => gekozen.push(vorm))
+    screen.getByTitle('Vierkante tafel').click()
+    expect(gekozen).toEqual(['vierkant'])
+  })
+
+  it('laat de munten de gekozen vorm volgen', () => {
+    toon(VLUCHT, 'vierkant')
+    const zetels = zetelsVan('vierkant')
+    expect(banen()[0]!.style.left).toBe(`${zetels[1].plaquette.x}%`)
   })
 })

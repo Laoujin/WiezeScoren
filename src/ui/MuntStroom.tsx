@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import type { Betaling } from '../domein/betalingen'
+import type { Tafelvorm } from '../domein/voorkeuren'
 import { Munt } from './Munt'
 import { plaats, plekVan } from './zetels'
 
@@ -13,9 +14,17 @@ const START_MS = 110
 
 export const VLUCHT_MS = 850
 
-function Betaalvlucht({ betaling, rang }: { betaling: Betaling; rang: number }) {
-  const van = plekVan(betaling.van)
-  const naar = plekVan(betaling.naar)
+function Betaalvlucht({
+  betaling,
+  rang,
+  vorm,
+}: {
+  betaling: Betaling
+  rang: number
+  vorm: Tafelvorm
+}) {
+  const van = plekVan(betaling.van, vorm)
+  const naar = plekVan(betaling.naar, vorm)
   const vertrek = `${rang * START_MS}ms`
   const baan = {
     ...plaats(van),
@@ -42,11 +51,22 @@ function Betaalvlucht({ betaling, rang }: { betaling: Betaling; rang: number }) 
   )
 }
 
-export function MuntStroom({ betalingen }: { betalingen: Betaling[] }) {
+export function MuntStroom({
+  betalingen,
+  vorm,
+}: {
+  betalingen: Betaling[]
+  vorm: Tafelvorm
+}) {
   return (
     <div className="pointer-events-none absolute inset-0 z-20">
       {betalingen.map((betaling, i) => (
-        <Betaalvlucht key={`${betaling.van}-${betaling.naar}-${i}`} betaling={betaling} rang={i} />
+        <Betaalvlucht
+          key={`${betaling.van}-${betaling.naar}-${i}`}
+          betaling={betaling}
+          rang={i}
+          vorm={vorm}
+        />
       ))}
     </div>
   )

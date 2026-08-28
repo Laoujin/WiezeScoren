@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { SPELER_IDS, type SpelerId } from '../domein/contracten'
+import type { Ploeglid } from '../domein/ploeg'
 import type { Punten } from '../domein/score'
-import { Munt } from './Munt'
+import { TAFELVORMEN, type Tafelvorm } from '../domein/voorkeuren'
+import { Avatar } from './Avatar'
 import { MuntStroom } from './MuntStroom'
+import { Ploegkiezer } from './Ploegkiezer'
 import type { Vlucht } from './useMuntStroom'
 import { useTelling } from './useTelling'
-import { ZETELS, plaats, puntKleur, tekenPunt } from './zetels'
+import { plaats, puntKleur, tekenPunt, zetelsVan, type Zetel } from './zetels'
 
 const MAX_FICHES = 8
 const PUNTEN_PER_FICHE = 6
@@ -39,7 +42,10 @@ function Fichestapel({ pot, vertraging }: { pot: number; vertraging: number }) {
 
 type PlaquetteProps = {
   speler: SpelerId
+  zetel: Zetel
   naam: string
+  lid: Ploeglid | undefined
+  ploeg: Ploeglid[]
   totaal: number
   voorbeeld: number | null
   geselecteerd: boolean
@@ -47,11 +53,15 @@ type PlaquetteProps = {
   onSelecteer: () => void
   onDeler: () => void
   onHernoem: (naam: string) => void
+  onKiesZetel: (naam: string) => void
 }
 
 function Plaquette({
   speler,
+  zetel,
   naam,
+  lid,
+  ploeg,
   totaal,
   voorbeeld,
   geselecteerd,
@@ -59,33 +69,48 @@ function Plaquette({
   onSelecteer,
   onDeler,
   onHernoem,
+  onKiesZetel,
 }: PlaquetteProps) {
   const [bewerkt, zetBewerkt] = useState(false)
+  const [kiest, zetKiest] = useState(false)
   const getoondTotaal = useTelling(totaal, vertraging)
 
   return (
     <div
-      className="absolute w-[30%] -translate-x-1/2 -translate-y-1/2 sm:w-[24%]"
-      style={plaats(ZETELS[speler].plaquette)}
+      data-plaquette={speler}
+      className="absolute w-[34%] -translate-x-1/2 -translate-y-1/2 sm:w-[26%]"
+      style={plaats(zetel.plaquette)}
     >
-      <button
-        type="button"
-        data-zetel={speler}
-        onClick={onSelecteer}
+      <div
         onContextMenu={(e) => {
           e.preventDefault()
           onDeler()
         }}
-        className={`flex w-full items-center gap-2 rounded-xl border px-2 py-1.5 text-left transition-transform duration-200 hover:-translate-y-0.5 ${
+        className={`flex items-center gap-2 rounded-xl border px-2 py-1.5 transition-transform duration-200 hover:-translate-y-0.5 ${
           geselecteerd
             ? 'plaquette-actief border-messing'
             : 'plaquette border-krijt/12 hover:border-krijt/30'
         }`}
       >
-        <Munt
-          className={`h-5 w-5 shrink-0 ${geselecteerd ? 'text-messing' : 'text-messing-diep'}`}
-        />
-        <span className="min-w-0 flex-1">
+        <button
+          type="button"
+          title={`${naam} vervangen`}
+          onClick={() => zetKiest((open) => !open)}
+          className="rounded-full transition-transform hover:scale-110"
+        >
+          <Avatar
+            naam={naam}
+            avatar={lid?.avatar}
+            className={`h-9 w-9 text-lg ${geselecteerd ? 'border-messing' : ''}`}
+          />
+        </button>
+
+        <button
+          type="button"
+          data-zetel={speler}
+          onClick={onSelecteer}
+          className="min-w-0 flex-1 text-left"
+        >
           {bewerkt ? (
             <input
               autoFocus
@@ -117,7 +142,8 @@ function Plaquette({
           >
             {getoondTotaal}
           </span>
-        </span>
+        </button>
+
         {voorbeeld !== null && (
           <span
             key={voorbeeld}
@@ -126,13 +152,24 @@ function Plaquette({
             {tekenPunt(voorbeeld)}
           </span>
         )}
-      </button>
+      </div>
+
+      {kiest && (
+        <Ploegkiezer
+          ploeg={ploeg}
+          aanTafel={naam}
+          omhoog={zetel.plaquette.y > 50}
+          onKies={onKiesZetel}
+          onSluit={() => zetKiest(false)}
+        />
+      )}
     </div>
   )
 }
 
 type TafelProps = {
   spelers: string[]
+  ploeg: Ploeglid[]
   totalen: Punten
   voorbeeld: Punten | null
   pot: number
@@ -140,13 +177,17 @@ type TafelProps = {
   selectie: SpelerId[]
   vlucht: Vlucht | null
   vertraging: number
+  vorm: Tafelvorm
   onSelecteer: (speler: SpelerId) => void
   onDeler: (speler: SpelerId) => void
   onHernoem: (speler: SpelerId, naam: string) => void
+  onKiesZetel: (speler: SpelerId, naam: string) => void
+  onVorm: (vorm: Tafelvorm) => void
 }
 
 export function Tafel({
   spelers,
+  ploeg,
   totalen,
   voorbeeld,
   pot,
@@ -154,17 +195,47 @@ export function Tafel({
   selectie,
   vlucht,
   vertraging,
+  vorm,
   onSelecteer,
   onDeler,
   onHernoem,
+  onKiesZetel,
+  onVorm,
 }: TafelProps) {
   const getoondePot = useTelling(pot, vertraging)
+  const zetels = zetelsVan(vorm)
 
   return (
     <div className="relative mx-auto aspect-square w-full max-w-[40rem] sm:aspect-4/3">
       <div className="lamplicht pointer-events-none absolute inset-x-0 top-[-14%] h-[70%]" />
 
-      <div className="vilt absolute top-1/2 left-1/2 h-[44%] w-[36%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border-4 border-messing-diep/60 bg-vilt-licht shadow-[0_28px_60px_-20px_#000,inset_0_2px_30px_rgba(0,0,0,0.45)] sm:h-[46%] sm:w-[48%]">
+      <div className="absolute top-0 right-0 z-30 flex gap-1 rounded-lg border border-krijt/15 bg-vilt-diep/70 p-1">
+        {TAFELVORMEN.map((keuze) => (
+          <button
+            key={keuze}
+            type="button"
+            title={keuze === 'rond' ? 'Ronde tafel' : 'Vierkante tafel'}
+            onClick={() => onVorm(keuze)}
+            className={`flex h-8 w-8 items-center justify-center transition-colors ${
+              keuze === 'rond' ? 'rounded-full' : 'rounded-sm'
+            } ${
+              vorm === keuze
+                ? 'bg-messing text-vilt-diep'
+                : 'border border-krijt/30 text-krijt-dof hover:border-krijt/60'
+            }`}
+          >
+            <span className="sr-only">{keuze === 'rond' ? 'Rond' : 'Vierkant'}</span>
+          </button>
+        ))}
+      </div>
+
+      <div
+        className={`vilt absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-4 border-messing-diep/60 bg-vilt-licht shadow-[0_28px_60px_-20px_#000,inset_0_2px_30px_rgba(0,0,0,0.45)] ${
+          vorm === 'rond'
+            ? 'h-[44%] w-[36%] rounded-[50%] sm:h-[46%] sm:w-[42%]'
+            : 'h-[88%] w-[88%] rounded-3xl'
+        }`}
+      >
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
           <span className="text-[0.58rem] tracking-[0.34em] text-krijt/45 uppercase">Pot</span>
           <Fichestapel key={pot} pot={pot} vertraging={vertraging} />
@@ -178,7 +249,7 @@ export function Tafel({
 
       <div
         className="deler-schuif pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2"
-        style={plaats(ZETELS[deler].deler)}
+        style={plaats(zetels[deler].deler)}
       >
         <span
           key={deler}
@@ -189,22 +260,29 @@ export function Tafel({
         </span>
       </div>
 
-      {SPELER_IDS.map((speler) => (
-        <Plaquette
-          key={speler}
-          speler={speler}
-          naam={spelers[speler] ?? ''}
-          totaal={totalen[speler]}
-          voorbeeld={voorbeeld ? voorbeeld[speler] : null}
-          geselecteerd={selectie.includes(speler)}
-          vertraging={vertraging}
-          onSelecteer={() => onSelecteer(speler)}
-          onDeler={() => onDeler(speler)}
-          onHernoem={(naam) => onHernoem(speler, naam)}
-        />
-      ))}
+      {SPELER_IDS.map((speler) => {
+        const naam = spelers[speler] ?? ''
+        return (
+          <Plaquette
+            key={speler}
+            speler={speler}
+            zetel={zetels[speler]}
+            naam={naam}
+            lid={ploeg.find((l) => l.naam === naam)}
+            ploeg={ploeg}
+            totaal={totalen[speler]}
+            voorbeeld={voorbeeld ? voorbeeld[speler] : null}
+            geselecteerd={selectie.includes(speler)}
+            vertraging={vertraging}
+            onSelecteer={() => onSelecteer(speler)}
+            onDeler={() => onDeler(speler)}
+            onHernoem={(nieuw) => onHernoem(speler, nieuw)}
+            onKiesZetel={(nieuw) => onKiesZetel(speler, nieuw)}
+          />
+        )
+      })}
 
-      {vlucht && <MuntStroom key={vlucht.id} betalingen={vlucht.betalingen} />}
+      {vlucht && <MuntStroom key={vlucht.id} betalingen={vlucht.betalingen} vorm={vorm} />}
     </div>
   )
 }
