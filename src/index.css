@@ -1,0 +1,133 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-vilt: #10412e;
+  --color-vilt-licht: #17573d;
+  --color-vilt-diep: #071a13;
+  --color-messing: #d9a441;
+  --color-messing-diep: #8a6420;
+  --color-krijt: #f3eee2;
+  --color-krijt-dof: #a9a396;
+  --color-hart: #c6402f;
+  --color-munt: #7fd8a0;
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-sans: 'Archivo', system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+      radial-gradient(120% 90% at 50% -10%, #1d6b4b 0%, var(--color-vilt) 38%, var(--color-vilt-diep) 100%);
+    background-attachment: fixed;
+    color: var(--color-krijt);
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-messing);
+    outline-offset: 2px;
+  }
+}
+
+/* Het viltweefsel van de tafel: fijne ruis over het groen. */
+.vilt {
+  background-image:
+    radial-gradient(70% 60% at 50% 26%, rgb(255 245 210 / 0.16) 0%, transparent 62%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+  background-blend-mode: screen, overlay;
+}
+
+/* De lamp boven de tafel. */
+.lamplicht {
+  background: radial-gradient(closest-side, rgb(255 226 160 / 0.28), transparent 72%);
+}
+
+@keyframes punt-inslag {
+  0% {
+    opacity: 0;
+    transform: translateY(-26px) scale(0.55) rotate(-8deg);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(3px) scale(1.14) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes chip-plof {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes gloed {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px var(--color-messing-diep), 0 0 22px -6px var(--color-messing);
+  }
+  50% {
+    box-shadow: 0 0 0 1px var(--color-messing), 0 0 34px -2px var(--color-messing);
+  }
+}
+
+@keyframes kaart-open {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animatie-inslag {
+  animation: punt-inslag 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.animatie-chip {
+  animation: chip-plof 0.4s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+
+.animatie-gloed {
+  animation: gloed 2.6s ease-in-out infinite;
+}
+
+.animatie-open {
+  animation: kaart-open 0.28s ease-out both;
+}
+
+.deler-schuif {
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
