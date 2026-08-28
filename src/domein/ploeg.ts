@@ -3,15 +3,15 @@ import type { SpelerId } from './contracten'
 export type Ploeglid = {
   id: string
   naam: string
-  /** Pad naar de avatar onder `public/`; zonder foto valt de weergave terug op initialen. */
+  /** Bestandsnaam onder `public/spelers/`; zonder foto valt de weergave terug op initialen. */
   avatar?: string
 }
 
 export const STANDAARD_PLOEG: Ploeglid[] = [
-  { id: 'wouter', naam: 'Wouter' },
+  { id: 'wouter', naam: 'Wouter', avatar: 'wouter.webp' },
   { id: 'gert', naam: 'Gert' },
-  { id: 'moe', naam: 'Moe' },
-  { id: 'va', naam: 'Va' },
+  { id: 'moe', naam: 'Moe', avatar: 'lieve.webp' },
+  { id: 'va', naam: 'Va', avatar: 'guido.webp' },
   { id: 'zus', naam: 'Zus' },
 ]
 
