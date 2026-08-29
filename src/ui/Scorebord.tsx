@@ -48,7 +48,7 @@ function BewerkbareCel({ waarde, aangepast, toon, klasse, onWijzig }: CelProps) 
         <input
           autoFocus
           type="number"
-          defaultValue={waarde}
+          defaultValue={waarde === 0 ? '' : waarde}
           onBlur={(e) => {
             onWijzig(Number(e.target.value) || 0)
             zetBewerkt(false)
