@@ -38,3 +38,12 @@ export function initialen(naam: string): string {
     .map((woord) => woord[0]!.toUpperCase())
   return letters.slice(0, 2).join('') || '?'
 }
+
+/** Nummert door op de gast-ids, zodat een hernoemde gast geen nummer teruggeeft. */
+export function maakGast(ploeg: Ploeglid[]): Ploeglid {
+  const nummers = ploeg
+    .map((lid) => Number(/^gast-(\d+)$/.exec(lid.id)?.[1]))
+    .filter((nummer) => Number.isFinite(nummer))
+  const nummer = Math.max(0, ...nummers) + 1
+  return { id: `gast-${nummer}`, naam: `Gast ${nummer}` }
+}

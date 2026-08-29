@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { STANDAARD_PLOEG, hernoemInPloeg, initialen, zetOpZetel, type Ploeglid } from './ploeg'
+import {
+  STANDAARD_PLOEG,
+  hernoemInPloeg,
+  initialen,
+  maakGast,
+  zetOpZetel,
+  type Ploeglid,
+} from './ploeg'
 
 const PLOEG: Ploeglid[] = [
   { id: 'a', naam: 'Wouter' },
@@ -73,5 +80,16 @@ describe('initialen', () => {
 
   it('geeft een vraagteken voor een lege naam', () => {
     expect(initialen('   ')).toBe('?')
+  })
+})
+
+describe('maakGast', () => {
+  it('nummert de eerste gast als 1', () => {
+    expect(maakGast(PLOEG)).toEqual({ id: 'gast-1', naam: 'Gast 1' })
+  })
+
+  it('telt verder na de hoogste gast, ook als die hernoemd is', () => {
+    const ploeg = [...PLOEG, { id: 'gast-1', naam: 'Gast 1' }, { id: 'gast-3', naam: 'Jef' }]
+    expect(maakGast(ploeg)).toEqual({ id: 'gast-4', naam: 'Gast 4' })
   })
 })

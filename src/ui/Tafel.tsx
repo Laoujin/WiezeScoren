@@ -60,6 +60,7 @@ type PlaquetteProps = {
   onDeler: () => void
   onHernoem: (naam: string) => void
   onKiesZetel: (naam: string) => void
+  onGast: () => void
 }
 
 function Plaquette({
@@ -78,6 +79,7 @@ function Plaquette({
   onDeler,
   onHernoem,
   onKiesZetel,
+  onGast,
 }: PlaquetteProps) {
   const [bewerkt, zetBewerkt] = useState(false)
   const [kiest, zetKiest] = useState(false)
@@ -191,6 +193,7 @@ function Plaquette({
           omhoog={zetel.plaquette.y > 50}
           anker={anker}
           onKies={onKiesZetel}
+          onGast={onGast}
           onSluit={sluit}
         />
       )}
@@ -213,6 +216,7 @@ type TafelProps = {
   onDeler: (speler: SpelerId) => void
   onHernoem: (speler: SpelerId, naam: string) => void
   onKiesZetel: (speler: SpelerId, naam: string) => void
+  onGast: (speler: SpelerId) => void
 }
 
 export function Tafel({
@@ -230,6 +234,7 @@ export function Tafel({
   onDeler,
   onHernoem,
   onKiesZetel,
+  onGast,
 }: TafelProps) {
   const getoondePot = useTelling(pot, vertraging)
   const zetels = zetelsVan(vorm)
@@ -300,6 +305,7 @@ export function Tafel({
             }}
             onHernoem={(nieuw) => onHernoem(speler, nieuw)}
             onKiesZetel={(nieuw) => onKiesZetel(speler, nieuw)}
+            onGast={() => onGast(speler)}
           />
         )
       })}

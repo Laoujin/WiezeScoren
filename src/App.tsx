@@ -200,6 +200,7 @@ export function App() {
                 onDeler={spelState.kiesDeler}
                 onHernoem={spelState.hernoem}
                 onKiesZetel={spelState.kiesZetel}
+                onGast={spelState.voegGastToe}
               />
             </div>
 

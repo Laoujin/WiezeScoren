@@ -14,7 +14,7 @@ const VLUCHT = {
   ],
 }
 
-function toon(vlucht: typeof VLUCHT | null, vorm: Tafelvorm = 'rond') {
+function toon(vlucht: typeof VLUCHT | null, vorm: Tafelvorm = 'rond', onGast = () => {}) {
   render(
     <Tafel
       spelers={['Az', 'Bo', 'Cy', 'Di']}
@@ -31,6 +31,7 @@ function toon(vlucht: typeof VLUCHT | null, vorm: Tafelvorm = 'rond') {
       onDeler={() => {}}
       onHernoem={() => {}}
       onKiesZetel={() => {}}
+      onGast={onGast}
     />,
   )
 }
@@ -112,10 +113,22 @@ describe('ploegkiezer', () => {
     return plaquette(speler).querySelector<HTMLElement>('.animatie-open')
   }
 
-  it('opent de kieslijst met de hele ploeg', () => {
+  it('opent de kieslijst met de hele ploeg en een gastknop', () => {
     toon(null)
     open(0)
-    expect([...kiezer(0)!.querySelectorAll('button')].map((b) => b.title)).toEqual(['Bo'])
+    expect([...kiezer(0)!.querySelectorAll('button')].map((b) => b.title)).toEqual([
+      'Bo',
+      'Gast toevoegen',
+    ])
+  })
+
+  it('vraagt een nieuwe gast voor deze zetel', () => {
+    const onGast = vi.fn()
+    toon(null, 'rond', onGast)
+    open(1)
+    fireEvent.click(kiezer(1)!.querySelector('button[title="Gast toevoegen"]')!)
+    expect(onGast).toHaveBeenCalledWith(1)
+    expect(kiezer(1)).toBeNull()
   })
 
   it('tilt de zetel boven de delerfiche zolang de lijst openstaat', () => {

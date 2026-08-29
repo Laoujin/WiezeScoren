@@ -12,6 +12,7 @@ export function Ploegkiezer({
   omhoog,
   anker,
   onKies,
+  onGast,
   onSluit,
 }: {
   ploeg: Ploeglid[]
@@ -20,6 +21,7 @@ export function Ploegkiezer({
   /** De zetel waar de lijst aan hangt; een klik daarbinnen laat hem openstaan. */
   anker: RefObject<HTMLElement | null>
   onKies: (naam: string) => void
+  onGast: () => void
   onSluit: () => void
 }) {
   // De zetel draagt een transform, dus een `fixed` overlay zou tegen die zetel uitlijnen in
@@ -61,6 +63,17 @@ export function Ploegkiezer({
           <Avatar naam={lid.naam} avatar={lid.avatar} className="h-9 w-9 text-base" />
         </button>
       ))}
+      <button
+        type="button"
+        title="Gast toevoegen"
+        onClick={() => {
+          onGast()
+          onSluit()
+        }}
+        className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-dashed border-messing/60 font-display text-base font-black text-messing/80 transition-transform hover:-translate-y-0.5 hover:text-messing"
+      >
+        G
+      </button>
     </div>
   )
 }

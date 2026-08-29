@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { Config, SpelerId } from '../domein/contracten'
-import { hernoemInPloeg, type Ploeglid } from '../domein/ploeg'
+import { hernoemInPloeg, maakGast, type Ploeglid } from '../domein/ploeg'
 import {
   hernoemSpeler,
   maakRonde,
@@ -77,6 +77,12 @@ export function useSpel() {
     zetSpel((huidig) => zetZetel(huidig, zetel, naam))
   }, [])
 
+  const voegGastToe = useCallback((zetel: SpelerId) => {
+    const gast = maakGast(ploeg)
+    zetPloeg((huidig) => [...huidig, gast])
+    zetSpel((huidig) => zetZetel(huidig, zetel, gast.naam))
+  }, [ploeg])
+
   const zetTafelvorm = useCallback((vorm: Tafelvorm) => {
     bewaarVoorkeuren(localStorage, { tafelvorm: vorm })
     zetTafelvormState(vorm)
@@ -124,6 +130,7 @@ export function useSpel() {
     herstelPunten,
     hernoem,
     kiesZetel,
+    voegGastToe,
     kiesDeler,
     startNieuwSpel,
     heropenUitArchief,
