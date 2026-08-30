@@ -118,6 +118,7 @@ function Plaquette({
             <Avatar
               naam={naam}
               avatar={lid?.avatar}
+              icoon={lid?.icoon}
               className={`h-9 w-9 text-lg ${geselecteerd ? 'border-messing' : ''}`}
             />
           </button>
