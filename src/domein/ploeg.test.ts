@@ -6,8 +6,10 @@ import {
   initialen,
   maakGast,
   zetOpZetel,
+  wisselPloeg,
   zetelnamen,
   type Ploeglid,
+  type Ploegen,
 } from './ploeg'
 
 const PLOEG: Ploeglid[] = [
@@ -124,5 +126,38 @@ describe('zetelnamen', () => {
       'Lies',
       'Bert',
     ])
+  })
+})
+
+function versePloegen(): Ploegen {
+  return {
+    actief: 'standaard',
+    standaard: { leden: STANDAARD_PLOEG, zetels: [] },
+    gezin: { leden: GEZINS_PLOEG, zetels: [] },
+  }
+}
+
+describe('wisselPloeg', () => {
+  it('zet de andere ploeg actief', () => {
+    expect(wisselPloeg(versePloegen(), ['Tom', 'Caro', 'Lies', 'Bert']).actief).toBe('gezin')
+  })
+
+  it('bewaart de meegegeven zetels bij de ploeg die je verlaat', () => {
+    const na = wisselPloeg(versePloegen(), ['Fien', 'Caro', 'Lies', 'Bert'])
+    expect(na.standaard.zetels).toEqual(['Fien', 'Caro', 'Lies', 'Bert'])
+  })
+
+  it('geeft de zetels terug bij het terugwisselen', () => {
+    const heen = wisselPloeg(versePloegen(), ['Fien', 'Caro', 'Lies', 'Bert'])
+    const terug = wisselPloeg(heen, ['Zus', 'Gert', 'Moe', 'Va'])
+    expect(terug.actief).toBe('standaard')
+    expect(zetelnamen(terug.standaard)).toEqual(['Fien', 'Caro', 'Lies', 'Bert'])
+    expect(terug.gezin.zetels).toEqual(['Zus', 'Gert', 'Moe', 'Va'])
+  })
+
+  it('laat de leden van beide ploegen ongemoeid', () => {
+    const na = wisselPloeg(versePloegen(), ['Tom', 'Caro', 'Lies', 'Bert'])
+    expect(na.standaard.leden).toEqual(STANDAARD_PLOEG)
+    expect(na.gezin.leden).toEqual(GEZINS_PLOEG)
   })
 })

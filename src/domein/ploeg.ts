@@ -36,6 +36,24 @@ export function zetelnamen(stand: Ploegstand): string[] {
   return stand.leden.slice(0, ZETELS).map((lid) => lid.naam)
 }
 
+export type Ploegkeuze = 'standaard' | 'gezin'
+
+export type Ploegen = Record<Ploegkeuze, Ploegstand> & { actief: Ploegkeuze }
+
+export const VERSE_PLOEGEN: Ploegen = {
+  actief: 'standaard',
+  standaard: { leden: STANDAARD_PLOEG, zetels: [] },
+  gezin: { leden: GEZINS_PLOEG, zetels: [] },
+}
+
+/** De zetels van de ploeg die je verlaat gaan mee de opslag in, zodat terugwisselen ze teruggeeft. */
+export function wisselPloeg(ploegen: Ploegen, zetels: string[]): Ploegen {
+  const verlaten = { ...ploegen[ploegen.actief], zetels }
+  return ploegen.actief === 'standaard'
+    ? { actief: 'gezin', standaard: verlaten, gezin: ploegen.gezin }
+    : { actief: 'standaard', standaard: ploegen.standaard, gezin: verlaten }
+}
+
 /** Zit de speler al aan tafel, dan ruilen de twee zetels van plaats. */
 export function zetOpZetel(spelers: string[], zetel: SpelerId, naam: string): string[] {
   const vorige = spelers.indexOf(naam)
