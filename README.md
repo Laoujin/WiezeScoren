@@ -39,6 +39,7 @@ http://localhost:5173
 | `+ Correctie`                 | lege rij met vier vrije velden                     |
 | `Nieuw spel`                  | partij naar het archief, namen blijven staan       |
 | `Uitleg` in de voettekst      | rondleiding die de klikken zelf voordoet           |
+| `Guido` in de voettekst       | wissel tussen de standaardploeg en het gezin       |
 
 Een rij kleurt rood zodra de punten samen met de potbeweging niet op nul uitkomen. De deler
 schuift automatisch door na elke ronde, behalve na een correctie.
@@ -85,9 +86,14 @@ rondes bewaren alleen hun invoer.
 
 ## De ploeg
 
-De ploeg staat vast op vijf: Wouter, Gert, Moe, Va en Zus. Vier ervan zitten aan tafel. Klik een
-avatar om iemand anders op die zetel te zetten; zit die al aan tafel, dan ruilen de twee van
-plaats. Dubbelklik een naam om te hernoemen, dat volgt de persoon zodat zijn avatar meegaat.
+De ploeg telt vijf leden, waarvan er vier aan tafel zitten. Standaard zijn dat Tom, Caro, Lies,
+Bert en Fien, elk met een dier-icoon. `Guido` in de voettekst wisselt naar het gezin — Wouter,
+Gert, Moe, Va en Zus, met hun foto-karikaturen — en terug. Elke ploeg houdt haar eigen
+hernoemingen, gasten en zetelverdeling; de lopende partij blijft staan, want rondes verwijzen naar
+zetels en niet naar namen.
+
+Klik een avatar om iemand anders op die zetel te zetten; zit die al aan tafel, dan ruilen de twee
+van plaats. Dubbelklik een naam om te hernoemen, dat volgt de persoon zodat zijn avatar meegaat.
 
 ### Avatars maken
 
@@ -121,12 +127,12 @@ vervorming in plaats van overdrijving.
 
 ## Opslag
 
-| Sleutel          | Inhoud                              |
-| ---------------- | ----------------------------------- |
-| `wiezen.spel`    | de lopende partij                   |
-| `wiezen.config`  | de contractwaarden                  |
-| `wiezen.archief` | afgesloten partijen, nieuwste eerst |
-| `wiezen.ploeg`   | de vaste ploeg met hun avatars      |
+| Sleutel          | Inhoud                                                    |
+| ---------------- | --------------------------------------------------------- |
+| `wiezen.spel`    | de lopende partij                                         |
+| `wiezen.config`  | de contractwaarden                                        |
+| `wiezen.archief` | afgesloten partijen, nieuwste eerst                       |
+| `wiezen.ploeg`   | beide ploegen met hun leden en zetels, en welke actief is |
 
 De pot hoort bij de partij en gaat dus mee het archief in.
 
@@ -138,7 +144,8 @@ De pot hoort bij de partij en gaat dus mee het archief in.
 | `src/domein/score.ts`      | `berekenPunten` en `speelRonde`             |
 | `src/domein/betalingen.ts` | wie aan wie betaalt, met de pot als knoop   |
 | `src/domein/spel.ts`       | partijstate, rondes, potverloop, totalen    |
-| `src/domein/ploeg.ts`      | de vaste ploeg en wie op welke zetel zit    |
+| `src/domein/ploeg.ts`      | de twee ploegen, hun zetels en het wisselen |
+| `src/ui/diericonen.tsx`    | de dier-iconen van de standaardploeg        |
 | `scripts/avatars.py`       | foto naar karikatuur-avatar                 |
 | `src/opslag/opslag.ts`     | laden, bewaren, archiveren                  |
 | `src/ui/`                  | tafel, contractknoppen, scorebord, schermen |
