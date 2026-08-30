@@ -55,7 +55,6 @@ type Props = {
   contract: ContractType | null
   slagen: number
   madams: Partial<Record<SpelerId, number>>
-  bericht: string
   kanOpslaan: boolean
   onContract: (contract: ContractType) => void
   onSlagen: (slagen: number) => void
@@ -72,7 +71,6 @@ export function ContractKeuze({
   contract,
   slagen,
   madams,
-  bericht,
   kanOpslaan,
   onContract,
   onSlagen,
@@ -216,30 +214,25 @@ export function ContractKeuze({
         </div>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-krijt/10 bg-vilt-diep/40 px-4 py-3">
-        <p className="min-w-0 flex-1 truncate font-display text-sm text-krijt/70 italic">
-          {bericht || 'Klik wie speelt.'}
-        </p>
-        <div className="flex gap-2">
-          {(contract || selectie.length > 0) && (
-            <button
-              type="button"
-              onClick={onWis}
-              className="h-11 rounded-xl border border-krijt/20 px-4 text-sm text-krijt-dof transition-colors hover:text-krijt"
-            >
-              Wissen
-            </button>
-          )}
+      <div className="flex items-center justify-end gap-2 border-t border-krijt/10 bg-vilt-diep/40 px-4 py-3">
+        {(contract || selectie.length > 0) && (
           <button
             type="button"
-            data-opslaan
-            disabled={!kanOpslaan}
-            onClick={onOpslaan}
-            className="h-11 rounded-xl bg-messing px-6 font-display text-base font-black text-vilt-diep transition-transform hover:scale-[1.03] disabled:cursor-not-allowed disabled:bg-krijt/12 disabled:text-krijt-dof/40"
+            onClick={onWis}
+            className="h-11 rounded-xl border border-krijt/20 px-4 text-sm text-krijt-dof transition-colors hover:text-krijt"
           >
-            Ronde opslaan
+            Wissen
           </button>
-        </div>
+        )}
+        <button
+          type="button"
+          data-opslaan
+          disabled={!kanOpslaan}
+          onClick={onOpslaan}
+          className="h-11 rounded-xl bg-messing px-6 font-display text-base font-black text-vilt-diep transition-transform hover:scale-[1.03] disabled:cursor-not-allowed disabled:bg-krijt/12 disabled:text-krijt-dof/40"
+        >
+          Ronde opslaan
+        </button>
       </div>
     </Kader>
   )

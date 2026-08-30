@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import {
   AANTAL_MADAMS,
-  ALLE_SLAGEN,
   isSpeelbaar,
   telMadams,
   type ContractType,
   type SpelerId,
 } from './domein/contracten'
-import { contractGehaald, speelRonde, type Punten } from './domein/score'
+import { speelRonde, type Punten } from './domein/score'
 import { totalenVan, verloop, type Ronde } from './domein/spel'
 import { Archief } from './ui/Archief'
 import { ContractKeuze } from './ui/ContractKeuze'
@@ -81,21 +80,6 @@ export function App() {
     ? { id: 'voorbeeld', deler: spel.deler, contract, spelers: selectie, slagen, madams }
     : null
   const voorbeeld: Punten | null = proefronde ? speelRonde(proefronde, config, pot).punten : null
-  const gehaald = proefronde !== null && contractGehaald(proefronde, config)
-
-  const bericht = (() => {
-    if (contract === 'passen') return 'Verdeel de madams.'
-    if (contract && isSpeelbaar(contract)) {
-      const c = config.contracten[contract]
-      if (c.geenSlagenteller) return `${c.naam} — ${gehaald ? 'gehaald' : 'mislukt'}`
-      if (c.bijAlleSlagen > 0 && slagen === ALLE_SLAGEN) return `${c.naam} — alle slagen!`
-      return `${c.naam} — ${slagen} van de ${c.slagenNodig} slagen`
-    }
-    if (selectie.length === 2)
-      return `${spel.spelers[selectie[0]!]} en ${spel.spelers[selectie[1]!]} samen`
-    if (selectie.length === 1) return `${spel.spelers[selectie[0]!]} alleen`
-    return ''
-  })()
 
   const bewaarRonde = () => {
     if (!kanOpslaan || !contract) return
@@ -244,7 +228,6 @@ export function App() {
               contract={contract}
               slagen={slagen}
               madams={madams}
-              bericht={bericht}
               kanOpslaan={kanOpslaan}
               onContract={kiesContract}
               onSlagen={zetSlagen}
