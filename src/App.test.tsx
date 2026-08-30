@@ -2,6 +2,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { App } from './App'
+import { markeerTutorialGezien } from './opslag/opslag'
 
 function zetel(speler: number): HTMLElement {
   const knop = document.querySelector(`[data-zetel="${speler}"]`)
@@ -34,6 +35,7 @@ function totalen(): string[] {
 describe('App', () => {
   beforeEach(() => {
     localStorage.clear()
+    markeerTutorialGezien(localStorage)
     vi.stubGlobal('matchMedia', () => ({ matches: false }))
   })
 
@@ -186,5 +188,46 @@ describe('App', () => {
     render(<App />)
     const link = screen.getByTitle('Broncode op GitHub')
     expect(link.getAttribute('href')).toBe('https://github.com/Laoujin/WiezeScoren')
+  })
+})
+
+describe('rondleiding', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+  })
+
+  afterEach(() => {
+    cleanup()
+    vi.unstubAllGlobals()
+  })
+
+  it('opent vanzelf bij een verse partij', () => {
+    render(<App />)
+    expect(screen.getByText('Wie zit er aan tafel')).toBeTruthy()
+  })
+
+  it('blijft weg zodra ze gesloten is', () => {
+    render(<App />)
+    fireEvent.click(knopMetTekst('Sluiten'))
+    cleanup()
+
+    render(<App />)
+    expect(screen.queryByText('Wie zit er aan tafel')).toBeNull()
+  })
+
+  it('zet de partij terug zoals ze was', () => {
+    markeerTutorialGezien(localStorage)
+    render(<App />)
+    const eersteNaam = document.querySelector('[data-naam="0"]')!.textContent
+
+    fireEvent.click(knopMetTekst('Uitleg'))
+    fireEvent.doubleClick(document.querySelector('[data-naam="0"]')!)
+    const veld = document.querySelector('[data-naam-invoer]') as HTMLInputElement
+    fireEvent.blur(veld, { target: { value: 'Nonkel Jef' } })
+    expect(document.querySelector('[data-naam="0"]')!.textContent).toBe('Nonkel Jef')
+
+    fireEvent.click(knopMetTekst('Sluiten'))
+    expect(document.querySelector('[data-naam="0"]')!.textContent).toBe(eersteNaam)
   })
 })

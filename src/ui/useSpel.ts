@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Config, SpelerId } from '../domein/contracten'
 import { hernoemInPloeg, maakGast, type Ploeglid } from '../domein/ploeg'
 import {
@@ -30,6 +30,8 @@ import {
   laadSpel,
 } from '../opslag/opslag'
 
+type Moment = { spel: Spel; ploeg: Ploeglid[] }
+
 export function useSpel() {
   const [spel, zetSpel] = useState<Spel>(() => laadSpel(localStorage))
   const [config, zetConfig] = useState<Config>(() => laadConfig(localStorage))
@@ -38,6 +40,25 @@ export function useSpel() {
     () => laadVoorkeuren(localStorage).tafelvorm,
   )
   const [ploeg, zetPloeg] = useState<Ploeglid[]>(() => laadPloeg(localStorage))
+
+  // De rondleiding speelt op de echte tafel; deze twee refs zetten haar sporen achteraf terug.
+  const huidig = useRef<Moment>({ spel, ploeg })
+  const moment = useRef<Moment | null>(null)
+  useEffect(() => {
+    huidig.current = { spel, ploeg }
+  }, [spel, ploeg])
+
+  const bewaarMoment = useCallback(() => {
+    moment.current = huidig.current
+  }, [])
+
+  const herstelMoment = useCallback(() => {
+    const bewaard = moment.current
+    moment.current = null
+    if (!bewaard) return
+    zetSpel(bewaard.spel)
+    zetPloeg(bewaard.ploeg)
+  }, [])
 
   useEffect(() => bewaarSpel(localStorage, spel), [spel])
   useEffect(() => bewaarConfig(localStorage, config), [config])
@@ -132,6 +153,8 @@ export function useSpel() {
     kiesZetel,
     voegGastToe,
     kiesDeler,
+    bewaarMoment,
+    herstelMoment,
     startNieuwSpel,
     heropenUitArchief,
     wisUitArchief,

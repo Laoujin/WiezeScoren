@@ -15,6 +15,7 @@ const SLEUTELS = {
   archief: 'wiezen.archief',
   ploeg: 'wiezen.ploeg',
   voorkeuren: 'wiezen.voorkeuren',
+  tutorial: 'wiezen.tutorial',
 } as const
 
 /** Zoveel spelers passen er aan tafel; de rest van de ploeg kijkt toe. */
@@ -134,6 +135,16 @@ export function heropen(opslag: Storage, lopend: Spel, spelId: string): Spel {
   bewaarArchief(opslag, lopend.rondes.length > 0 ? [lopend, ...rest] : rest)
   bewaarSpel(opslag, gezocht)
   return gezocht
+}
+
+/** De rondleiding dringt zich enkel op aan wie ze nog nooit zag en nog niets gespeeld heeft. */
+export function magTutorialTonen(opslag: Storage): boolean {
+  if (lees<boolean>(opslag, SLEUTELS.tutorial) === true) return false
+  return laadSpel(opslag).rondes.length === 0
+}
+
+export function markeerTutorialGezien(opslag: Storage): void {
+  schrijf(opslag, SLEUTELS.tutorial, true)
 }
 
 export function wisAlles(opslag: Storage): void {

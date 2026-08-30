@@ -14,6 +14,8 @@ import {
   laadPloeg,
   laadSpel,
   laadVoorkeuren,
+  magTutorialTonen,
+  markeerTutorialGezien,
   wisAlles,
 } from './opslag'
 
@@ -213,5 +215,21 @@ describe('voorkeuren', () => {
   it('negeert een onbekende tafelvorm', () => {
     opslag.setItem('wiezen.voorkeuren', JSON.stringify({ tafelvorm: 'driehoek' }))
     expect(laadVoorkeuren(opslag).tafelvorm).toBe('vierkant')
+  })
+})
+
+describe('tutorial', () => {
+  it('toont de rondleiding bij een verse partij', () => {
+    expect(magTutorialTonen(opslag)).toBe(true)
+  })
+
+  it('houdt de rondleiding weg zodra ze gezien is', () => {
+    markeerTutorialGezien(opslag)
+    expect(magTutorialTonen(opslag)).toBe(false)
+  })
+
+  it('valt een lopende partij niet lastig', () => {
+    bewaarSpel(opslag, voegRondeToe(nieuwSpel(), maakRonde({ contract: 'vragen', spelers: [0, 1], slagen: 9 })))
+    expect(magTutorialTonen(opslag)).toBe(false)
   })
 })

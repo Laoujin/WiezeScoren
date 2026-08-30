@@ -28,6 +28,8 @@ function Sierhoek({ plek }: { plek: keyof typeof HOEKEN }) {
 
 type Props = {
   as?: 'section' | 'nav'
+  /** Ankernaam voor de rondleiding, die dit blok in de schijnwerper zet. */
+  blok?: string
   /** De sierhoeken eisen zo'n 21px vrije rand; een smalle balk zet ze daarom af. */
   sierhoeken?: boolean
   /**
@@ -42,13 +44,14 @@ type Props = {
 
 export function Kader({
   as: Element = 'section',
+  blok,
   sierhoeken = true,
   positie = 'relative',
   className = '',
   children,
 }: Props) {
   return (
-    <Element className={`kader ${positie} ${className}`}>
+    <Element data-blok={blok} className={`kader ${positie} ${className}`}>
       {sierhoeken &&
         (Object.keys(HOEKEN) as (keyof typeof HOEKEN)[]).map((plek) => (
           <Sierhoek key={plek} plek={plek} />

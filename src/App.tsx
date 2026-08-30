@@ -16,6 +16,8 @@ import { Kader } from './ui/Kader'
 import { Scorebord } from './ui/Scorebord'
 import { Tafel } from './ui/Tafel'
 import { Tafelvormkiezer } from './ui/Tafelvormkiezer'
+import { Tutorial } from './ui/Tutorial'
+import { magTutorialTonen, markeerTutorialGezien } from './opslag/opslag'
 import { useMuntStroom } from './ui/useMuntStroom'
 import { useSpel } from './ui/useSpel'
 
@@ -35,6 +37,12 @@ export function App() {
 
   const [weergave, zetWeergave] = useState<Weergave>('tafel')
   const [menuOpen, zetMenuOpen] = useState(false)
+  // De momentopname moet er staan vóór de rondleiding haar eerste klik doet.
+  const [tutorial, zetTutorial] = useState(() => {
+    if (!magTutorialTonen(localStorage)) return false
+    spelState.bewaarMoment()
+    return true
+  })
   const [selectie, zetSelectie] = useState<SpelerId[]>([])
   const [contract, zetContract] = useState<ContractType | null>(null)
   const [slagen, zetSlagen] = useState(0)
@@ -108,6 +116,23 @@ export function App() {
   const kiesWeergave = (sleutel: Weergave) => {
     zetWeergave(sleutel)
     zetMenuOpen(false)
+  }
+
+  const { bewaarMoment, herstelMoment } = spelState
+
+  const openTutorial = () => {
+    zetMenuOpen(false)
+    zetWeergave('tafel')
+    wisKeuze()
+    bewaarMoment()
+    zetTutorial(true)
+  }
+
+  const sluitTutorial = () => {
+    zetTutorial(false)
+    herstelMoment()
+    wisKeuze()
+    markeerTutorialGezien(localStorage)
   }
 
   const nieuwSpelStarten = () => {
@@ -248,12 +273,14 @@ export function App() {
           />
         )}
 
-        <footer className="mt-10 flex flex-col items-center gap-3 border-t border-krijt/10 pt-4 text-center text-xs leading-relaxed text-krijt-dof">
-          <p>
-            Klik een zetel om die speler te laten spelen &middot; rechtsklik zet de deler &middot;
-            dubbelklik een naam om te hernoemen &middot; klik een punt in het scorebord om het
-            handmatig aan te passen
-          </p>
+        <footer className="mt-10 flex items-center justify-between gap-3 border-t border-krijt/10 pt-4 text-xs leading-relaxed text-krijt-dof">
+          <button
+            type="button"
+            onClick={openTutorial}
+            className="rounded-lg border border-krijt/20 px-3 py-1.5 text-sm font-semibold text-krijt-dof transition-colors hover:border-messing hover:text-messing"
+          >
+            Uitleg
+          </button>
           <a
             href={REPO}
             target="_blank"
@@ -268,6 +295,8 @@ export function App() {
           </a>
         </footer>
       </div>
+
+      {tutorial && <Tutorial onSluit={sluitTutorial} />}
     </div>
   )
 }

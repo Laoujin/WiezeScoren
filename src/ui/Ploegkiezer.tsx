@@ -51,6 +51,7 @@ export function Ploegkiezer({
         <button
           key={lid.id}
           type="button"
+          data-ploeglid={lid.id}
           title={lid.naam}
           onClick={() => {
             onKies(lid.naam)
@@ -65,6 +66,7 @@ export function Ploegkiezer({
       ))}
       <button
         type="button"
+        data-gast
         title="Gast toevoegen"
         onClick={() => {
           onGast()

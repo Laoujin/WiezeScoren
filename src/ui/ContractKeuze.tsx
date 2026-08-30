@@ -20,16 +20,18 @@ function toegestaan(contract: ContractType, config: Config, aantalSpelers: numbe
 }
 
 type KnopProps = {
+  contract: ContractType
   label: string
   actief: boolean
   bruikbaar: boolean
   onClick: () => void
 }
 
-function ContractKnop({ label, actief, bruikbaar, onClick }: KnopProps) {
+function ContractKnop({ contract, label, actief, bruikbaar, onClick }: KnopProps) {
   return (
     <button
       type="button"
+      data-contract={contract}
       disabled={!bruikbaar}
       onClick={onClick}
       className={`h-11 rounded-xl border px-2 text-sm font-semibold tracking-wide transition-all duration-150 ${
@@ -94,7 +96,7 @@ export function ContractKeuze({
   ]
 
   return (
-    <Kader className={`self-start overflow-hidden p-1.5 backdrop-blur-sm ${className}`}>
+    <Kader blok="contractkeuze" className={`self-start overflow-hidden p-1.5 backdrop-blur-sm ${className}`}>
       <div className="grid gap-x-5 gap-y-4 p-4 sm:grid-cols-2 lg:grid-cols-1">
         {groepen.map((groep) => (
           <div key={groep.titel}>
@@ -105,6 +107,7 @@ export function ContractKeuze({
               {groep.contracten.map((keuze) => (
                 <ContractKnop
                   key={keuze}
+                  contract={keuze}
                   label={config.contracten[keuze].naam}
                   actief={contract === keuze}
                   bruikbaar={toegestaan(keuze, config, selectie.length)}
@@ -118,6 +121,7 @@ export function ContractKeuze({
 
       <div className="px-4 pb-4">
         <ContractKnop
+          contract="passen"
           label="Iedereen past"
           actief={contract === 'passen'}
           bruikbaar={toegestaan('passen', config, selectie.length)}
@@ -193,6 +197,7 @@ export function ContractKeuze({
                   <button
                     key={n}
                     type="button"
+                    data-slagen={n}
                     onClick={() => onSlagen(n)}
                     className={`h-9 rounded-lg text-sm font-bold transition-colors ${
                       n === slagen
@@ -227,6 +232,7 @@ export function ContractKeuze({
           )}
           <button
             type="button"
+            data-opslaan
             disabled={!kanOpslaan}
             onClick={onOpslaan}
             className="h-11 rounded-xl bg-messing px-6 font-display text-base font-black text-vilt-diep transition-transform hover:scale-[1.03] disabled:cursor-not-allowed disabled:bg-krijt/12 disabled:text-krijt-dof/40"

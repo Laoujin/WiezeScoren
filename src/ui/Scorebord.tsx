@@ -112,11 +112,12 @@ export function Scorebord({
   const eindsom = somVan(stand) + pot
 
   return (
-    <Kader className={`min-w-0 p-5 backdrop-blur-sm ${className}`}>
+    <Kader blok="scorebord" className={`min-w-0 p-5 backdrop-blur-sm ${className}`}>
       <header className="mb-3 flex items-baseline justify-between gap-3">
         <h2 className="font-display text-xl font-black tracking-tight">Scorebord</h2>
         <button
           type="button"
+          data-correctie
           onClick={onCorrectie}
           className="rounded-lg border border-krijt/20 px-2.5 py-1 text-xs text-krijt-dof hover:text-krijt"
         >
@@ -186,6 +187,7 @@ export function Scorebord({
                   <td className="px-1 text-right">
                     <button
                       type="button"
+                      data-wis-ronde={rij.ronde.id}
                       onClick={() => onWisRonde(rij.ronde.id)}
                       title="Ronde verwijderen"
                       className="text-krijt-dof transition-colors hover:text-hart"

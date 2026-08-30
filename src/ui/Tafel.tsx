@@ -110,6 +110,7 @@ function Plaquette({
         <span data-avatar className="relative shrink-0">
           <button
             type="button"
+            data-avatar-knop={speler}
             title={`${naam} vervangen`}
             onClick={() => zetKiest((open) => !open)}
             className="block rounded-full transition-transform hover:scale-110"
@@ -132,6 +133,7 @@ function Plaquette({
           {bewerkt ? (
             <input
               autoFocus
+              data-naam-invoer
               defaultValue={naam}
               onClick={(e) => e.stopPropagation()}
               onBlur={(e) => {
@@ -146,6 +148,7 @@ function Plaquette({
             />
           ) : (
             <span
+              data-naam={speler}
               onDoubleClick={(e) => {
                 e.stopPropagation()
                 zetBewerkt(true)
@@ -241,7 +244,7 @@ export function Tafel({
   const [kiestDeler, zetKiestDeler] = useState(false)
 
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[40rem] sm:aspect-4/3">
+    <div data-tafel className="relative mx-auto aspect-square w-full max-w-[40rem] sm:aspect-4/3">
       <div className="lamplicht pointer-events-none absolute inset-x-0 top-[-14%] h-[70%]" />
 
       <div
