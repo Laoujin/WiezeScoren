@@ -201,17 +201,17 @@ describe('wisAlles', () => {
 })
 
 describe('voorkeuren', () => {
-  it('begint met een ronde tafel', () => {
-    expect(laadVoorkeuren(opslag).tafelvorm).toBe('rond')
+  it('begint met een vierkante tafel', () => {
+    expect(laadVoorkeuren(opslag).tafelvorm).toBe('vierkant')
   })
 
   it('bewaart een gekozen tafelvorm', () => {
-    bewaarVoorkeuren(opslag, { tafelvorm: 'vierkant' })
-    expect(laadVoorkeuren(opslag).tafelvorm).toBe('vierkant')
+    bewaarVoorkeuren(opslag, { tafelvorm: 'rond' })
+    expect(laadVoorkeuren(opslag).tafelvorm).toBe('rond')
   })
 
   it('negeert een onbekende tafelvorm', () => {
     opslag.setItem('wiezen.voorkeuren', JSON.stringify({ tafelvorm: 'driehoek' }))
-    expect(laadVoorkeuren(opslag).tafelvorm).toBe('rond')
+    expect(laadVoorkeuren(opslag).tafelvorm).toBe('vierkant')
   })
 })

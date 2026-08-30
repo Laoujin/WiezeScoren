@@ -6,7 +6,7 @@ export type Voorkeuren = {
   tafelvorm: Tafelvorm
 }
 
-export const STANDAARD_VOORKEUREN: Voorkeuren = { tafelvorm: 'rond' }
+export const STANDAARD_VOORKEUREN: Voorkeuren = { tafelvorm: 'vierkant' }
 
 export function isTafelvorm(waarde: unknown): waarde is Tafelvorm {
   return (TAFELVORMEN as readonly unknown[]).includes(waarde)
