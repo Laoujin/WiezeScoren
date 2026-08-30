@@ -80,8 +80,7 @@ export function App() {
     if (contract && isSpeelbaar(contract)) {
       const c = config.contracten[contract]
       if (c.geenSlagenteller) return `${c.naam} — ${gehaald ? 'gehaald' : 'mislukt'}`
-      if (c.verdubbelBijAlleSlagen && slagen === ALLE_SLAGEN)
-        return `${c.naam} — alle slagen, dubbel!`
+      if (c.bijAlleSlagen > 0 && slagen === ALLE_SLAGEN) return `${c.naam} — alle slagen!`
       return `${c.naam} — ${slagen} van de ${c.slagenNodig} slagen`
     }
     if (selectie.length === 2)

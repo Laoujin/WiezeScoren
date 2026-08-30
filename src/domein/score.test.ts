@@ -138,38 +138,49 @@ describe('berekenPunten', () => {
   })
 
   describe('alle slagen', () => {
-    it('verdubbelt vragen: 2 plus 5 overslagen, maal twee', () => {
+    it('rekent vragen af aan de vaste waarde 15', () => {
       expect(berekenPunten(ronde({ slagen: 13 }), STANDAARD_CONFIG)).toEqual({
-        0: 14,
-        1: 14,
-        2: -14,
-        3: -14,
+        0: 15,
+        1: 15,
+        2: -15,
+        3: -15,
       })
     })
 
-    it('verdubbelt troel: 4 plus 5 maal 2 overslagen, maal twee', () => {
+    it('rekent troel af aan de vaste waarde 30', () => {
       expect(
         berekenPunten(ronde({ contract: 'troel', slagen: 13 }), STANDAARD_CONFIG)[0],
-      ).toBe(28)
+      ).toBe(30)
     })
 
-    it('verdubbelt alleen gaan', () => {
+    it('rekent alleen gaan af aan de vaste waarde 20', () => {
       expect(
         berekenPunten(ronde({ contract: 'alleen', spelers: [2], slagen: 13 }), STANDAARD_CONFIG),
       ).toEqual({ 0: -20, 1: -20, 2: 60, 3: -20 })
+    })
+
+    it('valt terug op de slagenrekening wanneer er geen vaste waarde staat', () => {
+      const config: Config = {
+        ...STANDAARD_CONFIG,
+        contracten: {
+          ...STANDAARD_CONFIG.contracten,
+          vragen: { ...STANDAARD_CONFIG.contracten.vragen, bijAlleSlagen: 0 },
+        },
+      }
+      expect(berekenPunten(ronde({ slagen: 13 }), config)[0]).toBe(7)
     })
 
     it('laat twaalf slagen ongemoeid', () => {
       expect(berekenPunten(ronde({ slagen: 12 }), STANDAARD_CONFIG)[0]).toBe(6)
     })
 
-    it('verdubbelt abondance niet', () => {
+    it('laat abondance op zijn eigen waarde staan', () => {
       expect(
         berekenPunten(ronde({ contract: 'abondance', spelers: [1], slagen: 13 }), STANDAARD_CONFIG)[1],
       ).toBe(45)
     })
 
-    it('verdubbelt solo slim niet', () => {
+    it('laat solo slim op zijn eigen waarde staan', () => {
       expect(
         berekenPunten(ronde({ contract: 'soloSlim', spelers: [0], slagen: 13 }), STANDAARD_CONFIG)[0],
       ).toBe(150)

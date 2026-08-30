@@ -39,8 +39,8 @@ export function contractWaarde(ronde: Ronde, config: Config): number {
   if (!contractGehaald(ronde, config)) {
     return c.puntenVerloren + (c.slagenNodig - ronde.slagen) * c.perSlagTekort
   }
-  const waarde = c.puntenGehaald + (ronde.slagen - c.slagenNodig) * c.perExtraSlag
-  return c.verdubbelBijAlleSlagen && ronde.slagen === ALLE_SLAGEN ? waarde * 2 : waarde
+  if (c.bijAlleSlagen > 0 && ronde.slagen === ALLE_SLAGEN) return c.bijAlleSlagen
+  return c.puntenGehaald + (ronde.slagen - c.slagenNodig) * c.perExtraSlag
 }
 
 /** De punten van het contract zelf, zonder de pot. */

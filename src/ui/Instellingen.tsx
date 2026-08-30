@@ -12,10 +12,10 @@ const GETALVELDEN: { sleutel: keyof ContractConfig; label: string }[] = [
   { sleutel: 'puntenVerloren', label: 'Verloren' },
   { sleutel: 'perExtraSlag', label: 'Per extra slag' },
   { sleutel: 'perSlagTekort', label: 'Per slag tekort' },
+  { sleutel: 'bijAlleSlagen', label: 'Bij 13 slagen' },
 ]
 
 const VINKVELDEN: { sleutel: keyof ContractConfig; label: string }[] = [
-  { sleutel: 'verdubbelBijAlleSlagen', label: 'Dubbel bij 13' },
   { sleutel: 'wintDePot', label: 'Speelt om de pot' },
 ]
 
@@ -45,9 +45,9 @@ export function Instellingen({ config, onWijzig }: Props) {
       <p className="mt-1 mb-4 max-w-3xl text-sm text-krijt-dof">
         De waarde hieronder is de inzet die elke tegenstander neerlegt. Het spelende kamp verdeelt
         de hele inleg, dus een solist wint driemaal de inzet en een duo eenmaal. Haalt het kamp alle
-        dertien slagen, dan verdubbelt de inzet voor de contracten die daarvoor aangevinkt staan.
-        Wie om de pot speelt, wint hem bovenop zijn punten en verdubbelt hem bij verlies. Elke
-        wijziging herrekent meteen de lopende partij.
+        dertien slagen, dan telt de vaste waarde bij 13 slagen, tenzij die op nul staat. Wie om de
+        pot speelt, wint hem bovenop zijn punten en verdubbelt hem bij verlies. Elke wijziging
+        herrekent meteen de lopende partij.
       </p>
 
       <label className="mb-5 flex w-fit items-center gap-3 rounded-xl border border-krijt/15 bg-vilt-diep/50 px-4 py-2.5 text-sm">

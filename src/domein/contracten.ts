@@ -28,8 +28,8 @@ export type ContractConfig = {
   puntenVerloren: number
   perExtraSlag: number
   perSlagTekort: number
-  /** Verdubbelt de inzet wanneer het kamp alle dertien slagen pakt. */
-  verdubbelBijAlleSlagen: boolean
+  /** Vaste inzet wanneer het kamp alle dertien slagen pakt; 0 laat de slagenrekening staan. */
+  bijAlleSlagen: number
   /** Wint de pot bij een geslaagd contract en verdubbelt hem bij verlies. */
   wintDePot: boolean
   /** Toegelaten aantal spelers in het spelende kamp. */
@@ -56,7 +56,7 @@ export const STANDAARD_CONFIG: Config = {
       puntenVerloren: 3,
       perExtraSlag: 1,
       perSlagTekort: 1,
-      verdubbelBijAlleSlagen: true,
+      bijAlleSlagen: 15,
       wintDePot: false,
       kampGroottes: [2],
       hoogstens: false,
@@ -69,7 +69,7 @@ export const STANDAARD_CONFIG: Config = {
       puntenVerloren: 6,
       perExtraSlag: 2,
       perSlagTekort: 2,
-      verdubbelBijAlleSlagen: true,
+      bijAlleSlagen: 30,
       wintDePot: false,
       kampGroottes: [2],
       hoogstens: false,
@@ -82,7 +82,7 @@ export const STANDAARD_CONFIG: Config = {
       puntenVerloren: 3,
       perExtraSlag: 1,
       perSlagTekort: 1,
-      verdubbelBijAlleSlagen: true,
+      bijAlleSlagen: 20,
       wintDePot: false,
       kampGroottes: [1],
       hoogstens: false,
@@ -95,7 +95,7 @@ export const STANDAARD_CONFIG: Config = {
       puntenVerloren: 15,
       perExtraSlag: 0,
       perSlagTekort: 0,
-      verdubbelBijAlleSlagen: false,
+      bijAlleSlagen: 0,
       wintDePot: true,
       kampGroottes: [1],
       hoogstens: false,
@@ -108,7 +108,7 @@ export const STANDAARD_CONFIG: Config = {
       puntenVerloren: 15,
       perExtraSlag: 0,
       perSlagTekort: 0,
-      verdubbelBijAlleSlagen: false,
+      bijAlleSlagen: 0,
       wintDePot: true,
       kampGroottes: [1, 2],
       hoogstens: true,
@@ -121,7 +121,7 @@ export const STANDAARD_CONFIG: Config = {
       puntenVerloren: 30,
       perExtraSlag: 0,
       perSlagTekort: 0,
-      verdubbelBijAlleSlagen: false,
+      bijAlleSlagen: 0,
       wintDePot: true,
       kampGroottes: [1, 2],
       hoogstens: true,
@@ -134,7 +134,7 @@ export const STANDAARD_CONFIG: Config = {
       puntenVerloren: 50,
       perExtraSlag: 0,
       perSlagTekort: 0,
-      verdubbelBijAlleSlagen: false,
+      bijAlleSlagen: 0,
       wintDePot: true,
       kampGroottes: [1],
       hoogstens: false,

@@ -38,9 +38,13 @@ http://localhost:5173
 | Klik op een punt in de tabel  | handmatig aanpassen                                |
 | `+ Correctie`                 | lege rij met vier vrije velden                     |
 | `Nieuw spel`                  | partij naar het archief, namen blijven staan       |
+| `Uitleg` in de voettekst      | rondleiding die de klikken zelf voordoet           |
 
 Een rij kleurt rood zodra de punten samen met de potbeweging niet op nul uitkomen. De deler
 schuift automatisch door na elke ronde, behalve na een correctie.
+
+De rondleiding opent vanzelf bij een verse partij en speelt op de echte tafel: ze verzet de deler,
+haalt er een gast bij en slaat een ronde op. Bij het sluiten komt de partij terug zoals ze was.
 
 ## Scoreregels
 
@@ -49,18 +53,19 @@ schuift automatisch door na elke ronde, behalve na een correctie.
 De contractwaarde is de inzet die elke tegenstander neerlegt. Het spelende kamp verdeelt de hele
 inleg, dus een solist wint driemaal de inzet en een duo eenmaal.
 
-| Contract         | Kamp   | Slagen nodig | Gehaald | Verloren | Per extra slag | Per slag tekort | Dubbel bij 13 | Om de pot |
+| Contract         | Kamp   | Slagen nodig | Gehaald | Verloren | Per extra slag | Per slag tekort | Bij 13 slagen | Om de pot |
 | ---------------- | ------ | ------------ | ------- | -------- | -------------- | --------------- | ------------- | --------- |
-| Vragen           | 2      | 8            | 2       | 3        | 1              | 1               | ja            | nee       |
-| Troel            | 2      | 8            | 4       | 6        | 2              | 2               | ja            | nee       |
-| Alleen gaan      | 1      | 5            | 2       | 3        | 1              | 1               | ja            | nee       |
-| Abondance        | 1      | 9            | 15      | 15       | 0              | 0               | nee           | ja        |
-| Miserie          | 1 of 2 | 0            | 15      | 15       | 0              | 0               | nee           | ja        |
-| Miserie op tafel | 1 of 2 | 0            | 30      | 30       | 0              | 0               | nee           | ja        |
-| Solo slim        | 1      | 13           | 50      | 50       | 0              | 0               | nee           | ja        |
+| Vragen           | 2      | 8            | 2       | 3        | 1              | 1               | 15            | nee       |
+| Troel            | 2      | 8            | 4       | 6        | 2              | 2               | 30            | nee       |
+| Alleen gaan      | 1      | 5            | 2       | 3        | 1              | 1               | 20            | nee       |
+| Abondance        | 1      | 9            | 15      | 15       | 0              | 0               | 0             | ja        |
+| Miserie          | 1 of 2 | 0            | 15      | 15       | 0              | 0               | 0             | ja        |
+| Miserie op tafel | 1 of 2 | 0            | 30      | 30       | 0              | 0               | 0             | ja        |
+| Solo slim        | 1      | 13           | 50      | 50       | 0              | 0               | 0             | ja        |
 
-Haalt het kamp alle dertien slagen bij vragen, troel of alleen gaan, dan verdubbelt de inzet:
-vragen met dertien slagen is (2 + 5) x 2 = 14 per tegenstander.
+Haalt het kamp alle dertien slagen, dan vervangt de kolom "Bij 13 slagen" de slagenrekening:
+vragen met dertien slagen is 15 per tegenstander. Een nul in die kolom laat de gewone rekening
+staan.
 
 ### De pot
 
