@@ -274,13 +274,23 @@ export function App() {
         )}
 
         <footer className="mt-10 flex items-center justify-between gap-3 border-t border-krijt/10 pt-4 text-xs leading-relaxed text-krijt-dof">
-          <button
-            type="button"
-            onClick={openTutorial}
-            className="rounded-lg border border-krijt/20 px-3 py-1.5 text-sm font-semibold text-krijt-dof transition-colors hover:border-messing hover:text-messing"
-          >
-            Uitleg
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={openTutorial}
+              className="rounded-lg border border-krijt/20 px-3 py-1.5 text-sm font-semibold text-krijt-dof transition-colors hover:border-messing hover:text-messing"
+            >
+              Uitleg
+            </button>
+            <button
+              type="button"
+              onClick={spelState.wisselPloegkeuze}
+              aria-pressed={spelState.ploegkeuze === 'gezin'}
+              className="rounded-lg border border-krijt/20 px-3 py-1.5 text-sm font-semibold text-krijt-dof transition-colors hover:border-messing hover:text-messing aria-pressed:border-messing aria-pressed:text-messing"
+            >
+              Guido
+            </button>
+          </div>
           <a
             href={REPO}
             target="_blank"
