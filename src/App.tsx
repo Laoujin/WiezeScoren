@@ -156,8 +156,16 @@ export function App() {
         </h1>
       </div>
 
-      <div className="mx-auto min-h-screen max-w-6xl px-3 pt-5 pb-10 sm:px-4">
-        <header className="relative mb-1 flex items-start justify-end gap-3 pl-36 sm:pl-40">
+      {/* Op xxl hangt het uithangbord naast de kolom in plaats van erboven, dus verhuist het menu
+          naar de rechterkolom en staat de tafel ernaast in het midden. */}
+      <div
+        className={`mx-auto min-h-screen max-w-6xl px-3 pt-5 pb-10 sm:px-4 ${
+          weergave === 'tafel'
+            ? '2xl:grid 2xl:grid-cols-[minmax(0,1fr)_26rem] 2xl:items-start 2xl:gap-8'
+            : ''
+        }`}
+      >
+        <header className="relative mb-1 flex items-start justify-end gap-3 pl-36 sm:pl-40 2xl:col-start-2 2xl:row-start-1 2xl:mb-0 2xl:pl-0">
           <button
             type="button"
             aria-expanded={menuOpen}
@@ -207,8 +215,8 @@ export function App() {
         </header>
 
         {weergave === 'tafel' && (
-          <main className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_26rem]">
-            <div className="min-w-0 lg:col-start-1 lg:row-start-1">
+          <main className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_26rem] 2xl:contents">
+            <div className="min-w-0 lg:col-start-1 lg:row-start-1 2xl:row-span-2 2xl:row-start-1 2xl:self-center">
               <Tafel
                 spelers={spel.spelers}
                 ploeg={spelState.ploeg}
@@ -229,7 +237,7 @@ export function App() {
             </div>
 
             <ContractKeuze
-              className="lg:col-start-2 lg:row-span-2 lg:row-start-1"
+              className="lg:col-start-2 lg:row-start-1 2xl:col-start-2 2xl:row-start-2"
               config={config}
               spelers={spel.spelers}
               selectie={selectie}
@@ -246,7 +254,7 @@ export function App() {
             />
 
             <Scorebord
-              className="lg:col-start-1 lg:row-start-2"
+              className="lg:col-span-2 lg:col-start-1 lg:row-start-2 2xl:row-start-3"
               spel={spel}
               config={config}
               onWisRonde={spelState.wisRonde}
@@ -273,7 +281,7 @@ export function App() {
           />
         )}
 
-        <footer className="mt-10 flex items-center justify-between gap-3 border-t border-krijt/10 pt-4 text-xs leading-relaxed text-krijt-dof">
+        <footer className="mt-10 flex items-center justify-between gap-3 2xl:col-span-2 border-t border-krijt/10 pt-4 text-xs leading-relaxed text-krijt-dof">
           <button
             type="button"
             onClick={openTutorial}

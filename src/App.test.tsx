@@ -143,6 +143,27 @@ describe('App', () => {
     expect(kaders.some((k) => k.textContent?.includes('Om de punten'))).toBe(true)
   })
 
+  it('geeft het scorebord vanaf een tabletscherm de volle breedte', () => {
+    render(<App />)
+    const scorebord = screen.getByText('Scorebord').closest('.kader')!
+    expect(scorebord.className).toContain('lg:col-span-2')
+    expect(screen.getByText('Om de punten').closest('.kader')!.className).not.toContain(
+      'lg:row-span-2',
+    )
+  })
+
+  it('zet op een extra breed scherm de tafel gecentreerd naast menu en contractkeuze', () => {
+    render(<App />)
+    expect(document.querySelector('main')!.className).toContain('2xl:contents')
+    expect(document.querySelector('[data-tafel]')!.parentElement!.className).toContain(
+      '2xl:self-center',
+    )
+    expect(screen.getByText('Om de punten').closest('.kader')!.className).toContain(
+      '2xl:row-start-2',
+    )
+    expect(screen.getByText('Scorebord').closest('.kader')!.className).toContain('2xl:row-start-3')
+  })
+
   it('laat de contractkeuze niet meerekken met de linkerkolom', () => {
     render(<App />)
     const contracten = screen.getByText('Om de punten').closest('.kader')!
