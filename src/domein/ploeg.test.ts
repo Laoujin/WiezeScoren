@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  GEZINS_PLOEG,
   STANDAARD_PLOEG,
   hernoemInPloeg,
   initialen,
@@ -15,16 +16,31 @@ const PLOEG: Ploeglid[] = [
 ]
 
 describe('STANDAARD_PLOEG', () => {
-  it('bevat de vijf vaste spelers', () => {
-    expect(STANDAARD_PLOEG.map((l) => l.naam)).toEqual(['Wouter', 'Gert', 'Moe', 'Va', 'Zus'])
+  it('bevat de vijf verzonnen namen', () => {
+    expect(STANDAARD_PLOEG.map((l) => l.naam)).toEqual(['Tom', 'Caro', 'Lies', 'Bert', 'Fien'])
+  })
+
+  it('geeft elk lid een icoon in plaats van een foto', () => {
+    expect(STANDAARD_PLOEG.filter((l) => !l.icoon)).toEqual([])
+    expect(STANDAARD_PLOEG.filter((l) => l.avatar)).toEqual([])
   })
 
   it('geeft elk lid een eigen id', () => {
     expect(new Set(STANDAARD_PLOEG.map((l) => l.id)).size).toBe(STANDAARD_PLOEG.length)
   })
+})
 
-  it('geeft elk lid een avatar', () => {
-    expect(STANDAARD_PLOEG.filter((l) => !l.avatar)).toEqual([])
+describe('GEZINS_PLOEG', () => {
+  it('bevat het gezin', () => {
+    expect(GEZINS_PLOEG.map((l) => l.naam)).toEqual(['Wouter', 'Gert', 'Moe', 'Va', 'Zus'])
+  })
+
+  it('geeft elk lid een foto', () => {
+    expect(GEZINS_PLOEG.filter((l) => !l.avatar)).toEqual([])
+  })
+
+  it('geeft elk lid een eigen id', () => {
+    expect(new Set(GEZINS_PLOEG.map((l) => l.id)).size).toBe(GEZINS_PLOEG.length)
   })
 })
 

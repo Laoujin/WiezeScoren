@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { STANDAARD_CONFIG } from '../domein/contracten'
 import { maakRonde, nieuwSpel, voegRondeToe } from '../domein/spel'
-import { STANDAARD_PLOEG } from '../domein/ploeg'
+import { GEZINS_PLOEG } from '../domein/ploeg'
 import {
   archiveer,
   heropen,
@@ -65,7 +65,7 @@ describe('spel', () => {
 
 describe('ploeg', () => {
   it('geeft de standaardploeg terug wanneer er niets bewaard is', () => {
-    expect(laadPloeg(opslag)).toEqual(STANDAARD_PLOEG)
+    expect(laadPloeg(opslag)).toEqual(GEZINS_PLOEG)
   })
 
   it('bewaart en herleest een aangepaste ploeg', () => {
@@ -92,7 +92,7 @@ describe('ploeg', () => {
 
   it('valt terug op de standaardploeg bij een lege lijst', () => {
     opslag.setItem('wiezen.ploeg', '[]')
-    expect(laadPloeg(opslag)).toEqual(STANDAARD_PLOEG)
+    expect(laadPloeg(opslag)).toEqual(GEZINS_PLOEG)
   })
 })
 

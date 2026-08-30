@@ -3,11 +3,22 @@ import type { SpelerId } from './contracten'
 export type Ploeglid = {
   id: string
   naam: string
-  /** Bestandsnaam onder `public/spelers/`; zonder foto valt de weergave terug op initialen. */
+  /** Bestandsnaam onder `public/spelers/`; zonder foto valt de weergave terug op het icoon. */
   avatar?: string
+  /** Sleutel in de diericonen-map, voor wie geen foto heeft. */
+  icoon?: string
 }
 
+/** Wie de app voor het eerst opent, speelt met deze vijf. */
 export const STANDAARD_PLOEG: Ploeglid[] = [
+  { id: 'tom', naam: 'Tom', icoon: 'vos' },
+  { id: 'caro', naam: 'Caro', icoon: 'uil' },
+  { id: 'lies', naam: 'Lies', icoon: 'haas' },
+  { id: 'bert', naam: 'Bert', icoon: 'beer' },
+  { id: 'fien', naam: 'Fien', icoon: 'das' },
+]
+
+export const GEZINS_PLOEG: Ploeglid[] = [
   { id: 'wouter', naam: 'Wouter', avatar: 'wouter.webp' },
   { id: 'gert', naam: 'Gert', avatar: 'gert.webp' },
   { id: 'moe', naam: 'Moe', avatar: 'lieve.webp' },

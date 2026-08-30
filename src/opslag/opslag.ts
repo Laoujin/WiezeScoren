@@ -5,7 +5,7 @@ import {
   type ContractConfig,
   type SpeelbaarContract,
 } from '../domein/contracten'
-import { STANDAARD_PLOEG, type Ploeglid } from '../domein/ploeg'
+import { GEZINS_PLOEG, type Ploeglid } from '../domein/ploeg'
 import { nieuwSpel, type Spel } from '../domein/spel'
 import { STANDAARD_VOORKEUREN, isTafelvorm, type Voorkeuren } from '../domein/voorkeuren'
 
@@ -38,9 +38,9 @@ function schrijf(opslag: Storage, sleutel: string, waarde: unknown): void {
 /** Een bewaarde ploeg kan ouder zijn dan de avatars, dus ontbrekende foto's per lid aanvullen. */
 export function laadPloeg(opslag: Storage): Ploeglid[] {
   const bewaard = lees<Ploeglid[]>(opslag, SLEUTELS.ploeg)
-  if (!Array.isArray(bewaard) || bewaard.length === 0) return STANDAARD_PLOEG
+  if (!Array.isArray(bewaard) || bewaard.length === 0) return GEZINS_PLOEG
   return bewaard.map((lid) => {
-    const standaard = STANDAARD_PLOEG.find((s) => s.id === lid.id)
+    const standaard = GEZINS_PLOEG.find((s) => s.id === lid.id)
     return lid.avatar || !standaard?.avatar ? lid : { ...lid, avatar: standaard.avatar }
   })
 }
