@@ -5,7 +5,15 @@ import {
   type ContractConfig,
   type SpeelbaarContract,
 } from '../domein/contracten'
-import { GEZINS_PLOEG, type Ploeglid } from '../domein/ploeg'
+import {
+  GEZINS_PLOEG,
+  STANDAARD_PLOEG,
+  VERSE_PLOEGEN,
+  zetelnamen,
+  type Ploegen,
+  type Ploeglid,
+  type Ploegstand,
+} from '../domein/ploeg'
 import { nieuwSpel, type Spel } from '../domein/spel'
 import { STANDAARD_VOORKEUREN, isTafelvorm, type Voorkeuren } from '../domein/voorkeuren'
 
@@ -17,9 +25,6 @@ const SLEUTELS = {
   voorkeuren: 'wiezen.voorkeuren',
   tutorial: 'wiezen.tutorial',
 } as const
-
-/** Zoveel spelers passen er aan tafel; de rest van de ploeg kijkt toe. */
-const ZETELS = 4
 
 function lees<T>(opslag: Storage, sleutel: string): T | undefined {
   const ruw = opslag.getItem(sleutel)
@@ -36,24 +41,48 @@ function schrijf(opslag: Storage, sleutel: string, waarde: unknown): void {
 }
 
 /** Een bewaarde ploeg kan ouder zijn dan de avatars, dus ontbrekende foto's per lid aanvullen. */
-export function laadPloeg(opslag: Storage): Ploeglid[] {
-  const bewaard = lees<Ploeglid[]>(opslag, SLEUTELS.ploeg)
-  if (!Array.isArray(bewaard) || bewaard.length === 0) return GEZINS_PLOEG
-  return bewaard.map((lid) => {
-    const standaard = GEZINS_PLOEG.find((s) => s.id === lid.id)
-    return lid.avatar || !standaard?.avatar ? lid : { ...lid, avatar: standaard.avatar }
+function vulAan(leden: Ploeglid[], standaard: Ploeglid[]): Ploeglid[] {
+  return leden.map((lid) => {
+    const bron = standaard.find((s) => s.id === lid.id)
+    return lid.avatar || !bron?.avatar ? lid : { ...lid, avatar: bron.avatar }
   })
 }
 
-export function bewaarPloeg(opslag: Storage, ploeg: Ploeglid[]): void {
-  schrijf(opslag, SLEUTELS.ploeg, ploeg)
+function standVan(bewaard: Ploegstand | undefined, standaard: Ploeglid[]): Ploegstand {
+  if (!Array.isArray(bewaard?.leden) || bewaard.leden.length === 0)
+    return { leden: standaard, zetels: [] }
+  return { leden: vulAan(bewaard.leden, standaard), zetels: bewaard.zetels ?? [] }
 }
 
-/** Een verse partij zet de eerste vier van de ploeg aan tafel. */
+/** Een array is de vorm van voor de standaardploeg: dat was toen het gezin, dus dat blijft actief. */
+export function laadPloegen(opslag: Storage): Ploegen {
+  const bewaard = lees<Ploegen | Ploeglid[]>(opslag, SLEUTELS.ploeg)
+  if (Array.isArray(bewaard)) {
+    if (bewaard.length === 0) return VERSE_PLOEGEN
+    return {
+      actief: 'gezin',
+      standaard: { leden: STANDAARD_PLOEG, zetels: [] },
+      gezin: { leden: vulAan(bewaard, GEZINS_PLOEG), zetels: [] },
+    }
+  }
+  if (!bewaard) return VERSE_PLOEGEN
+  return {
+    actief: bewaard.actief === 'gezin' ? 'gezin' : 'standaard',
+    standaard: standVan(bewaard.standaard, STANDAARD_PLOEG),
+    gezin: standVan(bewaard.gezin, GEZINS_PLOEG),
+  }
+}
+
+export function bewaarPloegen(opslag: Storage, ploegen: Ploegen): void {
+  schrijf(opslag, SLEUTELS.ploeg, ploegen)
+}
+
+/** Een verse partij zet de zetels van de actieve ploeg aan tafel. */
 export function laadSpel(opslag: Storage): Spel {
   const spel = lees<Spel>(opslag, SLEUTELS.spel)
   if (spel?.rondes) return spel
-  return nieuwSpel(laadPloeg(opslag).slice(0, ZETELS).map((lid) => lid.naam))
+  const ploegen = laadPloegen(opslag)
+  return nieuwSpel(zetelnamen(ploegen[ploegen.actief]))
 }
 
 export function bewaarSpel(opslag: Storage, spel: Spel): void {
