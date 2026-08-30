@@ -26,6 +26,16 @@ export const GEZINS_PLOEG: Ploeglid[] = [
   { id: 'zus', naam: 'Zus', avatar: 'zus.webp' },
 ]
 
+/** Zoveel spelers passen er aan tafel; de rest van de ploeg kijkt toe. */
+export const ZETELS = 4
+
+export type Ploegstand = { leden: Ploeglid[]; zetels: string[] }
+
+export function zetelnamen(stand: Ploegstand): string[] {
+  if (stand.zetels.length === ZETELS) return stand.zetels
+  return stand.leden.slice(0, ZETELS).map((lid) => lid.naam)
+}
+
 /** Zit de speler al aan tafel, dan ruilen de twee zetels van plaats. */
 export function zetOpZetel(spelers: string[], zetel: SpelerId, naam: string): string[] {
   const vorige = spelers.indexOf(naam)

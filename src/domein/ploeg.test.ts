@@ -6,6 +6,7 @@ import {
   initialen,
   maakGast,
   zetOpZetel,
+  zetelnamen,
   type Ploeglid,
 } from './ploeg'
 
@@ -107,5 +108,21 @@ describe('maakGast', () => {
   it('telt verder na de hoogste gast, ook als die hernoemd is', () => {
     const ploeg = [...PLOEG, { id: 'gast-1', naam: 'Gast 1' }, { id: 'gast-3', naam: 'Jef' }]
     expect(maakGast(ploeg)).toEqual({ id: 'gast-4', naam: 'Gast 4' })
+  })
+})
+
+describe('zetelnamen', () => {
+  it('geeft de bewaarde zetels terug', () => {
+    const stand = { leden: STANDAARD_PLOEG, zetels: ['Fien', 'Tom', 'Bert', 'Caro'] }
+    expect(zetelnamen(stand)).toEqual(['Fien', 'Tom', 'Bert', 'Caro'])
+  })
+
+  it('valt terug op de eerste vier leden zonder bewaarde zetels', () => {
+    expect(zetelnamen({ leden: STANDAARD_PLOEG, zetels: [] })).toEqual([
+      'Tom',
+      'Caro',
+      'Lies',
+      'Bert',
+    ])
   })
 })
