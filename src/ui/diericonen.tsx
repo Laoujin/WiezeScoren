@@ -14,7 +14,7 @@ function Oog({ x }: { x: number }) {
   return <circle cx={x} cy={30} r={3} fill={LIJN} />
 }
 
-export const DIERICONEN: Record<string, Dier> = {
+const DIERICONEN: Record<string, Dier> = {
   vos: {
     tint: '#d8763a',
     teken: (tint) => (
