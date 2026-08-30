@@ -59,7 +59,11 @@ export const STAPPEN: Stap[] = [
     plaats: 'boven',
     tekst:
       'Klik een punt in de tabel om het zelf te typen. + Correctie zet er een lege rij bij met vier vrije velden. Een rij kleurt rood zolang de punten samen met de pot niet op nul uitkomen.',
-    acties: [{ soort: 'klik', doel: '[data-correctie]' }],
+    acties: [
+      { soort: 'klik', doel: '[data-correctie]' },
+      { soort: 'klik', doel: 'tbody tr:last-child [data-punt]' },
+      { soort: 'typ', doel: '[data-punt-invoer]', tekst: '10' },
+    ],
   },
   {
     id: 'wissen',

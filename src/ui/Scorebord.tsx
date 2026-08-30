@@ -47,6 +47,7 @@ function BewerkbareCel({ waarde, aangepast, toon, klasse, onWijzig }: CelProps) 
       <td className="px-1 py-1 text-right">
         <input
           autoFocus
+          data-punt-invoer
           type="number"
           defaultValue={waarde === 0 ? '' : waarde}
           onBlur={(e) => {
@@ -67,6 +68,7 @@ function BewerkbareCel({ waarde, aangepast, toon, klasse, onWijzig }: CelProps) 
     <td className="px-1 py-1 text-right">
       <button
         type="button"
+        data-punt
         onClick={() => zetBewerkt(true)}
         className={`w-full rounded px-2 py-0.5 text-right text-sm font-bold hover:bg-krijt/10 ${klasse} ${aangepast ? 'underline decoration-messing decoration-2 underline-offset-4' : ''}`}
       >

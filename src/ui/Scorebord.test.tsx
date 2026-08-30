@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { STANDAARD_CONFIG } from '../domein/contracten'
 import type { Spel } from '../domein/spel'
@@ -27,9 +27,10 @@ function toon(onPasPuntAan = () => {}) {
   )
 }
 
+// De rondleiding mikt op deze haken; ze horen dus bij het gedrag van het scorebord.
 function bewerk(kolom: number): HTMLInputElement {
-  fireEvent.click(screen.getAllByRole('button', { name: /^[+-]?\d+$/ })[kolom]!)
-  return document.querySelector<HTMLInputElement>('input[type="number"]')!
+  fireEvent.click(document.querySelectorAll<HTMLElement>('[data-punt]')[kolom]!)
+  return document.querySelector<HTMLInputElement>('[data-punt-invoer]')!
 }
 
 describe('Scorebord', () => {
