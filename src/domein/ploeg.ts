@@ -3,17 +3,56 @@ import type { SpelerId } from './contracten'
 export type Ploeglid = {
   id: string
   naam: string
-  /** Bestandsnaam onder `public/spelers/`; zonder foto valt de weergave terug op initialen. */
+  /** Bestandsnaam onder `public/spelers/`; zonder foto valt de weergave terug op het icoon. */
   avatar?: string
+  /** Sleutel in de diericonen-map, voor wie geen foto heeft. */
+  icoon?: string
 }
 
+/** Wie de app voor het eerst opent, speelt met deze vijf. */
 export const STANDAARD_PLOEG: Ploeglid[] = [
+  { id: 'tom', naam: 'Tom', icoon: 'vos' },
+  { id: 'caro', naam: 'Caro', icoon: 'uil' },
+  { id: 'lies', naam: 'Lies', icoon: 'haas' },
+  { id: 'bert', naam: 'Bert', icoon: 'beer' },
+  { id: 'fien', naam: 'Fien', icoon: 'das' },
+]
+
+export const GEZINS_PLOEG: Ploeglid[] = [
   { id: 'wouter', naam: 'Wouter', avatar: 'wouter.webp' },
   { id: 'gert', naam: 'Gert', avatar: 'gert.webp' },
   { id: 'moe', naam: 'Moe', avatar: 'lieve.webp' },
   { id: 'va', naam: 'Va', avatar: 'guido.webp' },
   { id: 'zus', naam: 'Zus', avatar: 'zus.webp' },
 ]
+
+/** Zoveel spelers passen er aan tafel; de rest van de ploeg kijkt toe. */
+export const ZETELS = 4
+
+export type Ploegstand = { leden: Ploeglid[]; zetels: string[] }
+
+export function zetelnamen(stand: Ploegstand): string[] {
+  if (stand.zetels.length === ZETELS) return stand.zetels
+  return stand.leden.slice(0, ZETELS).map((lid) => lid.naam)
+}
+
+export type Ploegkeuze = 'standaard' | 'gezin'
+
+export type Ploegen = Record<Ploegkeuze, Ploegstand> & { actief: Ploegkeuze }
+
+export const VERSE_PLOEGEN: Ploegen = {
+  actief: 'standaard',
+  standaard: { leden: STANDAARD_PLOEG, zetels: [] },
+  gezin: { leden: GEZINS_PLOEG, zetels: [] },
+}
+
+/** De zetels van de ploeg die je verlaat gaan mee de opslag in, zodat terugwisselen ze teruggeeft. */
+export function wisselPloeg(ploegen: Ploegen, zetels: string[]): Ploegen {
+  const verlaten = { ...ploegen[ploegen.actief], zetels }
+  return ploegen.actief === 'standaard'
+    ? { actief: 'gezin', standaard: verlaten, gezin: ploegen.gezin }
+    : { actief: 'standaard', standaard: ploegen.standaard, gezin: verlaten }
+}
 
 /** Zit de speler al aan tafel, dan ruilen de twee zetels van plaats. */
 export function zetOpZetel(spelers: string[], zetel: SpelerId, naam: string): string[] {

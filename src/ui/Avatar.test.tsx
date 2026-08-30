@@ -27,4 +27,22 @@ describe('Avatar', () => {
     expect(screen.getByText('G')).toBeTruthy()
     expect(foto()).toBeNull()
   })
+
+  it('tekent het icoon wanneer er geen foto is', () => {
+    const { container } = render(<Avatar naam="Tom" icoon="vos" />)
+    expect(container.querySelector('svg')).toBeTruthy()
+    expect(screen.queryByText('T')).toBeNull()
+  })
+
+  it('laat de foto voorgaan op het icoon', () => {
+    const { container } = render(<Avatar naam="Tom" avatar="wouter.webp" icoon="vos" />)
+    expect(foto()).toBeTruthy()
+    expect(container.querySelector('svg')).toBeNull()
+  })
+
+  it('valt terug op het icoon wanneer de foto niet laadt', () => {
+    const { container } = render(<Avatar naam="Tom" avatar="weg.webp" icoon="vos" />)
+    fireEvent.error(foto()!)
+    expect(container.querySelector('svg')).toBeTruthy()
+  })
 })

@@ -44,6 +44,34 @@ describe('App', () => {
     vi.unstubAllGlobals()
   })
 
+  function naamAanZetel(speler: number): string {
+    return zetel(speler).textContent!.trim()
+  }
+
+  it('begint met de standaardploeg', () => {
+    render(<App />)
+    expect(naamAanZetel(0)).toContain('Tom')
+  })
+
+  it('wisselt met de Guido-knop naar het gezin en terug', () => {
+    render(<App />)
+    fireEvent.click(knopMetTekst('Guido'))
+    expect(naamAanZetel(0)).toContain('Wouter')
+    fireEvent.click(knopMetTekst('Guido'))
+    expect(naamAanZetel(0)).toContain('Tom')
+  })
+
+  it('laat de punten staan bij het wisselen van ploeg', () => {
+    render(<App />)
+    fireEvent.click(zetel(0))
+    fireEvent.click(zetel(1))
+    fireEvent.click(knopMet('Vragen'))
+    fireEvent.click(knopMetTekst('Ronde opslaan'))
+    const voor = totalen()
+    fireEvent.click(knopMetTekst('Guido'))
+    expect(totalen()).toEqual(voor)
+  })
+
   it('begint met een leeg scorebord en een lege pot', () => {
     render(<App />)
     expect(screen.getByText(/Nog geen rondes/)).toBeTruthy()

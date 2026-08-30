@@ -61,7 +61,12 @@ export function Ploegkiezer({
             lid.naam === aanTafel ? 'ring-2 ring-messing' : 'opacity-70 hover:opacity-100'
           }`}
         >
-          <Avatar naam={lid.naam} avatar={lid.avatar} className="h-9 w-9 text-base" />
+          <Avatar
+            naam={lid.naam}
+            avatar={lid.avatar}
+            icoon={lid.icoon}
+            className="h-9 w-9 text-base"
+          />
         </button>
       ))}
       <button

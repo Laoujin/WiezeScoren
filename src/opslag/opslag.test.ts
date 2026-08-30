@@ -1,17 +1,17 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { STANDAARD_CONFIG } from '../domein/contracten'
 import { maakRonde, nieuwSpel, voegRondeToe } from '../domein/spel'
-import { STANDAARD_PLOEG } from '../domein/ploeg'
+import { GEZINS_PLOEG, STANDAARD_PLOEG } from '../domein/ploeg'
 import {
   archiveer,
   heropen,
   bewaarVoorkeuren,
-  bewaarPloeg,
+  bewaarPloegen,
   bewaarConfig,
   bewaarSpel,
   laadArchief,
   laadConfig,
-  laadPloeg,
+  laadPloegen,
   laadSpel,
   laadVoorkeuren,
   magTutorialTonen,
@@ -53,8 +53,17 @@ describe('spel', () => {
     expect(laadSpel(opslag)).toEqual(spel)
   })
 
-  it('zet de eerste vier van de ploeg aan tafel', () => {
-    expect(laadSpel(opslag).spelers).toEqual(['Wouter', 'Gert', 'Moe', 'Va'])
+  it('zet de zetels van de actieve ploeg aan tafel', () => {
+    expect(laadSpel(opslag).spelers).toEqual(['Tom', 'Caro', 'Lies', 'Bert'])
+  })
+
+  it('volgt de bewaarde zetels van de actieve ploeg', () => {
+    bewaarPloegen(opslag, {
+      actief: 'standaard',
+      standaard: { leden: STANDAARD_PLOEG, zetels: ['Fien', 'Tom', 'Bert', 'Caro'] },
+      gezin: { leden: GEZINS_PLOEG, zetels: [] },
+    })
+    expect(laadSpel(opslag).spelers).toEqual(['Fien', 'Tom', 'Bert', 'Caro'])
   })
 
   it('herstelt naar een vers spel bij onleesbare data', () => {
@@ -63,36 +72,61 @@ describe('spel', () => {
   })
 })
 
-describe('ploeg', () => {
-  it('geeft de standaardploeg terug wanneer er niets bewaard is', () => {
-    expect(laadPloeg(opslag)).toEqual(STANDAARD_PLOEG)
+describe('ploegen', () => {
+  it('begint bij de standaardploeg wanneer er niets bewaard is', () => {
+    const ploegen = laadPloegen(opslag)
+    expect(ploegen.actief).toBe('standaard')
+    expect(ploegen.standaard.leden).toEqual(STANDAARD_PLOEG)
+    expect(ploegen.gezin.leden).toEqual(GEZINS_PLOEG)
   })
 
-  it('bewaart en herleest een aangepaste ploeg', () => {
-    const ploeg = [{ id: 'x', naam: 'Xavier', avatar: '/spelers/x.webp' }]
-    bewaarPloeg(opslag, ploeg)
-    expect(laadPloeg(opslag)).toEqual(ploeg)
+  it('leest een oude ploeglijst als het gezin en houdt dat gezin actief', () => {
+    opslag.setItem('wiezen.ploeg', JSON.stringify([{ id: 'gert', naam: 'Gerrit' }]))
+    const ploegen = laadPloegen(opslag)
+    expect(ploegen.actief).toBe('gezin')
+    expect(ploegen.gezin.leden).toEqual([{ id: 'gert', naam: 'Gerrit', avatar: 'gert.webp' }])
+    expect(ploegen.standaard.leden).toEqual(STANDAARD_PLOEG)
   })
 
-  it('vult de avatar aan bij een ploeg die van voor de fotos komt', () => {
-    opslag.setItem('wiezen.ploeg', JSON.stringify([{ id: 'gert', naam: 'Gert' }]))
-    expect(laadPloeg(opslag)).toEqual([{ id: 'gert', naam: 'Gert', avatar: 'gert.webp' }])
-  })
-
-  it('laat een zelf gekozen avatar staan', () => {
+  it('laat een zelf gekozen avatar staan in een oude ploeglijst', () => {
     const eigen = [{ id: 'gert', naam: 'Gert', avatar: 'eigen.webp' }]
     opslag.setItem('wiezen.ploeg', JSON.stringify(eigen))
-    expect(laadPloeg(opslag)).toEqual(eigen)
+    expect(laadPloegen(opslag).gezin.leden).toEqual(eigen)
   })
 
-  it('laat een lid zonder standaardavatar met rust', () => {
-    opslag.setItem('wiezen.ploeg', JSON.stringify([{ id: 'gast', naam: 'Gast' }]))
-    expect(laadPloeg(opslag)).toEqual([{ id: 'gast', naam: 'Gast' }])
-  })
-
-  it('valt terug op de standaardploeg bij een lege lijst', () => {
+  it('valt terug op de standaardploeg bij een lege oude lijst', () => {
     opslag.setItem('wiezen.ploeg', '[]')
-    expect(laadPloeg(opslag)).toEqual(STANDAARD_PLOEG)
+    expect(laadPloegen(opslag).actief).toBe('standaard')
+  })
+
+  it('bewaart en herleest beide ploegen met hun zetels', () => {
+    const ploegen = {
+      actief: 'gezin' as const,
+      standaard: { leden: STANDAARD_PLOEG, zetels: ['Fien', 'Tom', 'Bert', 'Caro'] },
+      gezin: { leden: GEZINS_PLOEG, zetels: ['Zus', 'Gert', 'Moe', 'Va'] },
+    }
+    bewaarPloegen(opslag, ploegen)
+    expect(laadPloegen(opslag)).toEqual(ploegen)
+  })
+
+  it('vult een ontbrekende foto aan bij het gezin', () => {
+    bewaarPloegen(opslag, {
+      actief: 'gezin',
+      standaard: { leden: STANDAARD_PLOEG, zetels: [] },
+      gezin: { leden: [{ id: 'gert', naam: 'Gert' }], zetels: [] },
+    })
+    expect(laadPloegen(opslag).gezin.leden).toEqual([
+      { id: 'gert', naam: 'Gert', avatar: 'gert.webp' },
+    ])
+  })
+
+  it('laat een gast zonder foto met rust', () => {
+    bewaarPloegen(opslag, {
+      actief: 'gezin',
+      standaard: { leden: STANDAARD_PLOEG, zetels: [] },
+      gezin: { leden: [{ id: 'gast-1', naam: 'Jef' }], zetels: [] },
+    })
+    expect(laadPloegen(opslag).gezin.leden).toEqual([{ id: 'gast-1', naam: 'Jef' }])
   })
 })
 

@@ -1,14 +1,17 @@
 import { useState, type CSSProperties } from 'react'
 import { initialen } from '../domein/ploeg'
+import { Diericoon } from './diericonen'
 
 export function Avatar({
   naam,
   avatar,
+  icoon,
   className = '',
   style,
 }: {
   naam: string
   avatar?: string | undefined
+  icoon?: string | undefined
   className?: string | undefined
   style?: CSSProperties | undefined
 }) {
@@ -28,6 +31,8 @@ export function Avatar({
           onError={() => zetStuk(true)}
           className="h-full w-full object-cover"
         />
+      ) : icoon ? (
+        <Diericoon soort={icoon} />
       ) : (
         <span className="flex h-full w-full items-center justify-center font-display text-[0.58em] leading-none font-black text-messing">
           {initialen(naam)}

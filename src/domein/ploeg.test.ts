@@ -1,11 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import {
+  GEZINS_PLOEG,
   STANDAARD_PLOEG,
   hernoemInPloeg,
   initialen,
   maakGast,
   zetOpZetel,
+  wisselPloeg,
+  zetelnamen,
   type Ploeglid,
+  type Ploegen,
 } from './ploeg'
 
 const PLOEG: Ploeglid[] = [
@@ -15,16 +19,31 @@ const PLOEG: Ploeglid[] = [
 ]
 
 describe('STANDAARD_PLOEG', () => {
-  it('bevat de vijf vaste spelers', () => {
-    expect(STANDAARD_PLOEG.map((l) => l.naam)).toEqual(['Wouter', 'Gert', 'Moe', 'Va', 'Zus'])
+  it('bevat de vijf verzonnen namen', () => {
+    expect(STANDAARD_PLOEG.map((l) => l.naam)).toEqual(['Tom', 'Caro', 'Lies', 'Bert', 'Fien'])
+  })
+
+  it('geeft elk lid een icoon in plaats van een foto', () => {
+    expect(STANDAARD_PLOEG.filter((l) => !l.icoon)).toEqual([])
+    expect(STANDAARD_PLOEG.filter((l) => l.avatar)).toEqual([])
   })
 
   it('geeft elk lid een eigen id', () => {
     expect(new Set(STANDAARD_PLOEG.map((l) => l.id)).size).toBe(STANDAARD_PLOEG.length)
   })
+})
 
-  it('geeft elk lid een avatar', () => {
-    expect(STANDAARD_PLOEG.filter((l) => !l.avatar)).toEqual([])
+describe('GEZINS_PLOEG', () => {
+  it('bevat het gezin', () => {
+    expect(GEZINS_PLOEG.map((l) => l.naam)).toEqual(['Wouter', 'Gert', 'Moe', 'Va', 'Zus'])
+  })
+
+  it('geeft elk lid een foto', () => {
+    expect(GEZINS_PLOEG.filter((l) => !l.avatar)).toEqual([])
+  })
+
+  it('geeft elk lid een eigen id', () => {
+    expect(new Set(GEZINS_PLOEG.map((l) => l.id)).size).toBe(GEZINS_PLOEG.length)
   })
 })
 
@@ -91,5 +110,54 @@ describe('maakGast', () => {
   it('telt verder na de hoogste gast, ook als die hernoemd is', () => {
     const ploeg = [...PLOEG, { id: 'gast-1', naam: 'Gast 1' }, { id: 'gast-3', naam: 'Jef' }]
     expect(maakGast(ploeg)).toEqual({ id: 'gast-4', naam: 'Gast 4' })
+  })
+})
+
+describe('zetelnamen', () => {
+  it('geeft de bewaarde zetels terug', () => {
+    const stand = { leden: STANDAARD_PLOEG, zetels: ['Fien', 'Tom', 'Bert', 'Caro'] }
+    expect(zetelnamen(stand)).toEqual(['Fien', 'Tom', 'Bert', 'Caro'])
+  })
+
+  it('valt terug op de eerste vier leden zonder bewaarde zetels', () => {
+    expect(zetelnamen({ leden: STANDAARD_PLOEG, zetels: [] })).toEqual([
+      'Tom',
+      'Caro',
+      'Lies',
+      'Bert',
+    ])
+  })
+})
+
+function versePloegen(): Ploegen {
+  return {
+    actief: 'standaard',
+    standaard: { leden: STANDAARD_PLOEG, zetels: [] },
+    gezin: { leden: GEZINS_PLOEG, zetels: [] },
+  }
+}
+
+describe('wisselPloeg', () => {
+  it('zet de andere ploeg actief', () => {
+    expect(wisselPloeg(versePloegen(), ['Tom', 'Caro', 'Lies', 'Bert']).actief).toBe('gezin')
+  })
+
+  it('bewaart de meegegeven zetels bij de ploeg die je verlaat', () => {
+    const na = wisselPloeg(versePloegen(), ['Fien', 'Caro', 'Lies', 'Bert'])
+    expect(na.standaard.zetels).toEqual(['Fien', 'Caro', 'Lies', 'Bert'])
+  })
+
+  it('geeft de zetels terug bij het terugwisselen', () => {
+    const heen = wisselPloeg(versePloegen(), ['Fien', 'Caro', 'Lies', 'Bert'])
+    const terug = wisselPloeg(heen, ['Zus', 'Gert', 'Moe', 'Va'])
+    expect(terug.actief).toBe('standaard')
+    expect(zetelnamen(terug.standaard)).toEqual(['Fien', 'Caro', 'Lies', 'Bert'])
+    expect(terug.gezin.zetels).toEqual(['Zus', 'Gert', 'Moe', 'Va'])
+  })
+
+  it('laat de leden van beide ploegen ongemoeid', () => {
+    const na = wisselPloeg(versePloegen(), ['Tom', 'Caro', 'Lies', 'Bert'])
+    expect(na.standaard.leden).toEqual(STANDAARD_PLOEG)
+    expect(na.gezin.leden).toEqual(GEZINS_PLOEG)
   })
 })
